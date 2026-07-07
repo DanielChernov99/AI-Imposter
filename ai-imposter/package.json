@@ -13,6 +13,7 @@
     "@emotion/react": "^11.14.0",
     "@mantine/core": "^9.4.1",
     "@mantine/hooks": "^9.4.1",
+    "lucide-react": "^1.23.0",
     "mobx": "^6.16.1",
     "mobx-react-lite": "^4.1.1",
     "react": "^19.2.7",
