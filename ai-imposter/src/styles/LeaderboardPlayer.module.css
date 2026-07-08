@@ -1,0 +1,71 @@
+.row {
+  width: 100%;
+  min-height: 78px;
+  padding: 12px 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.playerInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.rank {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 900;
+
+  background: linear-gradient(
+    135deg,
+    var(--warning, #facc15),
+    var(--orange-accent, #fb923c)
+  );
+  box-shadow: 0 0 18px rgba(250, 204, 21, 0.55);
+}
+
+.rankMuted {
+  background: linear-gradient(135deg, #64748b, #1e293b);
+  box-shadow: none;
+  color: #dbeafe;
+}
+
+.avatar {
+  flex-shrink: 0;
+  border: 2px solid rgba(168, 85, 247, 0.55);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
+}
+
+.nickname {
+  color: var(--text-main, #f8fafc);
+  font-size: 1.15rem;
+}
+
+.score {
+  min-width: 64px;
+  flex-shrink: 0;
+  justify-content: flex-end;
+}
+
+.points {
+  color: var(--text-main, #f8fafc);
+  font-size: 1.6rem;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.star {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}

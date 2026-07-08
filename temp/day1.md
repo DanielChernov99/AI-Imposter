@@ -1,24 +1,21 @@
 For icons use react-lucide
 
-
 Daniel:
 leaderboards
 roundpoints
-podium
-
+podium - DONE
 
 Yosef:
 login page
 Answer page:
-    -question component
-    -text area component
-    -button component
-
+-question component
+-text area component
+-button component
 
 Tuval:
 lobby page
 header:
-    -rounds componenet
-    -timer component
-    -label component (which phase)
-    -logo components
+-rounds componenet
+-timer component
+-label component (which phase)
+-logo components
