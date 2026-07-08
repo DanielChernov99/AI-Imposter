@@ -1,0 +1,65 @@
+.wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.label {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.progress {
+  align-items: center;
+}
+
+.segment {
+  align-items: center;
+}
+
+.circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  font-size: 15px;
+
+  transition: 0.25s;
+}
+
+.completed {
+  background: #22c55e;
+  color: white;
+}
+
+.current {
+  background: #6d28d9;
+  color: white;
+}
+
+.future {
+  background: #2b2f42;
+  color: #8b91a7;
+}
+
+.line {
+  width: 34px;
+  height: 4px;
+  margin: 0 2px;
+  border-radius: 999px;
+}
+
+.lineCompleted {
+  background: #22c55e;
+}
+
+.lineFuture {
+  background: #3b4155;
+}
