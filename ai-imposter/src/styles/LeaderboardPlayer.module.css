@@ -20,3 +20,9 @@
   height: clamp(12px, 2vw, 18px);
   flex-shrink: 0;
 }
+.points {
+  color: var(--text-score);
+}
+.nickname {
+  color: var(--text-main);
+}
