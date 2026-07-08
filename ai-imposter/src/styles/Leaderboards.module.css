@@ -1,0 +1,69 @@
+.card {
+  width: 100%;
+  max-width: 390px;
+  padding: 22px 28px 26px;
+
+  border-radius: 22px;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(124, 58, 237, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(180deg, rgba(16, 26, 51, 0.96), rgba(8, 18, 43, 0.96));
+
+  color: var(--text-main);
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.25);
+}
+
+.header {
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trophyIcon {
+  background: rgba(124, 58, 237, 0.18);
+  border: 1px solid rgba(168, 85, 247, 0.75);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.45);
+  font-size: 1.6rem;
+}
+
+.title {
+  color: var(--text-main);
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.subtitle {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.footer {
+  padding-top: 20px;
+}
+
+.footerIcon {
+  background: var(--electric-purple);
+  color: white;
+  font-size: 0.95rem;
+}
+
+.ruleText {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.green {
+  color: var(--success);
+  font-weight: 800;
+}
+
+.yellow {
+  color: var(--warning,);
+  font-weight: 800;
+}

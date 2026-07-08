@@ -1,0 +1,44 @@
+.card {
+  width: 100%;
+  max-width: 360px;
+  padding: 0;
+
+  border-radius: 16px;
+  border: 1px solid rgba(168, 85, 247, 0.28);
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(124, 58, 237, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(180deg, rgba(16, 26, 51, 0.96), rgba(8, 18, 43, 0.96));
+
+  color: var(--text-main);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.22);
+  overflow: hidden;
+}
+
+.header {
+  height: 58px;
+  padding: 10px 16px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.icon {
+  background: linear-gradient(
+    135deg,
+    var(--electric-purple),
+    var(--neon-violet)
+  );
+  color: white;
+  box-shadow: 0 0 18px rgba(124, 58, 237, 0.45);
+  font-size: 1.2rem;
+}
+
+.title {
+  color: var(--text-main);
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}

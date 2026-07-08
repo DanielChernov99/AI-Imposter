@@ -1,107 +1,107 @@
-*{
+* {
   margin: 0;
   box-sizing: border-box;
-  padding: 0 ;
-  text-decoration:none;
+  padding: 0;
+  text-decoration: none;
   border: none;
   outline: none;
 }
 
-body{
-  height: 100vh;
+body {
+  min-height: 100vh;
   width: 100%;
   background-image: url("./assets/images/background.png");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 }
-
-
-
+#root {
+  min-height: 100vh;
+}
 
 :root {
   /* Background */
   --bg-main: #050816;
-  --bg-secondary: #08122B;
-  --surface-dark-purple: #14102B;
-  --surface-card: #101A33;
-  --surface-elevated: #17213D;
-  --surface-modal: #1B1635;
+  --bg-secondary: #08122b;
+  --surface-dark-purple: #14102b;
+  --surface-card: #101a33;
+  --surface-elevated: #17213d;
+  --surface-modal: #1b1635;
 
   /* Brand */
-  --primary: #7C3AED;
-  --primary-hover: #6D28D9;
-  --primary-active: #8B5CF6;
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-active: #8b5cf6;
 
-  --accent-violet: #A855F7;
-  --accent-blue: #38BDF8;
-  --accent-pink: #EC4899;
+  --accent-violet: #a855f7;
+  --accent-blue: #38bdf8;
+  --accent-pink: #ec4899;
 
   /* Active */
-  --active-purple: #8B5CF6;
-  --active-violet: #A855F7;
-  --active-blue: #0EA5E9;
-  --selected-card-border: #9333EA;
-  --selected-card-bg: #1E1B4B;
+  --active-purple: #8b5cf6;
+  --active-violet: #a855f7;
+  --active-blue: #0ea5e9;
+  --selected-card-border: #9333ea;
+  --selected-card-bg: #1e1b4b;
 
   /* Hover */
-  --hover-purple: #6D28D9;
-  --hover-violet: #9333EA;
-  --hover-blue: #0284C7;
-  --hover-surface: #1E293B;
-  --hover-border: #A855F7;
+  --hover-purple: #6d28d9;
+  --hover-violet: #9333ea;
+  --hover-blue: #0284c7;
+  --hover-surface: #1e293b;
+  --hover-border: #a855f7;
 
   /* Error */
-  --error: #EF4444;
-  --error-strong: #DC2626;
-  --error-bg: #2A0F18;
-  --error-border: #F87171;
-  --error-text: #FCA5A5;
-  --error-hover: #B91C1C;
+  --error: #ef4444;
+  --error-strong: #dc2626;
+  --error-bg: #2a0f18;
+  --error-border: #f87171;
+  --error-text: #fca5a5;
+  --error-hover: #b91c1c;
 
   /* Game States */
-  --success: #22C55E;
-  --success-dark: #14532D;
-  --success-text: #86EFAC;
+  --success: #22c55e;
+  --success-dark: #14532d;
+  --success-text: #86efac;
 
-  --warning: #FACC15;
+  --warning: #facc15;
   --warning-dark: #422006;
 
-  --orange-accent: #F97316;
+  --orange-accent: #f97316;
 
-  --info: #38BDF8;
-  --info-dark: #082F49;
+  --info: #38bdf8;
+  --info-dark: #082f49;
 
   /* Text */
-  --text-main: #F8FAFC;
-  --text-soft: #CBD5E1;
-  --text-muted: #64748B;
+  --text-main: #f8fafc;
+  --text-soft: #cbd5e1;
+  --text-muted: #64748b;
   --text-disabled: #475569;
-  --text-accent: #C084FC;
-  --text-score: #FACC15;
+  --text-accent: #c084fc;
+  --text-score: #facc15;
 
   /* Borders */
-  --border-subtle: #26324F;
-  --border-purple: #6D28D9;
-  --border-active: #A855F7;
-  --border-blue: #0EA5E9;
+  --border-subtle: #26324f;
+  --border-purple: #6d28d9;
+  --border-active-color: #a855f7;
+
+  --border-blue: #0ea5e9;
   --border-disabled: #334155;
 
   /* Disabled */
   --disabled-gray: #334155;
-  --disabled-surface: #1E293B;
+  --disabled-surface: #1e293b;
   --disabled-border: #475569;
-  --disabled-text: #64748B;
+  --disabled-text: #64748b;
 
   /* Effects */
-  --glow-purple: #8B5CF6;
-  --glow-blue: #0EA5E9;
-  --glow-pink: #EC4899;
-  --glow-green: #22C55E;
-  --glow-gold: #FACC15;
+  --glow-purple: #8b5cf6;
+  --glow-blue: #0ea5e9;
+  --glow-pink: #ec4899;
+  --glow-green: #22c55e;
+  --glow-gold: #facc15;
   --shadow-dark: #020617;
 
-
-  
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -112,7 +112,6 @@ body{
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
-
 
   --shadow-sm: 0 4px 12px rgba(2, 6, 23, 0.35);
   --shadow-md: 0 10px 30px rgba(2, 6, 23, 0.45);
@@ -125,8 +124,7 @@ body{
   --glow-pink-soft: 0 0 22px rgba(236, 72, 153, 0.35);
   --glow-green-soft: 0 0 18px rgba(34, 197, 94, 0.35);
 
-
   --border-default: 1px solid var(--border-subtle);
-  --border-active: 2px solid var(--border-active);
+  --border-active-style: 2px solid var(--border-active-color);
   --border-disabled: 1px dashed var(--border-disabled);
 }
