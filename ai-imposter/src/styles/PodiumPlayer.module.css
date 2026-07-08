@@ -1,0 +1,102 @@
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.rank {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-main);
+  font-size: 1.25rem;
+  font-weight: 800;
+
+  background: linear-gradient(135deg, var(--warning), var(--orange-accent));
+  box-shadow: 0 0 22px rgba(250, 204, 21, 0.65);
+}
+
+.avatarWrapper {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  padding: 4px;
+
+  background: linear-gradient(
+    135deg,
+    var(--accent-blue),
+    var(--accent-violet),
+    var(--accent-pink)
+  );
+
+  box-shadow: var(--glow-purple-strong);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+  background: var(--surface-card);
+}
+
+.name {
+  margin-top: 10px;
+  color: var(--text-main);
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-shadow: 0 3px 12px var(--shadow-dark);
+}
+
+.points {
+  margin-top: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  color: var(--text-score);
+  font-size: 1rem;
+  font-weight: 700;
+  text-shadow: 0 3px 12px var(--shadow-dark);
+}
+
+.star {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 700px) {
+  .rank {
+    width: 30px;
+    height: 30px;
+    font-size: 0.95rem;
+  }
+
+  .avatarWrapper {
+    width: 72px;
+    height: 72px;
+  }
+
+  .name {
+    font-size: 0.8rem;
+  }
+
+  .points {
+    font-size: 0.75rem;
+  }
+
+  .star {
+    width: 14px;
+    height: 14px;
+  }
+}

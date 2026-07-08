@@ -1,0 +1,61 @@
+.podium {
+  position: relative;
+  width: min(900px, 92vw);
+  margin: 0 auto;
+  padding-top: 150px;
+}
+
+.podiumImage {
+  width: 100%;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.playerPosition {
+  position: absolute;
+  z-index: 2;
+}
+
+.first {
+  left: 50%;
+  top: 125px;
+  transform: translateX(-50%);
+}
+
+.second {
+  left: 18%;
+  top: 185px;
+  transform: translateX(-50%);
+}
+
+.third {
+  left: 85%;
+  top: 205px;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 700px) {
+  .podium {
+    width: 96vw;
+    padding-top: 105px;
+  }
+
+  .first {
+    left: 50%;
+    top: 125px;
+    transform: translateX(-50%);
+  }
+
+  .second {
+    left: 17%;
+    top: 185px;
+    transform: translateX(-50%);
+  }
+
+  .third {
+    left: 83%;
+    top: 205px;
+    transform: translateX(-50%);
+  }
+}
