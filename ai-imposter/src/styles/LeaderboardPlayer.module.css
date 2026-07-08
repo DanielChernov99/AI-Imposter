@@ -1,0 +1,22 @@
+.rank {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  background: linear-gradient(135deg, var(--warning), var(--orange-accent));
+  box-shadow: 0 0 22px rgba(250, 204, 21, 0.65);
+}
+
+.star {
+  width: clamp(12px, 2vw, 18px);
+  height: clamp(12px, 2vw, 18px);
+  flex-shrink: 0;
+}
