@@ -1,9 +1,10 @@
-import { Avatar, Card, Group, Stack, Text } from "@mantine/core";
+import { Card, Stack, Text } from "@mantine/core";
 import LeaderboardPlayer from "./LeaderboardPlayer.jsx";
+import styles from "../../styles/Leaderboards.module.css";
 
 export default function Leaderboards({ players = [] }) {
   return (
-    <Card shadow="sm" padding="md" radius="md">
+    <Card className={styles.card} shadow="sm" padding="md" radius="md">
       <Stack>
         <Text fw={900}>LEADERBOARD</Text>
 
