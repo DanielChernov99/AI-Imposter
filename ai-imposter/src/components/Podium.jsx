@@ -1,3 +1,4 @@
+import { Box, Image } from "@mantine/core";
 import PodiumPlayer from "./PodiumPlayer";
 import podiumImage from "../assets/images/podium.png";
 import styles from "../styles/Podium.module.css";
@@ -8,30 +9,30 @@ export default function Podium({ players = [] }) {
   const thirdPlayer = players[2] || null;
 
   return (
-    <div className={styles.podium}>
-      <img
+    <Box className={styles.podium}>
+      <Image
         src={podiumImage}
         alt="Top 3 podium"
         className={styles.podiumImage}
       />
 
       {secondPlayer && (
-        <div className={`${styles.playerPosition} ${styles.second}`}>
+        <Box className={`${styles.playerPosition} ${styles.second}`}>
           <PodiumPlayer player={secondPlayer} place={2} />
-        </div>
+        </Box>
       )}
 
       {firstPlayer && (
-        <div className={`${styles.playerPosition} ${styles.first}`}>
+        <Box className={`${styles.playerPosition} ${styles.first}`}>
           <PodiumPlayer player={firstPlayer} place={1} />
-        </div>
+        </Box>
       )}
 
       {thirdPlayer && (
-        <div className={`${styles.playerPosition} ${styles.third}`}>
+        <Box className={`${styles.playerPosition} ${styles.third}`}>
           <PodiumPlayer player={thirdPlayer} place={3} />
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }

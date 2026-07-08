@@ -1,33 +1,37 @@
-.player {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+.avatarBlock {
+  position: relative;
+  width: min(72%, 112px);
+  aspect-ratio: 1;
 }
 
 .rank {
-  width: 42px;
-  height: 42px;
+  position: absolute;
+  left: 50%;
+  top: -3rem;
+  transform: translateX(-50%);
+  z-index: 3;
+
+  width: clamp(28px, 32%, 42px);
+  aspect-ratio: 1;
   border-radius: 50%;
-  margin-bottom: 8px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   color: var(--text-main);
-  font-size: 1.25rem;
+  font-size: clamp(0.85rem, 2vw, 1.25rem);
   font-weight: 800;
 
   background: linear-gradient(135deg, var(--warning), var(--orange-accent));
   box-shadow: 0 0 22px rgba(250, 204, 21, 0.65);
 }
 
-.avatarWrapper {
-  width: 112px;
-  height: 112px;
+.avatarRoot {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  padding: 4px;
+  padding: clamp(2px, 0.5vw, 4px);
 
   background: linear-gradient(
     135deg,
@@ -39,64 +43,28 @@
   box-shadow: var(--glow-purple-strong);
 }
 
-.avatar {
-  width: 100%;
-  height: 100%;
+.avatarImage {
   border-radius: 50%;
-  display: block;
   object-fit: cover;
   background: var(--surface-card);
 }
 
 .name {
-  margin-top: 10px;
-  color: var(--text-main);
-  font-size: 1.15rem;
-  font-weight: 800;
+  width: 100%;
+  margin-top: clamp(6px, 1vw, 10px);
+  font-size: clamp(0.75rem, 1.8vw, 1.15rem);
   text-shadow: 0 3px 12px var(--shadow-dark);
 }
 
 .points {
-  margin-top: 4px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
+  margin-top: clamp(2px, 0.6vw, 4px);
   color: var(--text-score);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: clamp(0.65rem, 1.5vw, 1rem);
   text-shadow: 0 3px 12px var(--shadow-dark);
 }
 
 .star {
-  width: 18px;
-  height: 18px;
-}
-
-@media (max-width: 700px) {
-  .rank {
-    width: 30px;
-    height: 30px;
-    font-size: 0.95rem;
-  }
-
-  .avatarWrapper {
-    width: 72px;
-    height: 72px;
-  }
-
-  .name {
-    font-size: 0.8rem;
-  }
-
-  .points {
-    font-size: 0.75rem;
-  }
-
-  .star {
-    width: 14px;
-    height: 14px;
-  }
+  width: clamp(12px, 2vw, 18px);
+  height: clamp(12px, 2vw, 18px);
+  flex-shrink: 0;
 }
