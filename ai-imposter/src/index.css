@@ -1,0 +1,132 @@
+*{
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0 ;
+  text-decoration:none;
+  border: none;
+  outline: none;
+}
+
+body{
+  height: 100vh;
+  width: 100%;
+  background-image: url("./assets/images/background.png");
+  background-size: cover;
+  background-position: center;
+}
+
+
+
+
+:root {
+  /* Background */
+  --bg-main: #050816;
+  --bg-secondary: #08122B;
+  --surface-dark-purple: #14102B;
+  --surface-card: #101A33;
+  --surface-elevated: #17213D;
+  --surface-modal: #1B1635;
+
+  /* Brand */
+  --primary: #7C3AED;
+  --primary-hover: #6D28D9;
+  --primary-active: #8B5CF6;
+
+  --accent-violet: #A855F7;
+  --accent-blue: #38BDF8;
+  --accent-pink: #EC4899;
+
+  /* Active */
+  --active-purple: #8B5CF6;
+  --active-violet: #A855F7;
+  --active-blue: #0EA5E9;
+  --selected-card-border: #9333EA;
+  --selected-card-bg: #1E1B4B;
+
+  /* Hover */
+  --hover-purple: #6D28D9;
+  --hover-violet: #9333EA;
+  --hover-blue: #0284C7;
+  --hover-surface: #1E293B;
+  --hover-border: #A855F7;
+
+  /* Error */
+  --error: #EF4444;
+  --error-strong: #DC2626;
+  --error-bg: #2A0F18;
+  --error-border: #F87171;
+  --error-text: #FCA5A5;
+  --error-hover: #B91C1C;
+
+  /* Game States */
+  --success: #22C55E;
+  --success-dark: #14532D;
+  --success-text: #86EFAC;
+
+  --warning: #FACC15;
+  --warning-dark: #422006;
+
+  --orange-accent: #F97316;
+
+  --info: #38BDF8;
+  --info-dark: #082F49;
+
+  /* Text */
+  --text-main: #F8FAFC;
+  --text-soft: #CBD5E1;
+  --text-muted: #64748B;
+  --text-disabled: #475569;
+  --text-accent: #C084FC;
+  --text-score: #FACC15;
+
+  /* Borders */
+  --border-subtle: #26324F;
+  --border-purple: #6D28D9;
+  --border-active: #A855F7;
+  --border-blue: #0EA5E9;
+  --border-disabled: #334155;
+
+  /* Disabled */
+  --disabled-gray: #334155;
+  --disabled-surface: #1E293B;
+  --disabled-border: #475569;
+  --disabled-text: #64748B;
+
+  /* Effects */
+  --glow-purple: #8B5CF6;
+  --glow-blue: #0EA5E9;
+  --glow-pink: #EC4899;
+  --glow-green: #22C55E;
+  --glow-gold: #FACC15;
+  --shadow-dark: #020617;
+
+
+  
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+
+  --shadow-sm: 0 4px 12px rgba(2, 6, 23, 0.35);
+  --shadow-md: 0 10px 30px rgba(2, 6, 23, 0.45);
+  --shadow-lg: 0 20px 60px rgba(2, 6, 23, 0.55);
+
+  --glow-purple-soft: 0 0 18px rgba(139, 92, 246, 0.35);
+  --glow-purple-strong: 0 0 32px rgba(139, 92, 246, 0.55);
+
+  --glow-blue-soft: 0 0 18px rgba(14, 165, 233, 0.3);
+  --glow-pink-soft: 0 0 22px rgba(236, 72, 153, 0.35);
+  --glow-green-soft: 0 0 18px rgba(34, 197, 94, 0.35);
+
+
+  --border-default: 1px solid var(--border-subtle);
+  --border-active: 2px solid var(--border-active);
+  --border-disabled: 1px dashed var(--border-disabled);
+}
