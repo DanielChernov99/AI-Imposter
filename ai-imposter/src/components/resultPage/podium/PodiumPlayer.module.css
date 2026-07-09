@@ -1,18 +1,35 @@
+.player {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  color: var(--text-main);
+}
+
 .avatarBlock {
   position: relative;
-  width: min(72%, 112px);
+  width: 4.5rem;
   aspect-ratio: 1;
-  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 0.35rem;
 }
 
 .rank {
   position: absolute;
   left: 50%;
-  top: -3rem;
+  top: -2.2rem;
   transform: translateX(-50%);
   z-index: 3;
 
-  width: clamp(28px, 32%, 42px);
+  width: 2rem;
   aspect-ratio: 1;
   border-radius: 50%;
 
@@ -21,7 +38,7 @@
   justify-content: center;
 
   color: var(--text-main);
-  font-size: clamp(0.85rem, 2vw, 1.25rem);
+  font-size: 1rem;
   font-weight: 800;
 
   background: linear-gradient(135deg, var(--warning), var(--orange-accent));
@@ -32,7 +49,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  padding: clamp(2px, 0.5vw, 4px);
+  padding: 3px;
 
   background: linear-gradient(
     135deg,
@@ -52,24 +69,63 @@
 
 .name {
   width: 100%;
-  margin-top: clamp(6px, 1vw, 10px);
-  font-size: clamp(0.75rem, 1.8vw, 1.15rem);
+  margin: 0;
+
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.1;
+
   text-align: center;
   text-shadow: 0 3px 12px var(--shadow-dark);
 }
 
 .points {
   width: 100%;
-  margin-top: clamp(2px, 0.6vw, 4px);
-  color: var(--text-score);
-  font-size: clamp(0.65rem, 1.5vw, 1rem);
-  text-align: center;
+  margin-top: 0.2rem;
+
+  display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 0.15rem;
+
+  color: var(--text-score);
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1;
+
+  text-align: center;
+  white-space: nowrap;
   text-shadow: 0 3px 12px var(--shadow-dark);
 }
 
 .star {
-  width: clamp(12px, 2vw, 18px);
-  height: clamp(12px, 2vw, 18px);
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .avatarBlock {
+    width: 3.75rem;
+  }
+
+  .rank {
+    top: -1.9rem;
+    width: 1.75rem;
+    font-size: 0.85rem;
+  }
+
+  .name {
+    font-size: 0.78rem;
+  }
+
+  .points {
+    font-size: 0.75rem;
+  }
+
+  .star {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
 }

@@ -1,12 +1,18 @@
 .podium {
   position: relative;
-  width: min(900px, 92vw);
-  margin: 90px auto 0;
+  width: min(58rem, 100%);
+  aspect-ratio: 16 / 7.2;
+  margin: 0 auto;
 }
 
 .podiumImage {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
   width: 100%;
   display: block;
+
   user-select: none;
   pointer-events: none;
 }
@@ -14,47 +20,52 @@
 .playerPosition {
   position: absolute;
   z-index: 2;
-  width: clamp(85px, 16%, 150px);
-  transform: translate(-50%, -100%);
-}
 
+  width: 8rem;
+  transform: translateX(-50%);
+}
 .first {
-  left: 52%;
-  top: 42%;
+  left: 50%;
+  top: 25%;
 }
 
 .second {
-  left: 20%;
-  top: 48%;
+  left: 17%;
+  top: 37%;
 }
 
 .third {
-  left: 86%;
-  top: 50%;
+  left: 85%;
+  top: 40%;
 }
 
 @media (max-width: 700px) {
   .podium {
-    width: 96vw;
-    margin-top: 80px;
+    width: 100%;
+    aspect-ratio: 16 / 8;
   }
 
   .playerPosition {
-    width: clamp(75px, 20%, 110px);
+    width: 5.8rem;
   }
 
   .first {
-    left: 52%;
-    top: 42%;
+    top: 10%;
   }
 
   .second {
-    left: 20%;
-    top: 48%;
+    left: 15%;
+    top: 20%;
   }
 
   .third {
-    left: 86%;
-    top: 50%;
+    left: 77%;
+    top: 46%;
+  }
+}
+
+@media (max-width: 420px) {
+  .playerPosition {
+    width: 5.2rem;
   }
 }

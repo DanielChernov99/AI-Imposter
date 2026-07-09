@@ -1,8 +1,10 @@
+import { Box } from "@mantine/core";
 import Header from "../components/layout/header/Header";
 import Podium from "../components/resultPage/podium/Podium";
 import ResultActions from "../components/resultPage/resultActions/ResultActions";
 import FinalPlayersList from "../components/resultPage/resultPlayers/FinalPlayersList";
 import { mockRoundPoints } from "../mockData/mockRoundPoints";
+import styles from "../styles/ResultPage.module.css";
 
 export default function ResultPage() {
   const sortedPlayers = [...mockRoundPoints].sort(
@@ -13,11 +15,14 @@ export default function ResultPage() {
   const otherPlayers = sortedPlayers.slice(3);
 
   return (
-    <>
-      <Header />
-      <Podium players={podiumPlayers} />
-      <FinalPlayersList players={otherPlayers} />
-      <ResultActions />
-    </>
+    <Box className={styles.page}>
+      <Header gameStatus="PLAYING" completedRounds={5} totalRounds={5} />
+
+      <main className={styles.content}>
+        <Podium players={podiumPlayers} />
+        <FinalPlayersList players={otherPlayers} />
+        <ResultActions />
+      </main>
+    </Box>
   );
 }

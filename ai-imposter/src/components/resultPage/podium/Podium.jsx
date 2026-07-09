@@ -4,9 +4,11 @@ import podiumImage from "../../../assets/images/podium.png";
 import styles from "./Podium.module.css";
 
 export default function Podium({ players = [] }) {
-  const firstPlayer = players[0] || null;
-  const secondPlayer = players[1] || null;
-  const thirdPlayer = players[2] || null;
+  const placements = [
+    { player: players[1], place: 2, className: styles.second },
+    { player: players[0], place: 1, className: styles.first },
+    { player: players[2], place: 3, className: styles.third },
+  ];
 
   return (
     <Box className={styles.podium}>
@@ -16,23 +18,18 @@ export default function Podium({ players = [] }) {
         className={styles.podiumImage}
       />
 
-      {secondPlayer && (
-        <Box className={`${styles.playerPosition} ${styles.second}`}>
-          <PodiumPlayer player={secondPlayer} place={2} />
-        </Box>
-      )}
+      {placements.map(({ player, place, className }) => {
+        if (!player) return null;
 
-      {firstPlayer && (
-        <Box className={`${styles.playerPosition} ${styles.first}`}>
-          <PodiumPlayer player={firstPlayer} place={1} />
-        </Box>
-      )}
-
-      {thirdPlayer && (
-        <Box className={`${styles.playerPosition} ${styles.third}`}>
-          <PodiumPlayer player={thirdPlayer} place={3} />
-        </Box>
-      )}
+        return (
+          <Box
+            key={player.id ?? place}
+            className={`${styles.playerPosition} ${className}`}
+          >
+            <PodiumPlayer player={player} place={place} />
+          </Box>
+        );
+      })}
     </Box>
   );
 }
