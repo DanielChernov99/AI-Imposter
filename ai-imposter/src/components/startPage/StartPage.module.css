@@ -1,61 +1,136 @@
-* {
-  border: solid black 5px;
-  color: white;
+.pageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .startPageContainer {
+  width: 600px;
+
+  padding: var(--space-8);
+
+  background: rgba(16, 26, 51, 0.82);
+  border: 1px solid var(--border-active-color);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg), var(--glow-purple-soft);
+}
+
+.logoContainer {
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mascotBlock {
   margin: auto;
-
-  width: 60%;
-  height: 500px;
-
-  transform: translateY(25%);
-
-  border: solid black 5px;
+  width: min(45%, 160px);
 }
 
-.welcomeSection {
+.mascotImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter:
+    drop-shadow(0 0 18px rgba(139, 92, 246, 0.45))
+    drop-shadow(0 0 28px rgba(56, 189, 248, 0.25));
 }
 
-.logo {
-  width: 50px;
-  height: 50px;
+.wordmarkBlock {
+  margin: auto;
+  width: min(70%, 280px);
 }
 
-.welcomeText {
-  text-align: center;
+.wordmarkImg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .nicknameInput {
-  margin: 20px;
+  width: 100%;
+}
+
+.nicknameInput label {
+  font-family: var(--font-main);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-soft);
+  margin-bottom: var(--space-2);
+}
+
+.nicknameInput input {
+  background: rgba(16, 26, 51, 0.9);
+  border: 1px solid var(--border-purple);
+  border-radius: var(--radius-lg);
+  padding-block: 16px;
+  padding-inline-end: 20px;
+  padding-inline-start: var(--space-10);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  font-size: 16px;
+}
+
+.nicknameInput input::placeholder {
+  color: var(--text-muted);
+}
+
+.nicknameInput input:focus {
+  border-color: var(--border-active-color);
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.16);
+}
+
+.nicknameInput svg {
+  color: var(--text-muted);
 }
 
 .enterGameOptions {
-  gap: 20px;
+  align-items: stretch;
   justify-content: center;
+  gap: var(--space-6);
+
+  background: var(--surface-dark-purple);
+  border: 1px solid var(--border-purple);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
 }
 
 .orDivider {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--space-2);
 }
 
 .orDividerLine {
   flex: 1;
-  width: 5px;
-  border: none;
-  background-color: black;
+  width: 1px;
+  background-color: var(--border-purple);
 }
 
 .orCircle {
-  width: 36px;
-  height: 36px;
-  min-height: 36px;
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
   flex: none;
-  border: solid black 5px;
+  background: var(--surface-modal);
+  border: 1px solid var(--border-active-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.orText {
+  font-family: var(--font-main);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.footerText {
+  text-align: center;
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
 }

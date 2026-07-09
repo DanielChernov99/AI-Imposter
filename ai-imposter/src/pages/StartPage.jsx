@@ -1,31 +1,48 @@
-import { Box, Flex, Image, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Box, Flex, Image, Stack, Text, TextInput } from "@mantine/core";
+import { User } from "lucide-react";
 import StartNewGame from "../components/startPage/StartNewGame";
 import JoinRoom from "../components/startPage/JoinRoom";
 import styles from "../components/startPage/StartPage.module.css";
-import logo from "../assets/images/ai_imposter_logo.png";
+import logoImg from "../assets/images/logo_img.png";
+import logoText from "../assets/images/logo_text.png";
 
 export default function StartPage() {
   return (
-    <Stack className={styles.startPageContainer}>
-      <Stack className={styles.welcomeSection}>
-        <Image className={styles.logo} src={logo} alt="App Logo"></Image>
-        <Title className={styles.welcomeText}>Welcome</Title>
-      </Stack>
-      <TextInput
-        className={styles.nicknameInput}
-        placeholder="Enter your nickname"
-      ></TextInput>
-      <Flex className={styles.enterGameOptions}>
-        <StartNewGame />
-        <Box className={styles.orDivider}>
-          <Box className={styles.orDividerLine} />
-          <Box className={styles.orCircle}>
-            <Text>Or</Text>
+    <Box className={styles.pageWrapper}>
+      <Stack className={styles.startPageContainer}>
+        <Stack className={styles.logoContainer}>
+          <Box className={styles.mascotBlock}>
+            <Image className={styles.mascotImg} src={logoImg} alt="App Logo" />
           </Box>
-          <Box className={styles.orDividerLine} />
-        </Box>
-        <JoinRoom />
-      </Flex>
-    </Stack>
+          <Box className={styles.wordmarkBlock}>
+            <Image className={styles.wordmarkImg} src={logoText} alt="AI Imposter" />
+          </Box>
+        </Stack>
+
+        <TextInput
+          className={styles.nicknameInput}
+          label="Pick a nickname:"
+          placeholder="Enter your nickname"
+          leftSection={<User size={18} />}
+          maxLength={20}
+        />
+
+        <Flex className={styles.enterGameOptions}>
+          <StartNewGame />
+          <Box className={styles.orDivider}>
+            <Box className={styles.orDividerLine} />
+            <Box className={styles.orCircle}>
+              <Text className={styles.orText}>Or</Text>
+            </Box>
+            <Box className={styles.orDividerLine} />
+          </Box>
+          <JoinRoom />
+        </Flex>
+
+        <Text className={styles.footerText}>
+          Join with a nickname — no sign up required.
+        </Text>
+      </Stack>
+    </Box>
   );
 }

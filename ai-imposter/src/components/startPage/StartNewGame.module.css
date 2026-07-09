@@ -1,12 +1,92 @@
 .elementContainer {
-  width: 300px;
+  flex: 1;
+  justify-content: flex-start;
+  gap: var(--space-4);
+}
+
+.titleRow {
+  align-items: center;
 }
 
 .title {
+  font-family: var(--font-main);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
 }
 
-.numOfPlayers {
+.stepperRow {
+  align-items: center;
+}
+
+.stepperButton {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(16, 26, 51, 0.9);
+  border: 1px solid var(--border-purple);
+  border-radius: var(--radius-md);
+  color: var(--text-soft);
+
+  transition:
+    border-color var(--transition-normal, 0.2s ease),
+    background-color var(--transition-normal, 0.2s ease);
+}
+
+.stepperButton:hover:not(:disabled) {
+  border-color: var(--border-active-color);
+  background: var(--hover-surface);
+}
+
+.stepperButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepperValue {
+  flex: 1;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(16, 26, 51, 0.9);
+  border: 1px solid var(--border-purple);
+  border-radius: var(--radius-md);
+
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .startGameButton {
+  height: auto;
+
+  font-family: var(--font-main);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  color: var(--text-main);
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #ec4899 100%);
+
+  border: none;
+  border-radius: var(--radius-lg);
+
+  padding: 14px 24px;
+
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.35);
+}
+
+.startGameButton:hover {
+  background: linear-gradient(135deg, #6d28d9 0%, #9333ea 45%, #db2777 100%);
+  box-shadow: 0 0 32px rgba(168, 85, 247, 0.55);
 }
