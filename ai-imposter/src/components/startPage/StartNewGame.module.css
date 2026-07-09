@@ -1,4 +1,11 @@
+.elementContainer {
+  width: 300px;
+}
+
 .title {
+}
+
+.numOfPlayers {
 }
 
 .startGameButton {

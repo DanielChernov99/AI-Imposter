@@ -3,7 +3,7 @@ import styles from "./JoinRoom.module.css";
 
 export default function JoinRoom() {
   return (
-    <Stack>
+    <Stack className={styles.elementContainer}>
       <Text className={styles.title}>Join a room</Text>
       <Input className={styles.inputRoomID} placeholder="Room ID" />
       <Button className={styles.joinButton}>Join Game</Button>
