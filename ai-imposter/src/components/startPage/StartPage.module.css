@@ -1,0 +1,21 @@
+* {
+  border: solid black 5px;
+  color: white;
+}
+
+.startPageContainer {
+  margin: auto;
+
+  width: 60%;
+  height: 500px;
+
+  transform: translateY(25%);
+
+  border: solid black 5px;
+}
+
+.welcomeSection {
+}
+
+.enterGameOptions {
+}
