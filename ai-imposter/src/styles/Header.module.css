@@ -1,7 +1,8 @@
 .header-wrapper {
   display: flex;
   flex-wrap: wrap;
-  position: fixed;
+  /* for now no need to fix the header, we do not have scrolling functionality  */
+  /* position: fixed; */
   width: 100%;
   background: rgba(2, 3, 8, 0.92);
   backdrop-filter: blur(14px);
@@ -167,7 +168,7 @@
   .header-wrapper {
     display: flex;
     flex-wrap: wrap;
-    position: fixed;
+    /* position: fixed; */
     width: 100%;
     background: rgba(2, 3, 8, 0.92);
     backdrop-filter: blur(14px);

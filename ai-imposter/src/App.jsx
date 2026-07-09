@@ -1,5 +1,11 @@
+import ResultPage from "./pages/ResultPage";
+
 function App() {
-  return <></>;
+  return (
+    <>
+      <ResultPage />
+    </>
+  );
 }
 
 export default App;

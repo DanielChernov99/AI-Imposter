@@ -1,0 +1,57 @@
+.buttonsContainer {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+.playButton {
+  width: 20rem;
+  height: 4.1rem;
+  border-radius: 999px;
+
+  color: white;
+  background: linear-gradient(
+    135deg,
+    var(--primary-active) 0%,
+    var(--primary) 42%,
+    var(--accent-pink) 100%
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.playButton:hover {
+  background: linear-gradient(
+    135deg,
+    var(--accent-violet) 0%,
+    var(--primary-active) 42%,
+    var(--accent-pink) 100%
+  );
+}
+
+.quitButton {
+  width: 17rem;
+  height: 4.1rem;
+  border-radius: 999px;
+
+  color: white;
+  background: rgba(8, 18, 43, 0.58);
+
+  border: 1.5px solid var(--active-purple);
+}
+
+.quitButton:hover {
+  color: white;
+  background: rgba(20, 16, 43, 0.8);
+  border-color: var(--accent-violet);
+}
+
+.buttonLabel {
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}
+
+.buttonSection {
+  color: white;
+  margin-right: var(--space-3);
+}

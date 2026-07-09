@@ -11,6 +11,8 @@ export default function PodiumPlayer({ player, place }) {
         <Avatar
           src={player.img}
           alt={player.nickname}
+          size="100%"
+          radius="50%"
           classNames={{
             root: styles.avatarRoot,
             image: styles.avatarImage,
