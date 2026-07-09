@@ -1,9 +1,9 @@
-import ResultPage from "./pages/ResultPage";
+import LobbyPage from "./pages/LobbyPage";
 
 function App() {
   return (
     <>
-      <ResultPage />
+      <LobbyPage />;
     </>
   );
 }
