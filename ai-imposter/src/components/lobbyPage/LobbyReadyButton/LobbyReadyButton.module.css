@@ -1,2 +1,28 @@
 .button {
+  min-width: 22rem;
+  height: 4rem;
+  margin-top: var(--space-2);
+
+  border-radius: var(--radius-pill);
+
+  color: var(--text-main);
+  font-size: 1.4rem;
+  font-weight: 900;
+
+  background: linear-gradient(90deg, var(--primary), var(--accent-pink));
+
+  box-shadow: var(--glow-purple-soft), var(--glow-pink-soft);
+}
+
+.button:hover {
+  background: linear-gradient(90deg, var(--primary-hover), var(--accent-pink));
+}
+
+@media (max-width: 768px) {
+  .button {
+    width: min(100%, 22rem);
+    min-width: unset;
+    height: 3.75rem;
+    font-size: 1.2rem;
+  }
 }

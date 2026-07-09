@@ -4,19 +4,21 @@ import styles from "./LobbyTitle.module.css";
 
 export default function LobbyTitle({ joinedCount, requiredPlayers }) {
   return (
-    <Stack className={styles.title} align="center">
-      <Group className={styles.heading}>
-        <Users />
-        <Title order={1}>Waiting for players</Title>
+    <Stack align="center" className={styles.wrapper}>
+      <Group className={styles.titleRow}>
+        <Users className={styles.mainIcon} />
+        <Title order={1} className={styles.title}>
+          Waiting for players
+        </Title>
       </Group>
 
       <Text className={styles.subtitle}>
         All players are connected and ready. The game is about to begin!
       </Text>
 
-      <Group className={styles.playerCount}>
-        <Users />
-        <Text>
+      <Group className={styles.countRow}>
+        <Users className={styles.countIcon} />
+        <Text className={styles.countText}>
           {joinedCount} / {requiredPlayers} players joined
         </Text>
       </Group>

@@ -4,7 +4,7 @@ import styles from "./LobbyPlayerList.module.css";
 
 export default function LobbyPlayerList({ players, currentPlayerId }) {
   return (
-    <Stack className={styles.list} w="100%">
+    <Stack className={styles.list}>
       {players.map((player) => (
         <LobbyPlayerRow
           key={player.id}

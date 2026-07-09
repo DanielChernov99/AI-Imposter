@@ -1,20 +1,33 @@
 import { Avatar, Badge, Group, Text } from "@mantine/core";
+import { CheckCircle } from "lucide-react";
 import styles from "./LobbyPlayerRow.module.css";
 
 export default function LobbyPlayerRow({ player, isCurrentPlayer }) {
   return (
-    <Group className={styles.row} justify="space-between" wrap="nowrap">
+    <Group
+      className={`${styles.row} ${isCurrentPlayer ? styles.currentPlayer : ""}`}
+      justify="space-between"
+      wrap="nowrap"
+    >
       <Group className={styles.playerInfo} wrap="nowrap">
-        <Avatar src={player.img} radius="xl" size="lg" />
+        <Avatar
+          src={player.img}
+          radius="xl"
+          size="lg"
+          className={styles.avatar}
+        />
 
-        <Group className={styles.nameGroup} gap="xs" wrap="nowrap">
-          <Text fw={700}>{player.nickname}</Text>
+        <Group gap="xs" wrap="nowrap">
+          <Text className={styles.nickname}>{player.nickname}</Text>
 
-          {isCurrentPlayer && <Badge>YOU</Badge>}
+          {isCurrentPlayer && <Badge className={styles.youBadge}>YOU</Badge>}
         </Group>
       </Group>
 
-      <Badge className={styles.readyBadge} color="green">
+      <Badge
+        className={styles.readyBadge}
+        leftSection={<CheckCircle size={14} />}
+      >
         READY
       </Badge>
     </Group>

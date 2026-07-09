@@ -13,7 +13,7 @@ export default function LobbyCard({
 }) {
   return (
     <Card className={styles.card}>
-      <Stack className={styles.content} align="center">
+      <Stack align="center" className={styles.content}>
         <LobbyTitle
           joinedCount={players.length}
           requiredPlayers={requiredPlayers}
@@ -26,7 +26,7 @@ export default function LobbyCard({
           onClick={onReadyClick}
         />
 
-        <Text className={styles.helperText}>
+        <Text className={styles.hint}>
           When all players are ready, the game starts automatically.
         </Text>
       </Stack>
