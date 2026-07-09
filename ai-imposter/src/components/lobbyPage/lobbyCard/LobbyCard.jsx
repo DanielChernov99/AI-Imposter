@@ -2,6 +2,7 @@ import { Card, Stack, Text } from "@mantine/core";
 import LobbyTitle from "../lobbyTitle/LobbyTitle";
 import LobbyPlayerList from "../lobbyPlayerList/LobbyPlayerList";
 import LobbyReadyButton from "../LobbyReadyButton/LobbyReadyButton";
+import styles from "./LobbyCard.module.css";
 
 export default function LobbyCard({
   players,
@@ -11,8 +12,8 @@ export default function LobbyCard({
   onReadyClick,
 }) {
   return (
-    <Card>
-      <Stack align="center">
+    <Card className={styles.card}>
+      <Stack className={styles.content} align="center">
         <LobbyTitle
           joinedCount={players.length}
           requiredPlayers={requiredPlayers}
@@ -25,7 +26,9 @@ export default function LobbyCard({
           onClick={onReadyClick}
         />
 
-        <Text>When all players are ready, the game starts automatically.</Text>
+        <Text className={styles.helperText}>
+          When all players are ready, the game starts automatically.
+        </Text>
       </Stack>
     </Card>
   );

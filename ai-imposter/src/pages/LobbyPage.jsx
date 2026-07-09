@@ -1,5 +1,6 @@
 import { mockRoundPoints } from "../mockData/mockRoundPoints";
 import LobbyCard from "../components/lobbyPage/lobbyCard/LobbyCard.jsx";
+import styles from "../styles/LobbyPage.module.css";
 
 export default function LobbyPage(params) {
   // this is only for the mock testing later it will be changed
@@ -9,7 +10,7 @@ export default function LobbyPage(params) {
   }));
 
   return (
-    <main>
+    <main className={styles.page}>
       <LobbyCard
         players={players}
         currentPlayerId={3}
