@@ -1,6 +1,6 @@
 import { Group, Box, Avatar, Text } from "@mantine/core";
-import styles from "../../styles/RoundPointPlayer.module.css";
-import star from "../../assets/icons/star.svg";
+import styles from "./RoundPointPlayer.module.css";
+import star from "../../../assets/icons/star.svg";
 
 export default function RoundPointPlayer({ player, rank }) {
   const hasPoints = player.points > 0;

@@ -1,6 +1,6 @@
 import { Card, Stack, Text, Group, ThemeIcon, Box } from "@mantine/core";
 import LeaderboardPlayer from "./LeaderboardPlayer.jsx";
-import styles from "../../styles/Leaderboards.module.css";
+import styles from "./Leaderboards.module.css";
 
 export default function Leaderboards({ players = [] }) {
   return (

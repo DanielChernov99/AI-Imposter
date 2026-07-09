@@ -1,6 +1,6 @@
 import { Avatar, Box, Group, Stack, Text } from "@mantine/core";
-import star from "../../assets/icons/star.svg";
-import styles from "../../styles/PodiumPlayer.module.css";
+import star from "../../../assets/icons/star.svg";
+import styles from "./PodiumPlayer.module.css";
 
 export default function PodiumPlayer({ player, place }) {
   return (

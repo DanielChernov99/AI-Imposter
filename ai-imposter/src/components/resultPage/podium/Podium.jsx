@@ -1,7 +1,7 @@
 import { Box, Image } from "@mantine/core";
 import PodiumPlayer from "./PodiumPlayer";
-import podiumImage from "../../assets/images/podium.png";
-import styles from "../../styles/Podium.module.css";
+import podiumImage from "../../../assets/images/podium.png";
+import styles from "./Podium.module.css";
 
 export default function Podium({ players = [] }) {
   const firstPlayer = players[0] || null;

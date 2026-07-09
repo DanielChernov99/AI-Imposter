@@ -1,6 +1,6 @@
 import { Button, Group } from "@mantine/core";
 import { LogOut, Play } from "lucide-react";
-import styles from "../styles/ResultActions.module.css";
+import styles from "./ResultActions.module.css";
 
 export default function ResultActions() {
   return (

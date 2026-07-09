@@ -1,6 +1,6 @@
 import { Group, Box, Avatar, Text } from "@mantine/core";
-import styles from "../../styles/LeaderboardPlayer.module.css";
-import star from "../../assets/icons/star.svg";
+import styles from "./LeaderboardPlayer.module.css";
+import star from "../../../assets/icons/star.svg";
 
 export default function LeaderboardPlayer({ player, rank }) {
   const rankClassName =

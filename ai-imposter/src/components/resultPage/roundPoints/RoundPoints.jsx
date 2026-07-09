@@ -1,6 +1,6 @@
 import { Card, Stack, Text, Group, ThemeIcon } from "@mantine/core";
 import RoundPointPlayer from "./RoundPointPlayer.jsx";
-import styles from "../../styles/RoundPoints.module.css";
+import styles from "./RoundPoints.module.css";
 
 export default function RoundPoints({ players = [] }) {
   return (

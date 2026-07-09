@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Flex } from "@mantine/core";
-import Classes from "../styles/Timer.module.css";
+import Classes from "./Timer.module.css";
 
 // 1. Set your custom duration here (e.g., 20, 45, 90, etc.)
 

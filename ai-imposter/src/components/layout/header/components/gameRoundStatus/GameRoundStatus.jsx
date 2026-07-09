@@ -1,6 +1,6 @@
 import { Flex, Text, ThemeIcon } from "@mantine/core";
 import { Check } from "lucide-react";
-import classes from "../styles/GameRoundStatus.module.css";
+import classes from "./GameRoundStatus.module.css";
 
 const GameRoundStatus = ({ completedRounds, totalRounds }) => {
   const rounds = Array.from({ length: totalRounds }, (_, i) => i + 1);

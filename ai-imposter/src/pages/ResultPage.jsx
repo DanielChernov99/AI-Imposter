@@ -1,6 +1,6 @@
-import Header from "../components/Header";
-import Podium from "../components/podium/Podium";
-import ResultActions from "../components/ResultActions";
+import Header from "../components/layout/header/Header";
+import Podium from "../components/resultPage/podium/Podium";
+import ResultActions from "../components/resultPage/resultActions/ResultActions";
 import { mockPlayersPodium } from "../mockData/mockPlayersPodium";
 
 export default function ResultPage() {

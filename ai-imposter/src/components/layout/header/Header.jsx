@@ -1,9 +1,9 @@
-import Classes from "../styles/Header.module.css";
-import logo from "../assets/images/AI-imposter_logo.png";
+import Classes from "./Header.module.css";
+import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { DoorClosedLocked, UsersRound } from "lucide-react";
-import Timer from "./Timer";
+import Timer from "./components/timer/Timer";
 import { Flex, Text } from "@mantine/core";
-import GameRoundStatus from "./GameRoundStatus";
+import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 
 const Header = ({ gameStatus = "PLAYING" }) => {
   return (
