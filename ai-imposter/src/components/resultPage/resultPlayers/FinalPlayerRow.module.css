@@ -1,0 +1,32 @@
+.row {
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+.rank {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 900;
+
+  background: linear-gradient(135deg, #64748b, #334155);
+}
+.avatar {
+  flex-shrink: 0;
+  border: 2px solid rgba(56, 189, 248, 0.45);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.2);
+}
