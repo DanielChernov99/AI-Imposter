@@ -1,0 +1,41 @@
+.answerBox-container {
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.textArea-bottomSection {
+  width: 100%;
+  justify-content: flex-end;
+}
+.answerBox-textArea {
+  background-color: var(--surface-card);
+  color: var(--text-main);
+  border: 1px solid var(--primary-active);
+}
+.submit-button {
+  display: flex;
+  margin-inline: auto;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--primary), var(--accent-pink));
+  box-shadow: var(--glow-purple-soft), var(--glow-pink-soft);
+}
+.submit-button:hover {
+  background: linear-gradient(90deg, var(--primary-hover), var(--accent-pink));
+}
+.submit-button-content {
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.send-icon {
+  width: 16px;
+  height: 16px;
+}
+.submit-button-text {
+  font-weight: 900;
+}
+.submit-label-container {
+  color: var(--text-soft);
+  font-size: 0.75em;
+  justify-content: center;
+}

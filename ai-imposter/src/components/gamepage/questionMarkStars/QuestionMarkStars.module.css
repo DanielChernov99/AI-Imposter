@@ -1,0 +1,63 @@
+.questionMark-wrapper {
+  position: relative;
+  padding: 20px;
+}
+.questionMark-Container {
+  border-radius: 9999px;
+  background-color: var(--primary);
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+  padding: 30px;
+  overflow: hidden;
+  position: relative;
+}
+.questionMark {
+  color: white;
+  font-size: 60px;
+  font-weight: bold;
+}
+.astroid {
+  position: absolute;
+  top: var(--astroid-top);
+  left: var(--astroid-left);
+  width: var(--astroid-width);
+  height: var(--astroid-height);
+  fill: var(--astroid-fill);
+  stroke: transparent;
+}
+.astroid1 {
+  --astroid-fill: #91fbef;
+  --astroid-top: 10px;
+  --astroid-left: 20px;
+  --astroid-width: 24x;
+  --astroid-height: 24px;
+}
+.astroid2 {
+  --astroid-fill: #4ee5e5;
+  --astroid-top: 80px;
+  --astroid-left: 4px;
+  --astroid-width: 20px;
+  --astroid-height: 20px;
+}
+.astroid3 {
+  --astroid-fill: #f3b1b8;
+  --astroid-top: 50px;
+  --astroid-left: 110px;
+  --astroid-width: 12px;
+  --astroid-height: 12px;
+}
+.astroid4 {
+  --astroid-fill: #f8d588;
+  --astroid-top: 2px;
+  --astroid-left: 70px;
+  --astroid-width: 16px;
+  --astroid-height: 16px;
+}
+.astroid5 {
+  --astroid-fill: #cad0df;
+  --astroid-top: 100px;
+  --astroid-left: 90px;
+  --astroid-width: 10px;
+  --astroid-height: 10px;
+}

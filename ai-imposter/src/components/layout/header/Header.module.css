@@ -92,9 +92,6 @@
     0 0 20px rgb(136, 246, 92, 0.5),
     0 0 40px rgb(136, 246, 92, 0.25);
 }
-.status-text {
-  font-size: 100px;
-}
 .verticalDivider {
   width: 1px;
   height: 60%;
@@ -254,9 +251,6 @@
       0 0 8px rgb(136, 246, 92),
       0 0 20px rgb(136, 246, 92, 0.5),
       0 0 40px rgb(136, 246, 92, 0.25);
-  }
-  .status-text {
-    font-size: 100px;
   }
   .verticalDivider {
     width: 1px;

@@ -1,0 +1,15 @@
+.questionBox-instructions-container {
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.questionBox-instructions-label {
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+.instruction-icon {
+  stroke: var(--primary);
+  width: 12px;
+  height: 12px;
+}

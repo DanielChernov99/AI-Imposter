@@ -1,11 +1,5 @@
-import LobbyPage from "./pages/LobbyPage";
-
 function App() {
-  return (
-    <>
-      <LobbyPage />;
-    </>
-  );
+  return <></>;
 }
 
 export default App;
