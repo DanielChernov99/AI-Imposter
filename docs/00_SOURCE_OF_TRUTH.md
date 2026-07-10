@@ -2,11 +2,13 @@
 
 ## Project Summary
 
-AI Imposter is a real-time multiplayer party game where players join one shared lobby, answer funny questions, and try to identify which answer was written by AI.
+AI Imposter is a real-time multiplayer party game where players create or join a room, answer funny questions, and try to identify which answer was written by AI.
 
-The game is inspired by social party games like Kahoot and Jackbox. Players do not need a full account. They join the shared lobby by entering a nickname.
+The game is inspired by social party games such as Kahoot and Jackbox. Players do not need a traditional account. They enter a nickname and either create a new room or join an existing room using a room code.
 
-In the MVP, the system supports one shared lobby and one active game session at a time. Multiple rooms, room codes, host-controlled rooms, and custom game settings are future extensions.
+The MVP supports multiple independent rooms. Each room has a randomly generated room code and a selected player capacity between 2 and 5 players.
+
+The game starts automatically when the room is full and every player in the room is marked as ready.
 
 ## Tech Stack
 
@@ -24,71 +26,102 @@ In the MVP, the system supports one shared lobby and one active game session at 
 
 ## Main Decisions
 
-- The MVP uses one shared lobby.
-- The MVP supports one active game session at a time.
-- Players join using a nickname only.
-- Players do not need email/password registration.
+- The MVP supports multiple rooms.
+- Each room has a randomly generated and unique room code.
+- A player can create a new room or join an existing room.
+- When creating a room, the player enters:
+  - A nickname
+  - The required number of players, between 2 and 5
+- When joining a room, the player enters:
+  - A nickname
+  - A room code
+- Players can join a room only while it is waiting for players and is not full.
+- Nicknames must be unique within the current room.
+- Players do not need email or password registration.
 - Supabase Anonymous Auth is used behind the scenes.
 - There are no registered users in the MVP.
 - There is no admin role in the MVP.
-- There is no host role in the MVP.
-- The game starts automatically when all required players are ready.
-- The game supports 2–9 players.
-- The game has 5 rounds.
+- There is no host-controlled game flow in the MVP.
+- The player who creates the room is the first player, but does not receive special host permissions.
+- A room starts in a waiting state.
+- The game starts automatically only when:
+  - The room has reached its selected player capacity.
+  - Every player in the room is marked as ready.
+- A short countdown is shown before the game begins.
+- Each game has 5 rounds.
 - Each round has:
   - 20 seconds for answering
   - 10 seconds for voting
   - 6 seconds for round results / reveal
+- Each game belongs to one room.
+- Players, answers, votes, scores, and round results belong to a specific game.
 - Google AI API is used to generate the AI answer for each round.
 - If the AI API fails, takes too long, or returns an invalid response, the game uses a fallback AI-style answer from the database.
 - The AI is not displayed as a player.
 - The AI does not appear in the leaderboard.
-- Supabase is the source of truth.
+- Supabase is the final source of truth for shared game data.
 - MobX is used for client-side state management.
-- React components should focus on UI.
-- Supabase calls should be handled through service files.
-- Multiple rooms and room codes are future extensions.
+- React components should focus mainly on UI.
+- Data access should be handled through service files.
+- Mock services may be used during development before connecting Supabase.
+- Game phases inside the main game screen are controlled by game state, not by separate routes.
+- The Answering, Voting, and Reveal phases are displayed as changing content inside the same Game Page.
+- Shared components such as the Header and Leaderboard remain visible and update according to the current game state.
 
-## MVP Goal
+## Room and Game Relationship
 
-The MVP should allow players to:
+A room represents the shared space that players join before the game begins.
 
-1. Enter a nickname.
-2. Join the shared lobby.
-3. See other players in the lobby.
-4. Mark themselves as ready.
-5. Wait for the game to start automatically.
-6. View the countdown before the game starts.
-7. Play a 5-round game.
-8. View the current question.
-9. Submit an answer during the answering phase.
-10. View all submitted answers anonymously.
-11. Vote for the answer they think was written by AI.
-12. See the reveal screen after each round.
-13. See who guessed correctly and incorrectly.
-14. See the updated leaderboard.
-15. View the final podium.
-16. Click Play Again.
-17. Return to the lobby after Play Again.
-18. Mark themselves as ready again for a new game.
-19. Quit the game.
+A room stores information such as:
 
-## Future Scope
+- Room ID
+- Room code
+- Required player capacity
+- Current players
+- Player ready states
+- Room status
+- Active game ID
 
-Future versions may include:
+A game represents one complete 5-round match inside a room.
 
-- Multiple rooms
-- Room codes
-- Host-controlled game start
-- Admin panel for question management
-- Question categories
-- Age-based question sets
-- Custom number of players
-- Custom number of rounds
+A game stores information such as:
 
-## Documentation Files
+- Game ID
+- Room ID
+- Current phase
+- Current round
+- Current question
+- Answers
+- Votes
+- Scores
+- Phase start and end times
 
-- `01_PROJECT_IDEA.md` — product idea and gameplay concept
-- `02_GAME_FLOW_AND_RULES.md` — game flow, timers, and scoring
-- `03_ARCHITECTURE.md` — frontend and backend architecture
-- `04_DATABASE_AND_SUPABASE.md` — database structure and Supabase usage
+When a room becomes full and all players are ready, a game begins for that room.
+
+After the game ends, the room may be reused for Play Again while a new game session is created.
+
+## Main Application Flow
+
+```txt
+Start Page
+    ↓
+Create Room or Join Room
+    ↓
+Lobby
+    ↓
+Wait until the room is full
+    ↓
+All players mark themselves as ready
+    ↓
+Countdown
+    ↓
+Answering
+    ↓
+Voting
+    ↓
+Round Results / Reveal
+    ↓
+Repeat for 5 rounds
+    ↓
+Final Results
+```

@@ -1,173 +1,130 @@
 # Game Flow and Rules
 
-## Player Limits
+## Room and Player Limits
 
-- Minimum players: 2
-- Maximum players: 9
+- Minimum players per room: 2
+- Maximum players per room: 5
+- The room creator selects the required number of players when creating the room.
+- A game cannot start until the room reaches its selected player capacity.
+- The MVP supports multiple independent rooms.
 
-A game cannot start with fewer than 2 players.
+Each room has:
 
-In the MVP, the game uses one shared lobby and one active game session at a time.
+- A unique internal room ID.
+- A randomly generated room code.
+- A selected player capacity between 2 and 5.
+- A list of players.
+- Player ready states.
+- A room status.
+- An active game ID when a game is running.
 
-## Lobby Flow
+Room codes must be unique among active rooms.
 
-### Join Game
+## Room Statuses
 
-A player enters a nickname and joins the shared lobby.
+Recommended room statuses:
 
-The player does not create a room and does not need a room code in the MVP.
+- `waiting`
+- `countdown`
+- `playing`
+- `finished`
 
-### Lobby / Ready
+### Waiting
 
-After joining the shared lobby, the player can see the other players.
-
-Each player can mark themselves as ready.
-
-When all required players are ready, the game starts automatically.
+The room is open and players may join if it is not full.
 
 ### Countdown
 
-Before the first round starts, a short countdown is shown.
+The room is full and every player is ready. A short countdown is displayed before the game starts.
 
-Recommended duration:
+New players cannot join during the countdown.
 
-- 3 seconds
+### Playing
 
-After the countdown ends, the game moves to the answering phase.
+The game has started.
+
+New players cannot join while the room is playing.
+
+### Finished
+
+The game has completed and the final results are displayed.
+
+Players may choose Play Again or leave the room.
+
+## Start Page Flow
+
+From the Start Page, a player can:
+
+1. Create a new room.
+2. Join an existing room.
+
+## Create Room
+
+When creating a room, the player enters:
+
+- A nickname.
+- The required number of players, between 2 and 5.
+
+The system then:
+
+1. Validates the nickname.
+2. Creates a new room.
+3. Generates a random and unique room code.
+4. Sets the selected player capacity.
+5. Adds the room creator as the first player.
+6. Sets the creator's ready state to `false`.
+7. Moves the creator to the room lobby.
+
+The room creator does not receive special host permissions in the MVP.
+
+The game does not require the creator to manually start it.
+
+## Join Room
+
+When joining an existing room, the player enters:
+
+- A nickname.
+- A room code.
+
+A player can join only if:
+
+- The room code belongs to an active room.
+- The room status is `waiting`.
+- The room is not full.
+- The nickname is valid.
+- The nickname is not already used in that room.
+
+If any condition fails, the player remains on the Start Page and sees an appropriate error message.
 
 ## Nickname Rules
 
-- Minimum length: 2 characters
-- Maximum length: 16 characters
-- Must be unique in the current shared lobby
-- Cannot be empty
+- Minimum length: 2 characters.
+- Maximum length: 16 characters.
+- Cannot be empty.
+- Leading and trailing spaces should be removed.
+- Must be unique within the current room.
+- Nickname comparison should be case-insensitive.
 
-## Game Structure
+For example, `PlayerOne` and `playerone` are considered the same nickname inside the same room.
 
-Each game has 5 rounds.
+The same nickname may exist in different rooms.
 
-Each round has these phases:
+## Lobby Flow
 
-1. Answering
-2. Voting
-3. Round Results / Reveal
+After creating or joining a room, the player enters the room lobby.
 
-After 5 rounds, the game moves to the final results screen.
+Inside the lobby, players can:
 
-## Answering Phase
+- See the room code.
+- See the current number of players.
+- See the selected player capacity.
+- See the other players in the room.
+- See which players are ready.
+- Mark themselves as ready or not ready.
+- Leave the room.
 
-Duration: 20 seconds
+Each player begins with:
 
-During this phase:
-
-- A question is shown.
-- Each player writes an answer.
-- The game generates one AI answer using Google AI API.
-- If the AI API fails, takes too long, or returns an invalid response, the game uses the fallback AI-style answer from the database.
-
-If all players submit valid answers before the 20 seconds end, the game can move to the voting phase early.
-
-## Answer Rules
-
-- A player can submit only one answer per round.
-- Empty answers are invalid.
-- Answers should have a maximum length of 120 characters.
-- A player cannot edit an answer after submitting it.
-
-## Invalid or Missing Answers
-
-If a player does not submit an answer in time, or submits an empty answer, the game shows a disabled answer card.
-
-Example text:
-
-> No valid answer submitted
-
-This answer cannot be voted for.
-
-The player can still vote in the voting phase.
-
-## Voting Phase
-
-Duration: 10 seconds
-
-During this phase:
-
-- All valid human answers are shown anonymously.
-- The AI answer is also shown anonymously.
-- Disabled invalid answers may be shown, but cannot be selected.
-- Players vote for the answer they think was written by AI.
-
-Voting time is always 10 seconds, even if all players vote early.
-
-## Voting Rules
-
-- A player can vote only once per round.
-- A player cannot vote for their own answer.
-- A player cannot vote for an invalid answer.
-- A vote is final and cannot be changed.
-
-## Round Results / Reveal Phase
-
-Duration: 6 seconds
-
-During this phase:
-
-- The AI answer is revealed.
-- Correct and incorrect guesses are shown.
-- Round points are shown.
-- The leaderboard is updated.
-- The game then moves to the next round or to the final results screen.
-
-## Scoring Rules
-
-If a player correctly votes for the AI answer:
-
-- The voter gets 2 points.
-
-If a player votes for a real human answer:
-
-- The owner of that answer gets 1 point.
-- The voter gets 0 points.
-
-Players cannot vote for their own answer.
-
-Invalid answers cannot receive votes or points.
-
-The AI does not receive points.
-
-The AI does not appear in the leaderboard.
-
-## Final Results
-
-After 5 rounds, the game shows a podium:
-
-- 1st place
-- 2nd place
-- 3rd place
-
-The final screen also shows the rest of the players below the podium.
-
-The final screen includes:
-
-- Play Again
-- Quit Game
-
-## Play Again
-
-For the MVP, Play Again returns all players to the shared lobby.
-
-After returning to the lobby:
-
-- Player scores are reset.
-- Answers are cleared.
-- Votes are cleared.
-- Round progress is reset.
-- Players need to mark themselves as ready again.
-- When all required players are ready, a new game starts automatically.
-
-## Quit Game
-
-When a player quits the game:
-
-- The player is removed from the current lobby.
-- The player returns to the join screen.
+```js
+isReady: false;
+```
