@@ -2,12 +2,19 @@ import { useState } from "react";
 import { Stack, Group, Box, Text, Button } from "@mantine/core";
 import { Play, Minus, Plus } from "lucide-react";
 import styles from "./StartNewGame.module.css";
+import {
+  MAX_NICKNAME_LENGTH,
+  MIN_PLAYERS,
+  MAX_PLAYERS,
+} from "../domain/constants";
 
 export default function StartNewGame() {
-  const [playerCount, setPlayerCount] = useState(2);
+  const [playerCount, setPlayerCount] = useState(MIN_PLAYERS);
 
-  const decrement = () => setPlayerCount((count) => Math.max(2, count - 1));
-  const increment = () => setPlayerCount((count) => Math.min(9, count + 1));
+  const decrement = () =>
+    setPlayerCount((count) => Math.max(MIN_PLAYERS, count - 1));
+  const increment = () =>
+    setPlayerCount((count) => Math.min(MAX_PLAYERS, count + 1));
 
   return (
     <Stack className={styles.elementContainer}>
@@ -21,7 +28,7 @@ export default function StartNewGame() {
           variant="default"
           className={styles.stepperButton}
           onClick={decrement}
-          disabled={playerCount <= 2}
+          disabled={playerCount <= MIN_PLAYERS}
           aria-label="Decrease player count"
         >
           <Minus size={16} />
@@ -31,7 +38,7 @@ export default function StartNewGame() {
           variant="default"
           className={styles.stepperButton}
           onClick={increment}
-          disabled={playerCount >= 5}
+          disabled={playerCount >= MAX_PLAYERS}
           aria-label="Increase player count"
         >
           <Plus size={16} />

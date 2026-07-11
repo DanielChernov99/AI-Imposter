@@ -5,6 +5,7 @@ import JoinRoom from "../components/startPage/JoinRoom";
 import styles from "../components/startPage/StartPage.module.css";
 import logoImg from "../assets/images/logo_img.png";
 import logoText from "../assets/images/logo_text.png";
+import { MAX_NICKNAME_LENGTH } from "../domain/constants";
 
 export default function StartPage() {
   return (
@@ -15,7 +16,11 @@ export default function StartPage() {
             <Image className={styles.mascotImg} src={logoImg} alt="App Logo" />
           </Box>
           <Box className={styles.wordmarkBlock}>
-            <Image className={styles.wordmarkImg} src={logoText} alt="AI Imposter" />
+            <Image
+              className={styles.wordmarkImg}
+              src={logoText}
+              alt="AI Imposter"
+            />
           </Box>
         </Stack>
 
@@ -24,7 +29,7 @@ export default function StartPage() {
           label="Pick a nickname:"
           placeholder="Enter your nickname"
           leftSection={<User size={18} />}
-          maxLength={20}
+          maxLength={MAX_NICKNAME_LENGTH}
         />
 
         <Flex className={styles.enterGameOptions}>
