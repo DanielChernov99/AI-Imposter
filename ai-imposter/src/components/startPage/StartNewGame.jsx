@@ -5,11 +5,13 @@ import styles from "./StartNewGame.module.css";
 import { MIN_PLAYERS, MAX_PLAYERS } from "../../domain/constants";
 import { useStores } from "../../context/StoreContext.jsx";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router";
 
 function StartNewGame({ nickname }) {
   const [roomCapacity, setRoomCapacity] = useState(MIN_PLAYERS);
 
   const { roomStore } = useStores();
+  const navigate = useNavigate();
 
   const decrement = () =>
     setRoomCapacity((count) => Math.max(MIN_PLAYERS, count - 1));
@@ -21,7 +23,9 @@ function StartNewGame({ nickname }) {
       nickname,
       capacity: roomCapacity,
     });
-    console.log("Room created:", wasCreated);
+    if (wasCreated) {
+      navigate("/lobby");
+    }
   };
 
   return (
