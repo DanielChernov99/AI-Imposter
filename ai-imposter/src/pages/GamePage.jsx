@@ -2,7 +2,7 @@ import QuestionBox from "../components/gamepage/questionBox/QuestionBox";
 import AnswerBox from "../components/gamepage/answerBox/AnswerBox";
 import VotingGrid from "../components/gamepage/votingGrid/VotingGrid";
 import InstructionLabel from "../components/gamepage/instructionLabel/InstructionLabel";
-const GamePage = ({ phase = "ANSWERING" }) => {
+const GamePage = ({ phase = "VOTING" }) => {
   return (
     <section
       style={{

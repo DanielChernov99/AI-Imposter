@@ -1,17 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Stack, Group, Box, Text, Button } from "@mantine/core";
 import { Play, Minus, Plus } from "lucide-react";
 import styles from "./StartNewGame.module.css";
-import { MIN_PLAYERS, MAX_PLAYERS } from "../../domain/constants";
-import { useStores } from "../../context/StoreContext.jsx";
-import { observer } from "mobx-react-lite";
-import { useNavigate } from "react-router";
-
-function StartNewGame({ nickname }) {
-  const [roomCapacity, setRoomCapacity] = useState(MIN_PLAYERS);
-
-  const { roomStore } = useStores();
-  const navigate = useNavigate();
+import {
+  MAX_NICKNAME_LENGTH,
+  MIN_PLAYERS,
+  MAX_PLAYERS,
+} from "../../domain/constants";
+export default function StartNewGame() {
+  const [playerCount, setPlayerCount] = useState(MIN_PLAYERS);
 
   const decrement = () =>
     setRoomCapacity((count) => Math.max(MIN_PLAYERS, count - 1));
