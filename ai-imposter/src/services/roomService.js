@@ -27,6 +27,7 @@ export const ROOM_SERVICE_ERRORS = Object.freeze({
   NICKNAME_TAKEN: "NICKNAME_TAKEN",
   PLAYER_NOT_FOUND: "PLAYER_NOT_FOUND",
   INVALID_READY_STATE: "INVALID_READY_STATE",
+  UNKNOWN_ERROR: "UNKNOWN_ERROR",
 });
 
 export class RoomServiceError extends Error {

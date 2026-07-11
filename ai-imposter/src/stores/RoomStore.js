@@ -45,14 +45,16 @@ export default class RoomStore {
           };
         } else {
           this.error = {
-            code: "UNKNOWN_ERROR",
+            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
             message: "Failed to create room",
           };
         }
       });
       return false;
     } finally {
-      this.isLoading = false;
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
   }
 }
