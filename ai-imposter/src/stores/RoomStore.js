@@ -21,7 +21,12 @@ export default class RoomStore {
       isLoading: observable,
       error: observable,
       createRoom: action,
+      clearError: action,
     });
+  }
+
+  clearError() {
+    this.error = null;
   }
 
   async createRoom({ nickname, capacity }) {

@@ -5,11 +5,29 @@ import JoinRoom from "../components/startPage/JoinRoom";
 import styles from "../styles/StartPage.module.css";
 import logoImg from "../assets/images/logo_img.png";
 import logoText from "../assets/images/logo_text.png";
-import { MAX_NICKNAME_LENGTH } from "../domain/constants";
+import { MIN_NICKNAME_LENGTH, MAX_NICKNAME_LENGTH } from "../domain/constants";
+import { ROOM_SERVICE_ERRORS } from "../services/roomService.js";
 import { useState } from "react";
+import { useStores } from "../context/StoreContext.jsx";
 
 export default function StartPage() {
   const [nickname, setNickname] = useState("");
+
+  const { roomStore } = useStores();
+
+  const handleNicknameChange = (event) => {
+    const newNickname = event.currentTarget.value;
+    setNickname(newNickname);
+
+    const isNicknameValid = newNickname.trim().length >= MIN_NICKNAME_LENGTH;
+
+    const isNicknameError =
+      roomStore.error?.code === ROOM_SERVICE_ERRORS.INVALID_NICKNAME;
+
+    if (isNicknameValid && isNicknameError) {
+      roomStore.clearError();
+    }
+  };
 
   return (
     <Box className={styles.pageWrapper}>
@@ -34,7 +52,7 @@ export default function StartPage() {
           leftSection={<User size={18} />}
           maxLength={MAX_NICKNAME_LENGTH}
           value={nickname}
-          onChange={(event) => setNickname(event.currentTarget.value)}
+          onChange={handleNicknameChange}
         />
 
         <Flex className={styles.enterGameOptions}>
