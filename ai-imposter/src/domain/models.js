@@ -3,7 +3,7 @@
  *
  * @typedef {Object} Player
  * @property {string} id
- * @property {string} roomId
+ * @property {string} roomID
  * @property {string} nickname
  * @property {string} avatarUrl
  * @property {boolean} isReady

@@ -61,7 +61,7 @@ export default function createMockRoomService() {
 
     const player = {
       id: crypto.randomUUID(),
-      roomId: room.id,
+      roomID: room.id,
       nickname: cleanNickname,
       avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(
         cleanNickname,
@@ -79,7 +79,25 @@ export default function createMockRoomService() {
     };
   }
 
+  async function getRoomById(roomID) {
+    const room = rooms.find((room) => room.id === roomID);
+    if (!room) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_NOT_FOUND,
+        `Couldnt find room with this id : ${rommId}`,
+      );
+    }
+    return room;
+  }
+
+  async function getPlayersByRoomId(roomID) {
+    const room = await getRoomById(roomID);
+    return players.filter((player) => player.roomID === roomID);
+  }
+
   return {
     createRoom,
+    getRoomById,
+    getPlayersByRoomId,
   };
 }
