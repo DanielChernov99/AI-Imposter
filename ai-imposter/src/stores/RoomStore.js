@@ -25,6 +25,9 @@ export default class RoomStore {
   }
 
   async createRoom({ nickname, capacity }) {
+    if (this.isLoading) {
+      return false;
+    }
     this.isLoading = true;
     this.error = null;
 
