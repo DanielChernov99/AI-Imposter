@@ -4,13 +4,23 @@ import { MantineProvider } from "@mantine/core";
 import { HashRouter } from "react-router";
 import "@mantine/core/styles.css";
 import "./index.css";
+
 import App from "./App.jsx";
+import createMockRoomService from "./services/mockRoomService.js";
+import RootStore from "./stores/RootStore.js";
+import { StoreProvider } from "./context/StoreContext.jsx";
+
+const rootStore = new RootStore({
+  roomService: createMockRoomService(),
+});
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <HashRouter>
       <MantineProvider>
-        <App />
+        <StoreProvider store={rootStore}>
+          <App />
+        </StoreProvider>
       </MantineProvider>
     </HashRouter>
   </StrictMode>,

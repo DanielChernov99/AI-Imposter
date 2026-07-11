@@ -1,10 +1,7 @@
-import createMockRoomService from "../services/mockRoomService.js";
 import RoomStore from "./RoomStore.js";
 
 export default class RootStore {
-  constructor() {
-    const roomService = createMockRoomService();
-
+  constructor({ roomService }) {
     this.roomStore = new RoomStore(roomService);
   }
 }
