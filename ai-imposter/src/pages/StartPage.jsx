@@ -6,8 +6,11 @@ import styles from "../components/startPage/StartPage.module.css";
 import logoImg from "../assets/images/logo_img.png";
 import logoText from "../assets/images/logo_text.png";
 import { MAX_NICKNAME_LENGTH } from "../domain/constants";
+import { useState } from "react";
 
 export default function StartPage() {
+  const [nickname, setNickname] = useState("");
+
   return (
     <Box className={styles.pageWrapper}>
       <Stack className={styles.startPageContainer}>
@@ -30,10 +33,12 @@ export default function StartPage() {
           placeholder="Enter your nickname"
           leftSection={<User size={18} />}
           maxLength={MAX_NICKNAME_LENGTH}
+          value={nickname}
+          onChange={(event) => setNickname(event.currentTarget.value)}
         />
 
         <Flex className={styles.enterGameOptions}>
-          <StartNewGame />
+          <StartNewGame nickname={nickname} />
           <Box className={styles.orDivider}>
             <Box className={styles.orDividerLine} />
             <Box className={styles.orCircle}>
