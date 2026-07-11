@@ -13,6 +13,22 @@ export default function createMockRoomService() {
   const rooms = [];
   const players = [];
 
+  function validateNickname(nickname) {
+    const cleanNickname = typeof nickname === "string" ? nickname.trim() : "";
+
+    if (
+      cleanNickname.length < MIN_NICKNAME_LENGTH ||
+      cleanNickname.length > MAX_NICKNAME_LENGTH
+    ) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.INVALID_NICKNAME,
+        `Nickname must be between ${MIN_NICKNAME_LENGTH} and ${MAX_NICKNAME_LENGTH} characters.`,
+      );
+    }
+
+    return cleanNickname;
+  }
+
   function generateRoomCode() {
     let roomCode;
 
@@ -28,17 +44,7 @@ export default function createMockRoomService() {
   }
 
   async function createRoom({ nickname, capacity }) {
-    const cleanNickname = typeof nickname === "string" ? nickname.trim() : "";
-
-    if (
-      cleanNickname.length < MIN_NICKNAME_LENGTH ||
-      cleanNickname.length > MAX_NICKNAME_LENGTH
-    ) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.INVALID_NICKNAME,
-        `Nickname must be between ${MIN_NICKNAME_LENGTH} and ${MAX_NICKNAME_LENGTH} characters.`,
-      );
-    }
+    const cleanNickname = validateNickname(nickname);
 
     if (
       !Number.isInteger(capacity) ||
@@ -54,18 +60,18 @@ export default function createMockRoomService() {
     const room = {
       id: crypto.randomUUID(),
       code: generateRoomCode(),
-      capacity: capacity,
+      capacity,
       status: ROOM_STATUS.WAITING,
       activeGameId: null,
     };
 
+    const playerId = crypto.randomUUID();
+
     const player = {
-      id: crypto.randomUUID(),
-      roomID: room.id,
+      id: playerId,
+      roomId: room.id,
       nickname: cleanNickname,
-      avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(
-        cleanNickname,
-      )}`,
+      avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${playerId}`,
       isReady: false,
     };
 
@@ -79,25 +85,84 @@ export default function createMockRoomService() {
     };
   }
 
-  async function getRoomById(roomID) {
-    const room = rooms.find((room) => room.id === roomID);
+  async function getRoomById(roomId) {
+    const room = rooms.find((room) => room.id === roomId);
+
     if (!room) {
       throw new RoomServiceError(
         ROOM_SERVICE_ERRORS.ROOM_NOT_FOUND,
-        `Couldnt find room with this id : ${rommId}`,
+        `Could not find room with ID: ${roomId}`,
       );
     }
+
     return room;
   }
 
-  async function getPlayersByRoomId(roomID) {
-    const room = await getRoomById(roomID);
-    return players.filter((player) => player.roomID === roomID);
+  async function getPlayersByRoomId(roomId) {
+    await getRoomById(roomId);
+
+    return players.filter((player) => player.roomId === roomId);
+  }
+
+  async function joinRoom({ nickname, roomCode }) {
+    const cleanNickname = validateNickname(nickname);
+    const cleanRoomCode = typeof roomCode === "string" ? roomCode.trim() : "";
+
+    const room = rooms.find((room) => room.code === cleanRoomCode);
+
+    if (!room) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_NOT_FOUND,
+        `No such room with code ${cleanRoomCode}`,
+      );
+    }
+    if (room.status !== ROOM_STATUS.WAITING) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
+        "Game already started in this room",
+      );
+    }
+
+    const roomPlayers = players.filter((player) => player.roomId === room.id);
+
+    if (roomPlayers.length >= room.capacity) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_FULL,
+        "This room is full.",
+      );
+    }
+    if (
+      roomPlayers.some(
+        (player) =>
+          player.nickname.toLowerCase() === cleanNickname.toLowerCase(),
+      )
+    ) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.NICKNAME_TAKEN,
+        `${cleanNickname} is already taken`,
+      );
+    }
+
+    const playerId = crypto.randomUUID();
+    const newPlayer = {
+      id: playerId,
+      roomId: room.id,
+      nickname: cleanNickname,
+      avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${playerId}`,
+      isReady: false,
+    };
+    players.push(newPlayer);
+    return {
+      room,
+      player: newPlayer,
+      players: [...roomPlayers, newPlayer],
+    };
   }
 
   return {
     createRoom,
     getRoomById,
     getPlayersByRoomId,
+    joinRoom,
   };
 }
