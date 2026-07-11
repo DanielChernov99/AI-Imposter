@@ -3,14 +3,25 @@ import { Stack, Group, Box, Text, Button } from "@mantine/core";
 import { Play, Minus, Plus } from "lucide-react";
 import styles from "./StartNewGame.module.css";
 import { MIN_PLAYERS, MAX_PLAYERS } from "../../domain/constants";
+import { useStores } from "../../context/StoreContext.jsx";
 
-export default function StartNewGame() {
+export default function StartNewGame({ nickname }) {
   const [roomCapacity, setRoomCapacity] = useState(MIN_PLAYERS);
+
+  const { roomStore } = useStores();
 
   const decrement = () =>
     setRoomCapacity((count) => Math.max(MIN_PLAYERS, count - 1));
   const increment = () =>
     setRoomCapacity((count) => Math.min(MAX_PLAYERS, count + 1));
+
+  const handleCreateRoom = async () => {
+    const wasCreated = await roomStore.createRoom({
+      nickname,
+      capacity: roomCapacity,
+    });
+    console.log("Room created:", wasCreated);
+  };
 
   return (
     <Stack className={styles.elementContainer}>
@@ -41,7 +52,11 @@ export default function StartNewGame() {
         </Button>
       </Group>
 
-      <Button className={styles.startGameButton} variant="default">
+      <Button
+        className={styles.startGameButton}
+        variant="default"
+        onClick={handleCreateRoom}
+      >
         Start Game
       </Button>
     </Stack>
