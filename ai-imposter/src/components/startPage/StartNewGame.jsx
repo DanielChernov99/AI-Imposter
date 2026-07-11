@@ -65,6 +65,13 @@ function StartNewGame({ nickname }) {
       >
         Start Game
       </Button>
+      <Box className={styles.errorSlot} aria-live="polite">
+        {roomStore.error && (
+          <Text className={styles.errorMessage} role="alert">
+            {roomStore.error.message}
+          </Text>
+        )}
+      </Box>
     </Stack>
   );
 }
