@@ -90,3 +90,13 @@
   background: linear-gradient(135deg, #6d28d9 0%, #9333ea 45%, #db2777 100%);
   box-shadow: 0 0 32px rgba(168, 85, 247, 0.55);
 }
+.errorSlot {
+  min-height: 42px;
+}
+
+.errorMessage {
+  font-family: var(--font-main);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--error);
+}
