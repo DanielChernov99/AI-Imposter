@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Stack, Group, Box, Text, Button } from "@mantine/core";
 import { Play, Minus, Plus } from "lucide-react";
@@ -6,8 +7,7 @@ import {
   MAX_NICKNAME_LENGTH,
   MIN_PLAYERS,
   MAX_PLAYERS,
-} from "../domain/constants";
-
+} from "../../domain/constants";
 export default function StartNewGame() {
   const [playerCount, setPlayerCount] = useState(MIN_PLAYERS);
 

@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { Button, Flex, Textarea, Text } from "@mantine/core";
+import { Button, Flex, Textarea, Text, Tooltip } from "@mantine/core";
 import classes from "./VotingCard.module.css";
 import MaskIcon from "../maskIcon/MaskIcon";
 import { Check } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const maskColors = {
   purple: "#b23cff",
@@ -22,6 +23,18 @@ const VotingCard = ({
   isValid = true,
   color = "gray",
 }) => {
+  const textRef = useRef(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const displayText = isValid ? answer : "Invalid answer was submitted";
+
+  useEffect(() => {
+    const el = textRef.current;
+    console.log("🚀 ~ VotingCard ~ el.clientHeight:", el.clientHeight);
+    console.log("🚀 ~ VotingCard ~ el.scrollHeight:", el.scrollHeight);
+    if (el) {
+      setIsTruncated(el.scrollHeight > el.clientHeight);
+    }
+  }, []);
   return (
     <Flex
       className={[
@@ -46,10 +59,17 @@ const VotingCard = ({
           maskColor={isValid ? maskColors[color] : maskColors.gray}
         />
       </Flex>
-
-      <Text className={classes["answer-text"]}>
-        {isValid ? answer : "Invalid answer was submitted"}
-      </Text>
+      <Tooltip
+        label={displayText}
+        disabled={!isTruncated}
+        multiline
+        w={250}
+        transitionProps={{ transition: "pop", duration: 300 }}
+      >
+        <Text ref={textRef} className={classes["answer-text"]}>
+          {displayText}
+        </Text>
+      </Tooltip>
 
       {isSelected && isValid && (
         <Flex className={classes["check-icon"]}>
