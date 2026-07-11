@@ -2,7 +2,7 @@ import { Box, Flex, Image, Stack, Text, TextInput } from "@mantine/core";
 import { User } from "lucide-react";
 import StartNewGame from "../components/startPage/StartNewGame";
 import JoinRoom from "../components/startPage/JoinRoom";
-import styles from "../components/startPage/StartPage.module.css";
+import styles from "../styles/StartPage.module.css";
 import logoImg from "../assets/images/logo_img.png";
 import logoText from "../assets/images/logo_text.png";
 import { MAX_NICKNAME_LENGTH } from "../domain/constants";
