@@ -159,10 +159,43 @@ export default function createMockRoomService() {
     };
   }
 
+  async function setPlayerReady({ roomId, playerId, isReady }) {
+    const room = await getRoomById(roomId);
+
+    if (room.status !== ROOM_STATUS.WAITING) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
+        "Cannot change ready state after the game has started",
+      );
+    }
+
+    if (typeof isReady !== "boolean") {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.INVALID_READY_STATE,
+        "The Ready state must be true or false",
+      );
+    }
+
+    const playerIndex = players.findIndex(
+      (player) => player.id === playerId && player.roomId === roomId,
+    );
+
+    if (playerIndex === -1) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
+        `player with id: ${playerId} in roomID: ${roomId} was not found`,
+      );
+    }
+    players[playerIndex].isReady = isReady;
+
+    return players[playerIndex];
+  }
+
   return {
     createRoom,
     getRoomById,
     getPlayersByRoomId,
     joinRoom,
+    setPlayerReady,
   };
 }
