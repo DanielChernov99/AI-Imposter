@@ -13,7 +13,10 @@ function App() {
       <Route
         path="/lobby"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute
+            requiredStatus={ROOM_STATUS.WAITING}
+            fallbackPath="/game"
+          >
             <LobbyPage />
           </ProtectedRoute>
         }
