@@ -1,31 +1,32 @@
 .header-wrapper {
   display: flex;
   flex-wrap: wrap;
-  /* for now no need to fix the header, we do not have scrolling functionality  */
-  /* position: fixed; */
   width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-1);
+
   background: rgba(2, 3, 8, 0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  opacity: 0.9;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 20;
-  padding: var(--space-2) var(--space-1);
+
   box-shadow:
     0 0 8px var(--glow-purple),
     0 0 20px rgba(139, 92, 246, 0.5),
     0 0 40px rgba(139, 92, 246, 0.25);
-  gap: var(--space-4);
+
+  z-index: 20;
 }
 
 .logo-container {
-  align-items: center;
-  justify-content: center;
+  width: 100%;
   height: 8rem;
   flex-shrink: 0;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-logo {
@@ -33,16 +34,18 @@
 }
 
 .room-container {
+  width: 100%;
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  width: 100%;
 }
+
 .room-info-container {
   flex-wrap: wrap;
   gap: var(--space-4);
   text-align: center;
 }
+
 .room-label {
   color: rgba(255, 255, 255, 0.5);
   letter-spacing: 0.05em;
@@ -53,50 +56,51 @@
   color: whitesmoke;
   letter-spacing: 0.02em;
 }
+
 .room-icon {
   width: 2rem;
   height: 2rem;
 }
 
 .waitingroom-container {
-  color: var(--text-main);
-  height: 100%;
   width: 100%;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
+  color: var(--text-main);
 }
+
 .waitingroom-title {
   align-items: center;
+  gap: 0;
   text-align: center;
-  gap: 0px;
 }
+
 .status-container {
+  height: 4rem;
   align-items: center;
   gap: 0.5rem;
+  padding: 10px 1rem;
+
   border: 1px solid var(--border-subtle);
   border-radius: 2rem;
-  padding: 10px 1rem;
-  height: 4rem;
 }
+
 .status-container.waiting {
   color: orange;
+
   box-shadow:
     0 0 8px rgb(246, 197, 92),
-    0 0 20px rgb(246, 197, 92, 0.5),
-    0 0 40px rgb(246, 197, 92, 0.25);
+    0 0 20px rgba(246, 197, 92, 0.5),
+    0 0 40px rgba(246, 197, 92, 0.25);
 }
-.status-container.ready {
-  color: rgb(136, 246, 92);
-  box-shadow:
-    0 0 8px rgb(136, 246, 92),
-    0 0 20px rgb(136, 246, 92, 0.5),
-    0 0 40px rgb(136, 246, 92, 0.25);
-}
+
 .verticalDivider {
   width: 1px;
   height: 60%;
-  align-self: center;
   flex-shrink: 0;
+  align-self: center;
+
   background: linear-gradient(
     to bottom,
     transparent,
@@ -105,166 +109,98 @@
   );
 }
 
-/* md - 768px: tablet */
+/* Tablet */
 @media (min-width: 768px) {
   .logo-container {
     height: 12rem;
   }
+
   .room-container {
-    gap: var(--space-6);
     flex: 1;
+    gap: var(--space-6);
   }
+
   .room-info-container {
-    flex-wrap: wrap;
-    gap: 0px;
-    text-align: center;
     flex-direction: column;
     align-items: center;
+    gap: 0;
   }
+
   .waitingroom-container {
-    align-items: center;
+    flex: 1;
     justify-content: center;
     gap: var(--space-4);
-    flex: 1;
   }
+
   .status-container {
     padding: 10px 2rem;
   }
+
   .verticalDivider:nth-child(4) {
     height: 4rem;
   }
 }
-/* lg - 1024: Laptop*/
+
+/* Laptop */
 @media (min-width: 1024px) {
   .header-wrapper {
-    flex-wrap: nowrap;
     height: 150px;
+    flex-wrap: nowrap;
   }
+
   .logo-container {
-    height: 8rem;
     width: auto;
+    height: 8rem;
   }
+
   .verticalDivider:nth-child(4) {
     height: 60%;
   }
 }
 
-/* xl - 1440px: desktop*/
+/* Desktop */
 @media (min-width: 1440px) {
   .logo-container {
     margin: 0 2rem;
   }
-
-  .header-logo {
-    height: 80%;
-  }
 }
 
-/* 2xl - 1920px: bigger desktop,*/
+/* Large desktop */
 @media (min-width: 1920px) {
   .header-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    /* position: fixed; */
-    width: 100%;
-    background: rgba(2, 3, 8, 0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    opacity: 0.9;
-    align-items: center;
-    justify-content: space-between;
-    height: 150px;
-    z-index: 20;
     padding: var(--space-2) var(--space-6);
-    box-shadow:
-      0 0 8px var(--glow-purple),
-      0 0 20px rgba(139, 92, 246, 0.5),
-      0 0 40px rgba(139, 92, 246, 0.25);
   }
 
   .logo-container {
-    align-items: center;
-    justify-content: center;
     height: 100%;
-    flex-shrink: 0;
     margin: 0 8rem;
   }
 
-  .header-logo {
-    height: 80%;
-  }
-
   .room-container {
-    align-items: center;
     height: 100%;
     gap: var(--space-4);
   }
-  .room-info-container {
-    flex-direction: column;
-    text-align: center;
-  }
+
   .room-label {
-    color: rgba(255, 255, 255, 0.5);
     font-size: 0.85rem;
     font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
   }
 
   .room-code {
-    color: whitesmoke;
     font-size: 1.5rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
   }
 
   .waitingroom-container {
-    color: var(--text-main);
     gap: var(--space-16);
     font-size: 2rem;
-    height: 100%;
-    align-items: center;
   }
+
   .waitingroom-title {
-    align-items: center;
     gap: var(--space-2);
   }
+
   .status-container {
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid var(--border-subtle);
-    border-radius: 2rem;
     padding: 10px 50px;
-    height: 4rem;
   }
-  .status-container.waiting {
-    color: orange;
-    box-shadow:
-      0 0 8px rgb(246, 197, 92),
-      0 0 20px rgb(246, 197, 92, 0.5),
-      0 0 40px rgb(246, 197, 92, 0.25);
-  }
-  .status-container.ready {
-    color: rgb(136, 246, 92);
-    box-shadow:
-      0 0 8px rgb(136, 246, 92),
-      0 0 20px rgb(136, 246, 92, 0.5),
-      0 0 40px rgb(136, 246, 92, 0.25);
-  }
-  .verticalDivider {
-    width: 1px;
-    height: 60%;
-    align-self: center;
-    flex-shrink: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      rgba(255, 255, 255, 0.8) 50%,
-      transparent
-    );
-  }
-}
-/* 3xl - 2560px: ultrawide, one more step up */
-@media (min-width: 2560px) {
 }
