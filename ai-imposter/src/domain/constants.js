@@ -11,7 +11,16 @@ export const ANSWERING_DURATION_SECONDS = 20;
 export const VOTING_DURATION_SECONDS = 20;
 export const ROUND_RESULTS_DURATION_SECONDS = 10;
 
+export const TOTAL_ROUNDS = 5;
+
 export const ROOM_STATUS = Object.freeze({
   WAITING: "waiting",
   IN_GAME: "in_game",
+});
+
+export const GAME_PHASE = Object.freeze({
+  ANSWERING: "answering",
+  VOTING: "voting",
+  REVEAL: "reveal",
+  FINISHED: "finished",
 });
