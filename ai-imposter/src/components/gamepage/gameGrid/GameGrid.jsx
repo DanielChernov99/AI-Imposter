@@ -1,7 +1,10 @@
+/* eslint-disable no-unused-vars */
+
 import { Grid } from "@mantine/core";
 import VotingCard from "../votingCard/VotingCard";
+import ResultCard from "../resultCard/ResultCard";
 
-const VotingGrid = () => {
+const GameGrid = ({ phase }) => {
   // const votes = Array.from({ length: numOfPlayers }, (_, i) => i + 1);
   const dynamicVotes = [
     {
@@ -41,20 +44,38 @@ const VotingGrid = () => {
       isSelected: false,
     },
   ];
+  const resultGrid = [1, 2, 3, 4];
+  const displayCards =
+    phase === "ANSWERING" ? [] : phase === "VOTING" ? dynamicVotes : resultGrid;
+
   return (
     <Grid>
-      {dynamicVotes.map((vote, index) => (
-        <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
-          <VotingCard
-            answer={vote.answer}
-            isSelected={vote.isSelected}
-            isValid={vote.isValid}
-            color={vote.color}
-          />
-        </Grid.Col>
-      ))}
+      {displayCards.map((vote, index) => {
+        if (phase === "VOTING") {
+          return (
+            <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
+              <VotingCard
+                answer={vote.answer}
+                isSelected={vote.isSelected}
+                isValid={vote.isValid}
+                color={vote.color}
+              />
+            </Grid.Col>
+          );
+        }
+
+        if (phase === "REVEALING") {
+          return (
+            <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
+              <ResultCard index={index} />
+            </Grid.Col>
+          );
+        }
+
+        return null;
+      })}
     </Grid>
   );
 };
 
-export default VotingGrid;
+export default GameGrid;
