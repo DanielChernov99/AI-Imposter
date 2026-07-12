@@ -10,13 +10,13 @@ import { ROOM_STATUS } from "../../../domain/constants.js";
 
 const Header = () => {
   const { roomStore } = useStores();
+  const { currentRoom } = roomStore;
 
-  const roomCode = roomStore.currentRoom?.code ?? "------";
+  const roomCode = currentRoom?.code ?? "------";
+  const roomStatus = currentRoom?.status;
 
-  const isWaitingRoom = roomStore.currentRoom?.status === ROOM_STATUS.WAITING;
-
-  const isGameInProgress =
-    roomStore.currentRoom?.status === ROOM_STATUS.IN_GAME;
+  const isWaitingRoom = roomStatus === ROOM_STATUS.WAITING;
+  const isGameInProgress = roomStatus === ROOM_STATUS.IN_GAME;
 
   return (
     <header className={Classes["header-wrapper"]}>
@@ -42,7 +42,7 @@ const Header = () => {
         <Flex className={Classes["waitingroom-container"]}>
           <Flex className={Classes["waitingroom-title"]}>
             <UsersRound
-              size={"4rem"}
+              size="4rem"
               className={Classes["header-icon"]}
               stroke="var(--primary)"
             />
@@ -53,7 +53,7 @@ const Header = () => {
           <Flex
             className={`${Classes["status-container"]} ${Classes["waiting"]}`}
           >
-            <Text span size="xl" className={`${Classes["status-text"]}`}>
+            <Text span size="xl" className={Classes["status-text"]}>
               Waiting
             </Text>
           </Flex>
