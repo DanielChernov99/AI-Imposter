@@ -11,7 +11,7 @@ export default function LobbyPlayerRow({ player, isCurrentPlayer }) {
     >
       <Group className={styles.playerInfo} wrap="nowrap">
         <Avatar
-          src={player.img}
+          src={player.avatarUrl}
           radius="xl"
           size="lg"
           className={styles.avatar}

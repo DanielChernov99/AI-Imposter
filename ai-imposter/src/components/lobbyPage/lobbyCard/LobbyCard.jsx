@@ -5,19 +5,16 @@ import LobbyReadyButton from "../LobbyReadyButton/LobbyReadyButton";
 import styles from "./LobbyCard.module.css";
 
 export default function LobbyCard({
-  players,
+  players = [],
   currentPlayerId,
-  requiredPlayers,
+  capacity,
   isCurrentPlayerReady,
   onReadyClick,
 }) {
   return (
     <Card className={styles.card}>
       <Stack align="center" className={styles.content}>
-        <LobbyTitle
-          joinedCount={players.length}
-          requiredPlayers={requiredPlayers}
-        />
+        <LobbyTitle joinedCount={players.length} capacity={capacity} />
 
         <LobbyPlayerList players={players} currentPlayerId={currentPlayerId} />
 

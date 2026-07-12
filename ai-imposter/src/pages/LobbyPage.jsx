@@ -1,26 +1,25 @@
-import { mockRoundPoints } from "../mockData/mockRoundPoints";
 import LobbyCard from "../components/lobbyPage/lobbyCard/LobbyCard.jsx";
 import styles from "../styles/LobbyPage.module.css";
 import Header from "../components/layout/header/Header.jsx";
+import { useStores } from "../context/StoreContext.jsx";
+import { observer } from "mobx-react-lite";
 
-export default function LobbyPage() {
-  // this is only for the mock testing later it will be changed
-  const players = mockRoundPoints.map((player) => ({
-    ...player,
-    isReady: true,
-  }));
+function LobbyPage() {
+  const { roomStore } = useStores();
 
   return (
     <main className={styles.page}>
       <Header gameStatus="WAITING" />
 
       <LobbyCard
-        players={players}
+        players={roomStore.players}
         currentPlayerId={3}
-        requiredPlayers={5}
+        capacity={roomStore.currentRoom?.capacity ?? 0}
         isCurrentPlayerReady={true}
         onReadyClick={() => console.log("ready clicked")}
       />
     </main>
   );
 }
+
+export default observer(LobbyPage);
