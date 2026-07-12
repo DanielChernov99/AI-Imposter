@@ -36,6 +36,7 @@ export default class RoomStore {
 
       createRoom: action,
       clearError: action,
+      setServiceError: action,
       setCurrentPlayerReady: action,
       joinRoom: action,
       leaveRoom: action,
@@ -74,6 +75,22 @@ export default class RoomStore {
     this.error = null;
   }
 
+  setServiceError(source, caughtError, fallbackMessage) {
+    if (caughtError instanceof RoomServiceError) {
+      this.error = {
+        source,
+        code: caughtError.code,
+        message: caughtError.message,
+      };
+    } else {
+      this.error = {
+        source,
+        code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+        message: fallbackMessage,
+      };
+    }
+  }
+
   async createRoom({ nickname, capacity }) {
     if (this.isLoading) {
       return false;
@@ -96,21 +113,7 @@ export default class RoomStore {
 
       return true;
     } catch (caughtError) {
-      runInAction(() => {
-        if (caughtError instanceof RoomServiceError) {
-          this.error = {
-            source: "create",
-            code: caughtError.code,
-            message: caughtError.message,
-          };
-        } else {
-          this.error = {
-            source: "create",
-            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
-            message: "Failed to create room",
-          };
-        }
-      });
+      this.setServiceError("create", caughtError, "Failed to create room");
 
       return false;
     } finally {
@@ -141,19 +144,11 @@ export default class RoomStore {
       });
       return true;
     } catch (caughtError) {
-      runInAction(() => {
-        if (caughtError instanceof RoomServiceError) {
-          this.error = {
-            code: caughtError.code,
-            message: caughtError.message,
-          };
-        } else {
-          this.error = {
-            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
-            message: "Failed to update ready state",
-          };
-        }
-      });
+      this.setServiceError(
+        "ready",
+        caughtError,
+        "Failed to update ready state",
+      );
       return false;
     } finally {
       runInAction(() => {
@@ -184,21 +179,7 @@ export default class RoomStore {
 
       return true;
     } catch (caughtError) {
-      runInAction(() => {
-        if (caughtError instanceof RoomServiceError) {
-          this.error = {
-            source: "join",
-            code: caughtError.code,
-            message: caughtError.message,
-          };
-        } else {
-          this.error = {
-            source: "join",
-            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
-            message: "Failed to join room",
-          };
-        }
-      });
+      this.setServiceError("join", caughtError, "Failed to join room");
 
       return false;
     } finally {
@@ -231,21 +212,7 @@ export default class RoomStore {
 
       return true;
     } catch (caughtError) {
-      runInAction(() => {
-        if (caughtError instanceof RoomServiceError) {
-          this.error = {
-            source: "leave",
-            code: caughtError.code,
-            message: caughtError.message,
-          };
-        } else {
-          this.error = {
-            source: "leave",
-            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
-            message: "Failed to leave room",
-          };
-        }
-      });
+      this.setServiceError("leave", caughtError, "Failed to leave room");
 
       return false;
     } finally {
@@ -274,21 +241,11 @@ export default class RoomStore {
 
       return true;
     } catch (caughtError) {
-      runInAction(() => {
-        if (caughtError instanceof RoomServiceError) {
-          this.error = {
-            source: "loadPlayers",
-            code: caughtError.code,
-            message: caughtError.message,
-          };
-        } else {
-          this.error = {
-            source: "loadPlayers",
-            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
-            message: "Failed to load room players",
-          };
-        }
-      });
+      this.setServiceError(
+        "loadPlayers",
+        caughtError,
+        "Failed to load room players",
+      );
 
       return false;
     } finally {
@@ -314,21 +271,11 @@ export default class RoomStore {
       });
       return true;
     } catch (caughtError) {
-      runInAction(() => {
-        if (caughtError instanceof RoomServiceError) {
-          this.error = {
-            source: "startGame",
-            code: caughtError.code,
-            message: caughtError.message,
-          };
-        } else {
-          this.error = {
-            source: "startGame",
-            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
-            message: "Failed to start game",
-          };
-        }
-      });
+      this.setServiceError(
+        "startGame",
+        caughtError,
+        "Failed to start game",
+      );
 
       return false;
     } finally {

@@ -32,6 +32,14 @@ const Header = observer(function Header() {
     }
   };
 
+  const handleGameStart = async () => {
+    const didStart = await roomStore.startCurrentGame();
+
+    if (didStart) {
+      navigate("/game");
+    }
+  };
+
   return (
     <header className={Classes["header-wrapper"]}>
       <Flex className={Classes["logo-container"]}>
@@ -90,6 +98,7 @@ const Header = observer(function Header() {
           <Timer
             duration={GAME_START_COUNTDOWN_SECONDS}
             label="GAME STARTS IN"
+            onComplete={handleGameStart}
           />
         </>
       )}

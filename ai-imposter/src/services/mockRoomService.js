@@ -17,6 +17,30 @@ export default function createMockRoomService() {
     return players.filter((player) => player.roomId === roomId);
   }
 
+  function assertRoomWaiting(room, errorMessage) {
+    if (room.status !== ROOM_STATUS.WAITING) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
+        errorMessage,
+      );
+    }
+  }
+
+  function findPlayerIndexOrThrow({ roomId, playerId }) {
+    const playerIndex = players.findIndex(
+      (player) => player.id === playerId && player.roomId === roomId,
+    );
+
+    if (playerIndex === -1) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
+        `player with id: ${playerId} in roomID: ${roomId} was not found`,
+      );
+    }
+
+    return playerIndex;
+  }
+
   function validateNickname(nickname) {
     const cleanNickname = typeof nickname === "string" ? nickname.trim() : "";
 
@@ -120,12 +144,7 @@ export default function createMockRoomService() {
         `No such room with code ${cleanRoomCode}`,
       );
     }
-    if (room.status !== ROOM_STATUS.WAITING) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
-        "Game already started in this room",
-      );
-    }
+    assertRoomWaiting(room, "Game already started in this room");
 
     const roomPlayers = findPlayersByRoomId(room.id);
 
@@ -166,12 +185,10 @@ export default function createMockRoomService() {
   async function setPlayerReady({ roomId, playerId, isReady }) {
     const room = await getRoomById(roomId);
 
-    if (room.status !== ROOM_STATUS.WAITING) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
-        "Cannot change ready state after the game has started",
-      );
-    }
+    assertRoomWaiting(
+      room,
+      "Cannot change ready state after the game has started",
+    );
 
     if (typeof isReady !== "boolean") {
       throw new RoomServiceError(
@@ -180,16 +197,7 @@ export default function createMockRoomService() {
       );
     }
 
-    const playerIndex = players.findIndex(
-      (player) => player.id === playerId && player.roomId === roomId,
-    );
-
-    if (playerIndex === -1) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
-        `player with id: ${playerId} in roomID: ${roomId} was not found`,
-      );
-    }
+    const playerIndex = findPlayerIndexOrThrow({ roomId, playerId });
     players[playerIndex].isReady = isReady;
 
     return players[playerIndex];
@@ -198,16 +206,7 @@ export default function createMockRoomService() {
   async function leaveRoom({ roomId, playerId }) {
     await getRoomById(roomId);
 
-    const playerIndex = players.findIndex(
-      (player) => player.id === playerId && player.roomId === roomId,
-    );
-
-    if (playerIndex === -1) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
-        `player with id: ${playerId} in roomID: ${roomId} was not found`,
-      );
-    }
+    const playerIndex = findPlayerIndexOrThrow({ roomId, playerId });
 
     const [removedPlayer] = players.splice(playerIndex, 1);
 
@@ -217,12 +216,7 @@ export default function createMockRoomService() {
   async function startGame({ roomId }) {
     const room = await getRoomById(roomId);
 
-    if (room.status !== ROOM_STATUS.WAITING) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
-        "The game has already started in this room.",
-      );
-    }
+    assertRoomWaiting(room, "The game has already started in this room.");
 
     const roomPlayers = findPlayersByRoomId(roomId);
 
