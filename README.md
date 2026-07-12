@@ -44,13 +44,13 @@ After 5 rounds, the game ends with a final podium.
 
 ## 🧠 Game Rules
 
-| Rule | Value |
-|---|---|
-| Players | 2–9 |
-| Rounds | 5 |
+| Rule        | Value      |
+| ----------- | ---------- |
+| Players     | 2–5        |
+| Rounds      | 5          |
 | Answer time | 20 seconds |
 | Voting time | 10 seconds |
-| Reveal time | 6 seconds |
+| Reveal time | 6 seconds  |
 
 Players cannot vote for their own answer.  
 Invalid or missing answers cannot receive votes.
@@ -59,11 +59,11 @@ Invalid or missing answers cannot receive votes.
 
 ## 🏆 Scoring
 
-| Action | Points |
-|---|---:|
-| Correctly voting for the AI answer | +2 |
-| Another player votes for your answer | +1 |
-| Voting for a human answer | 0 |
+| Action                               | Points |
+| ------------------------------------ | -----: |
+| Correctly voting for the AI answer   |     +2 |
+| Another player votes for your answer |     +1 |
+| Voting for a human answer            |      0 |
 
 The AI does not receive points and does not appear in the leaderboard.
 
@@ -71,17 +71,17 @@ The AI does not receive points and does not appear in the leaderboard.
 
 ## 🛠️ Tech Stack
 
-| Area | Technology |
-|---|---|
-| Frontend | React, Vite, JavaScript |
-| UI | Mantine UI, CSS Modules |
-| Routing | React Router |
-| State Management | MobX |
-| Database | Supabase |
-| Realtime Sync | Supabase Realtime |
-| Authentication | Supabase Anonymous Auth |
-| AI | Google AI API |
-| Deployment | GitHub Pages |
+| Area             | Technology              |
+| ---------------- | ----------------------- |
+| Frontend         | React, Vite, JavaScript |
+| UI               | Mantine UI, CSS Modules |
+| Routing          | React Router            |
+| State Management | MobX                    |
+| Database         | Supabase                |
+| Realtime Sync    | Supabase Realtime       |
+| Authentication   | Supabase Anonymous Auth |
+| AI               | Google AI API           |
+| Deployment       | GitHub Pages            |
 
 ---
 
@@ -127,5 +127,3 @@ Build for production:
     npm run build
 
 ---
-
-
