@@ -1,4 +1,11 @@
-import { runInAction, action, makeObservable, observable } from "mobx";
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from "mobx";
+
 import {
   RoomServiceError,
   ROOM_SERVICE_ERRORS,
@@ -7,7 +14,7 @@ import {
 export default class RoomStore {
   currentRoom = null;
   currentPlayer = null;
-  players = [];
+  currentRoomPlayers = [];
   isLoading = false;
   error = null;
 
@@ -17,12 +24,20 @@ export default class RoomStore {
     makeObservable(this, {
       currentRoom: observable,
       currentPlayer: observable,
-      players: observable,
+      currentRoomPlayers: observable,
       isLoading: observable,
       error: observable,
+
+      joinedPlayersCount: computed,
+
       createRoom: action,
       clearError: action,
+      setCurrentPlayerReady: action,
     });
+  }
+
+  get joinedPlayersCount() {
+    return this.currentRoomPlayers.length;
   }
 
   clearError() {
@@ -33,16 +48,22 @@ export default class RoomStore {
     if (this.isLoading) {
       return false;
     }
+
     this.isLoading = true;
     this.error = null;
 
     try {
-      const result = await this.roomService.createRoom({ nickname, capacity });
+      const result = await this.roomService.createRoom({
+        nickname,
+        capacity,
+      });
+
       runInAction(() => {
         this.currentRoom = result.room;
         this.currentPlayer = result.player;
-        this.players = result.players;
+        this.currentRoomPlayers = result.players;
       });
+
       return true;
     } catch (caughtError) {
       runInAction(() => {
@@ -55,6 +76,48 @@ export default class RoomStore {
           this.error = {
             code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
             message: "Failed to create room",
+          };
+        }
+      });
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+  async setCurrentPlayerReady(isReady) {
+    if (this.isLoading || !this.currentRoom || !this.currentPlayer) {
+      return false;
+    }
+    this.isLoading = true;
+    this.error = null;
+    try {
+      const updatedPlayer = await this.roomService.setPlayerReady({
+        roomId: this.currentRoom.id,
+        playerId: this.currentPlayer.id,
+        isReady,
+      });
+
+      runInAction(() => {
+        this.currentPlayer = updatedPlayer;
+        this.currentRoomPlayers = this.currentRoomPlayers.map((player) =>
+          player.id === updatedPlayer.id ? updatedPlayer : player,
+        );
+      });
+      return true;
+    } catch (caughtError) {
+      runInAction(() => {
+        if (caughtError instanceof RoomServiceError) {
+          this.error = {
+            code: caughtError.code,
+            message: caughtError.message,
+          };
+        } else {
+          this.error = {
+            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+            message: "Failed to update ready state",
           };
         }
       });

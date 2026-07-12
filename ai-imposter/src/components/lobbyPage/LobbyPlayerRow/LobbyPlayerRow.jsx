@@ -25,10 +25,12 @@ export default function LobbyPlayerRow({ player, isCurrentPlayer }) {
       </Group>
 
       <Badge
-        className={styles.readyBadge}
-        leftSection={<CheckCircle size={14} />}
+        className={`${styles.readyBadge} ${
+          player.isReady ? styles.ready : styles.waiting
+        }`}
+        leftSection={player.isReady ? <CheckCircle size={14} /> : undefined}
       >
-        READY
+        {player.isReady ? "READY" : "WAITING"}
       </Badge>
     </Group>
   );

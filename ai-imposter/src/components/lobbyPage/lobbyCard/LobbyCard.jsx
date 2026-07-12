@@ -3,24 +3,37 @@ import LobbyTitle from "../lobbyTitle/LobbyTitle";
 import LobbyPlayerList from "../lobbyPlayerList/LobbyPlayerList";
 import LobbyReadyButton from "../LobbyReadyButton/LobbyReadyButton";
 import styles from "./LobbyCard.module.css";
+import { observer } from "mobx-react-lite";
+import { useStores } from "../../../context/StoreContext.jsx";
 
-export default function LobbyCard({
-  players = [],
-  currentPlayerId,
-  capacity,
-  isCurrentPlayerReady,
-  onReadyClick,
-}) {
+function LobbyCard() {
+  const { roomStore } = useStores();
+  const { currentRoomPlayers, currentRoom, currentPlayer } = roomStore;
+
+  const handleReadyClick = async () => {
+    if (!currentPlayer) {
+      return;
+    }
+
+    await roomStore.setCurrentPlayerReady(!currentPlayer.isReady);
+  };
+
   return (
     <Card className={styles.card}>
       <Stack align="center" className={styles.content}>
-        <LobbyTitle joinedCount={players.length} capacity={capacity} />
+        <LobbyTitle
+          joinedCount={currentRoomPlayers.length}
+          capacity={currentRoom?.capacity ?? 0}
+        />
 
-        <LobbyPlayerList players={players} currentPlayerId={currentPlayerId} />
+        <LobbyPlayerList
+          players={currentRoomPlayers}
+          currentPlayerId={currentPlayer?.id}
+        />
 
         <LobbyReadyButton
-          isReady={isCurrentPlayerReady}
-          onClick={onReadyClick}
+          isReady={currentPlayer?.isReady ?? false}
+          onClick={handleReadyClick}
         />
 
         <Text className={styles.hint}>
@@ -30,3 +43,5 @@ export default function LobbyCard({
     </Card>
   );
 }
+
+export default observer(LobbyCard);

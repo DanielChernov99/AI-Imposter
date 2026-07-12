@@ -47,10 +47,18 @@
 .readyBadge {
   height: 2rem;
   padding-inline: var(--space-3);
+}
 
+.ready {
   color: var(--success-text);
   background: rgba(34, 197, 94, 0.14);
   border: 1px solid var(--success-dark);
+}
+
+.waiting {
+  color: var(--orange-accent);
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid var(--orange-accent);
 }
 
 @media (max-width: 768px) {
