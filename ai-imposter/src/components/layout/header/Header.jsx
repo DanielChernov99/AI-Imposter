@@ -80,10 +80,13 @@ const Header = observer(function Header() {
       {isGameInProgress && (
         <GameRoundStatus completedRounds={1} totalRounds={5} />
       )}
+      {roomStore.canStartGame && (
+        <>
+          <div className={Classes.verticalDivider} />
 
-      <div className={Classes.verticalDivider} />
-
-      <Timer duration={30} label="GAME STARTS IN" />
+          <Timer duration={5} label="GAME STARTS IN" />
+        </>
+      )}
     </header>
   );
 });
