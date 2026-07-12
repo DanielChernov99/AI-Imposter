@@ -6,6 +6,11 @@ export const MAX_NICKNAME_LENGTH = 16;
 
 export const ROOM_CODE_LENGTH = 6;
 
+export const GAME_START_COUNTDOWN_SECONDS = 5;
+export const ANSWERING_DURATION_SECONDS = 20;
+export const VOTING_DURATION_SECONDS = 20;
+export const ROUND_RESULTS_DURATION_SECONDS = 10;
+
 export const ROOM_STATUS = Object.freeze({
   WAITING: "waiting",
   IN_GAME: "in_game",

@@ -5,7 +5,10 @@ import { useNavigate } from "react-router";
 
 import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { useStores } from "../../../context/StoreContext.jsx";
-import { ROOM_STATUS } from "../../../domain/constants.js";
+import {
+  GAME_START_COUNTDOWN_SECONDS,
+  ROOM_STATUS,
+} from "../../../domain/constants.js";
 import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
@@ -84,7 +87,10 @@ const Header = observer(function Header() {
         <>
           <div className={Classes.verticalDivider} />
 
-          <Timer duration={5} label="GAME STARTS IN" />
+          <Timer
+            duration={GAME_START_COUNTDOWN_SECONDS}
+            label="GAME STARTS IN"
+          />
         </>
       )}
     </header>
