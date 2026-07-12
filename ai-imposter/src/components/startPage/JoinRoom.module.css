@@ -62,3 +62,14 @@
   background: rgba(14, 165, 233, 0.1);
   box-shadow: var(--glow-blue-soft);
 }
+
+.errorSlot {
+  min-height: 42px;
+}
+
+.errorMessage {
+  font-family: var(--font-main);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--error);
+}

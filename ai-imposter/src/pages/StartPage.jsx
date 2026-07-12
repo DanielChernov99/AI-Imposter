@@ -64,7 +64,7 @@ export default function StartPage() {
             </Box>
             <Box className={styles.orDividerLine} />
           </Box>
-          <JoinRoom />
+          <JoinRoom nickname={nickname} />
         </Flex>
 
         <Text className={styles.footerText}>

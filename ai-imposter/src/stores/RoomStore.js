@@ -33,6 +33,7 @@ export default class RoomStore {
       createRoom: action,
       clearError: action,
       setCurrentPlayerReady: action,
+      joinRoom: action,
     });
   }
 
@@ -69,11 +70,13 @@ export default class RoomStore {
       runInAction(() => {
         if (caughtError instanceof RoomServiceError) {
           this.error = {
+            source: "create",
             code: caughtError.code,
             message: caughtError.message,
           };
         } else {
           this.error = {
+            source: "create",
             code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
             message: "Failed to create room",
           };
@@ -121,6 +124,51 @@ export default class RoomStore {
           };
         }
       });
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+  async joinRoom({ nickname, roomCode }) {
+    if (this.isLoading) {
+      return false;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const result = await this.roomService.joinRoom({
+        nickname,
+        roomCode,
+      });
+
+      runInAction(() => {
+        this.currentRoom = result.room;
+        this.currentPlayer = result.player;
+        this.currentRoomPlayers = result.players;
+      });
+
+      return true;
+    } catch (caughtError) {
+      runInAction(() => {
+        if (caughtError instanceof RoomServiceError) {
+          this.error = {
+            source: "join",
+            code: caughtError.code,
+            message: caughtError.message,
+          };
+        } else {
+          this.error = {
+            source: "join",
+            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+            message: "Failed to join room",
+          };
+        }
+      });
+
       return false;
     } finally {
       runInAction(() => {

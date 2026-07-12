@@ -78,7 +78,7 @@ function StartNewGame({ nickname }) {
       </Button>
 
       <Box className={styles.errorSlot} aria-live="polite">
-        {roomStore.error && (
+        {roomStore.error?.source === "create" && (
           <Text className={styles.errorMessage} role="alert">
             {roomStore.error.message}
           </Text>
