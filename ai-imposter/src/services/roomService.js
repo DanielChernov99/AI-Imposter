@@ -8,6 +8,7 @@
  * getRoomById(roomId)
  * getPlayersByRoomId(roomId)
  * setPlayerReady({ roomId, playerId, isReady })
+ * leaveRoom({ roomId, playerId })
  *
  * createRoom and joinRoom should return:
  *

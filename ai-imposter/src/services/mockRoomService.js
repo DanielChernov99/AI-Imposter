@@ -191,11 +191,31 @@ export default function createMockRoomService() {
     return players[playerIndex];
   }
 
+  async function leaveRoom({ roomId, playerId }) {
+    await getRoomById(roomId);
+
+    const playerIndex = players.findIndex(
+      (player) => player.id === playerId && player.roomId === roomId,
+    );
+
+    if (playerIndex === -1) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
+        `player with id: ${playerId} in roomID: ${roomId} was not found`,
+      );
+    }
+
+    const [removedPlayer] = players.splice(playerIndex, 1);
+
+    return removedPlayer;
+  }
+
   return {
     createRoom,
     getRoomById,
     getPlayersByRoomId,
     joinRoom,
     setPlayerReady,
+    leaveRoom,
   };
 }

@@ -1,6 +1,7 @@
-import { Flex, Text } from "@mantine/core";
-import { DoorClosedLocked, UsersRound } from "lucide-react";
+import { ActionIcon, Flex, Text } from "@mantine/core";
+import { LogOut, UsersRound } from "lucide-react";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router";
 
 import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { useStores } from "../../../context/StoreContext.jsx";
@@ -9,15 +10,24 @@ import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
 
-const Header = () => {
+const Header = observer(function Header() {
   const { roomStore } = useStores();
   const { currentRoom } = roomStore;
+  const navigate = useNavigate();
 
   const roomCode = currentRoom?.code ?? "------";
   const roomStatus = currentRoom?.status;
 
   const isWaitingRoom = roomStatus === ROOM_STATUS.WAITING;
   const isGameInProgress = roomStatus === ROOM_STATUS.IN_GAME;
+
+  const handleLeaveRoom = async () => {
+    const didLeave = await roomStore.leaveRoom();
+
+    if (didLeave) {
+      navigate("/");
+    }
+  };
 
   return (
     <header className={Classes["header-wrapper"]}>
@@ -38,7 +48,15 @@ const Header = () => {
           </Text>
         </Flex>
 
-        <DoorClosedLocked className={Classes["room-icon"]} stroke="white" />
+        <ActionIcon
+          variant="transparent"
+          color="gray"
+          aria-label="Leave room"
+          onClick={handleLeaveRoom}
+          loading={roomStore.isLoading}
+        >
+          <LogOut className={Classes["room-icon"]} stroke="white" />
+        </ActionIcon>
       </Flex>
 
       <div className={Classes.verticalDivider} />
@@ -68,6 +86,6 @@ const Header = () => {
       <Timer duration={30} label="GAME STARTS IN" />
     </header>
   );
-};
+});
 
-export default observer(Header);
+export default Header;

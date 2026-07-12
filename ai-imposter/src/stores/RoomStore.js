@@ -34,6 +34,7 @@ export default class RoomStore {
       clearError: action,
       setCurrentPlayerReady: action,
       joinRoom: action,
+      leaveRoom: action,
     });
   }
 
@@ -165,6 +166,53 @@ export default class RoomStore {
             source: "join",
             code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
             message: "Failed to join room",
+          };
+        }
+      });
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  async leaveRoom() {
+    if (this.isLoading || !this.currentRoom || !this.currentPlayer) {
+      return false;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      await this.roomService.leaveRoom({
+        roomId: this.currentRoom.id,
+        playerId: this.currentPlayer.id,
+      });
+
+      runInAction(() => {
+        this.currentRoom = null;
+        this.currentPlayer = null;
+        this.currentRoomPlayers = [];
+        this.error = null;
+      });
+
+      return true;
+    } catch (caughtError) {
+      runInAction(() => {
+        if (caughtError instanceof RoomServiceError) {
+          this.error = {
+            source: "leave",
+            code: caughtError.code,
+            message: caughtError.message,
+          };
+        } else {
+          this.error = {
+            source: "leave",
+            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+            message: "Failed to leave room",
           };
         }
       });
