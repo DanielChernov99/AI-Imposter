@@ -40,6 +40,7 @@ export default class RoomStore {
       joinRoom: action,
       leaveRoom: action,
       loadCurrentRoomPlayers: action,
+      startCurrentGame: action,
     });
   }
 
@@ -118,6 +119,7 @@ export default class RoomStore {
       });
     }
   }
+
   async setCurrentPlayerReady(isReady) {
     if (this.isLoading || !this.currentRoom || !this.currentPlayer) {
       return false;
@@ -159,6 +161,7 @@ export default class RoomStore {
       });
     }
   }
+
   async joinRoom({ nickname, roomCode }) {
     if (this.isLoading) {
       return false;
@@ -283,6 +286,46 @@ export default class RoomStore {
             source: "loadPlayers",
             code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
             message: "Failed to load room players",
+          };
+        }
+      });
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  async startCurrentGame() {
+    if (this.isLoading || !this.currentRoom || !this.canStartGame) {
+      return false;
+    }
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const updatedRoom = await this.roomService.startGame({
+        roomId: this.currentRoom.id,
+      });
+      runInAction(() => {
+        this.currentRoom = updatedRoom;
+      });
+      return true;
+    } catch (caughtError) {
+      runInAction(() => {
+        if (caughtError instanceof RoomServiceError) {
+          this.error = {
+            source: "startGame",
+            code: caughtError.code,
+            message: caughtError.message,
+          };
+        } else {
+          this.error = {
+            source: "startGame",
+            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+            message: "Failed to start game",
           };
         }
       });

@@ -13,6 +13,10 @@ export default function createMockRoomService() {
   const rooms = [];
   const players = [];
 
+  function findPlayersByRoomId(roomId) {
+    return players.filter((player) => player.roomId === roomId);
+  }
+
   function validateNickname(nickname) {
     const cleanNickname = typeof nickname === "string" ? nickname.trim() : "";
 
@@ -101,7 +105,7 @@ export default function createMockRoomService() {
   async function getPlayersByRoomId(roomId) {
     await getRoomById(roomId);
 
-    return players.filter((player) => player.roomId === roomId);
+    return findPlayersByRoomId(roomId);
   }
 
   async function joinRoom({ nickname, roomCode }) {
@@ -123,7 +127,7 @@ export default function createMockRoomService() {
       );
     }
 
-    const roomPlayers = players.filter((player) => player.roomId === room.id);
+    const roomPlayers = findPlayersByRoomId(room.id);
 
     if (roomPlayers.length >= room.capacity) {
       throw new RoomServiceError(
@@ -210,6 +214,41 @@ export default function createMockRoomService() {
     return removedPlayer;
   }
 
+  async function startGame({ roomId }) {
+    const room = await getRoomById(roomId);
+
+    if (room.status !== ROOM_STATUS.WAITING) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
+        "The game has already started in this room.",
+      );
+    }
+
+    const roomPlayers = findPlayersByRoomId(roomId);
+
+    if (roomPlayers.length !== room.capacity) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_NOT_FULL,
+        "The room must be full before the game can start.",
+      );
+    }
+
+    const areAllPlayersReady = roomPlayers.every(
+      (player) => player.isReady === true,
+    );
+
+    if (!areAllPlayersReady) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.PLAYERS_NOT_READY,
+        "All players must be ready before the game can start.",
+      );
+    }
+
+    room.status = ROOM_STATUS.IN_GAME;
+
+    return room;
+  }
+
   return {
     createRoom,
     getRoomById,
@@ -217,5 +256,6 @@ export default function createMockRoomService() {
     joinRoom,
     setPlayerReady,
     leaveRoom,
+    startGame,
   };
 }
