@@ -1,118 +1,55 @@
 .countdown-wrapper {
   position: relative;
-  color: white;
+
+  width: 70%;
   height: 100%;
-  gap: var(--space-2);
+  margin-inline: auto;
+  padding: 10px 8px;
+
   align-items: center;
   justify-content: center;
-  border-radius: 1rem;
-  padding: 10px 8px;
+  gap: var(--space-2);
+
+  color: white;
   border: 3px solid var(--border-purple);
+  border-radius: 1rem;
+
   box-shadow:
     0 0 8px var(--glow-purple),
     0 0 20px rgba(139, 92, 246, 0.5),
     0 0 40px rgba(139, 92, 246, 0.25);
-  width: 70%;
-  margin-left: auto;
-  margin-right: auto;
 }
+
 .countdown-container {
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
+
 .countdown-timer {
   font-size: 2rem;
   font-weight: 900;
 }
+
 .timer-icon {
   width: 48px;
   height: 48px;
-}
-.beam-group {
-  position: absolute;
-  top: 50%;
+  flex-shrink: 0;
 }
 
-.beam-group-left {
-  left: -10px;
-}
-
-.beam-group-right {
-  right: -10px;
-}
-
-.beam {
-  display: none;
-  position: absolute;
-  width: 52px;
-  height: 4px;
-  top: 0;
-  left: 0;
-  transform-origin: 0% 50%;
-  background: linear-gradient(to right, var(--border-purple));
-  border-radius: 50% 4px 4px 50% / 50% 50% 50% 50%;
-}
-
-.beam-group-left .beam {
-  transform: rotate(180deg) rotate(var(--angle));
-}
-.beam-group-left .beam-1 {
-  --angle: -25deg;
-  top: 20px;
-  width: 40px;
-}
-.beam-group-left .beam-2 {
-  --angle: 0deg;
-}
-.beam-group-left .beam-3 {
-  --angle: 25deg;
-  top: -20px;
-  width: 40px;
-}
-
-.beam-group-right .beam {
-  transform: rotate(var(--angle));
-}
-.beam-group-right .beam-1 {
-  --angle: -25deg;
-  top: -20px;
-  width: 40px;
-}
-.beam-group-right .beam-2 {
-  --angle: 0deg;
-}
-.beam-group-right .beam-3 {
-  --angle: 25deg;
-  top: 20px;
-  width: 40px;
-}
-
-/* md - 768px: tablet */
-@media (min-width: 768px) {
-}
-/* lg - 1024: Laptop*/
+/* Laptop */
 @media (min-width: 1024px) {
   .countdown-wrapper {
     width: 200px;
-    margin-right: 2rem;
     height: 80%;
+    margin-left: auto;
+    margin-right: 2rem;
   }
 }
 
-/* xl - 1440px: desktop*/
+/* Desktop */
 @media (min-width: 1440px) {
   .countdown-wrapper {
-    width: 200px;
-    height: 80%;
-    margin-right: 2rem;
     margin-left: 2rem;
   }
-}
-
-/* 2xl - 1920px: bigger desktop,*/
-@media (min-width: 1920px) {
-}
-/* 3xl - 2560px: ultrawide, one more step up */
-@media (min-width: 2560px) {
 }

@@ -142,7 +142,7 @@
 }
 
 /* Laptop */
-@media (min-width: 1024px) {
+@media (min-width: 1050px) {
   .header-wrapper {
     height: 150px;
     flex-wrap: nowrap;

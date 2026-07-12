@@ -1,20 +1,26 @@
-const Clock = () => {
+const Clock = ({ angle = 0, className }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="white"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class="lucide lucide-clock12 lucide-clock-12 _timer-icon_8h3u1_53"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="10"></circle>
-      <path id="clock-hand" d="M12 6v6"></path>
+      <circle cx="12" cy="12" r="10" />
+
+      <path
+        d="M12 6v6"
+        style={{
+          transform: `rotate(${angle}deg)`,
+          transformOrigin: "12px 12px",
+          transition: "transform 0.2s ease-in-out",
+        }}
+      />
     </svg>
   );
 };
