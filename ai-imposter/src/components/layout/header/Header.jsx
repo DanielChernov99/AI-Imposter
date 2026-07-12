@@ -4,8 +4,20 @@ import { DoorClosedLocked, UsersRound } from "lucide-react";
 import Timer from "./components/timer/Timer";
 import { Flex, Text } from "@mantine/core";
 import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
+import { observer } from "mobx-react-lite";
+import { useStores } from "../../../context/StoreContext.jsx";
+import { ROOM_STATUS } from "../../../domain/constants.js";
 
-const Header = ({ gameStatus = "PLAYING" }) => {
+const Header = () => {
+  const { roomStore } = useStores();
+
+  const roomCode = roomStore.currentRoom?.code ?? "------";
+
+  const isWaitingRoom = roomStore.currentRoom?.status === ROOM_STATUS.WAITING;
+
+  const isGameInProgress =
+    roomStore.currentRoom?.status === ROOM_STATUS.IN_GAME;
+
   return (
     <header className={Classes["header-wrapper"]}>
       <Flex className={Classes["logo-container"]}>
@@ -19,14 +31,14 @@ const Header = ({ gameStatus = "PLAYING" }) => {
             Room Code
           </Text>
           <Text span size="xl" className={Classes["room-code"]}>
-            {"[784392]"}
+            {roomCode}
           </Text>
         </Flex>
         <DoorClosedLocked className={Classes["room-icon"]} stroke="white" />
       </Flex>
 
       <div className={Classes["verticalDivider"]}></div>
-      {gameStatus === "WAITING" && (
+      {isWaitingRoom && (
         <Flex className={Classes["waitingroom-container"]}>
           <Flex className={Classes["waitingroom-title"]}>
             <UsersRound
@@ -47,7 +59,7 @@ const Header = ({ gameStatus = "PLAYING" }) => {
           </Flex>
         </Flex>
       )}
-      {gameStatus === "PLAYING" && (
+      {isGameInProgress && (
         <GameRoundStatus completedRounds={1} totalRounds={5} />
       )}
 
@@ -57,4 +69,4 @@ const Header = ({ gameStatus = "PLAYING" }) => {
   );
 };
 
-export default Header;
+export default observer(Header);

@@ -5,7 +5,7 @@ import Header from "../components/layout/header/Header.jsx";
 function LobbyPage() {
   return (
     <main className={styles.page}>
-      <Header gameStatus="WAITING" />
+      <Header />
       <LobbyCard />
     </main>
   );
