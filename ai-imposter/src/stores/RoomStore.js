@@ -19,6 +19,8 @@ export default class RoomStore {
   isLoading = false;
   error = null;
 
+  roomSubscription = null;
+
   constructor(roomService) {
     this.roomService = roomService;
 
@@ -35,9 +37,9 @@ export default class RoomStore {
       canStartGame: computed,
 
       createRoom: action,
+      joinRoom: action,
       clearError: action,
       setCurrentPlayerReady: action,
-      joinRoom: action,
       leaveRoom: action,
       loadCurrentRoomPlayers: action,
     });
@@ -118,6 +120,55 @@ export default class RoomStore {
       });
     }
   }
+  /**
+   * Starts syncing currentRoom/currentRoomPlayers/currentPlayer with live
+   * changes from the backend (Realtime), if the service supports it.
+   * Call from a component's mount effect; pair with stopRoomRealtimeSync
+   * on unmount.
+   */
+  startRoomRealtimeSync() {
+    if (!this.currentRoom || this.roomSubscription || !this.roomService.subscribeToRoom) {
+      return;
+    }
+
+    this.roomSubscription = this.roomService.subscribeToRoom({
+      roomId: this.currentRoom.id,
+      onPlayersChange: ({ eventType, newPlayer, oldPlayer }) => {
+        runInAction(() => {
+          if (eventType === "INSERT" && newPlayer) {
+            if (!this.currentRoomPlayers.some((player) => player.id === newPlayer.id)) {
+              this.currentRoomPlayers = [...this.currentRoomPlayers, newPlayer];
+            }
+          } else if (eventType === "UPDATE" && newPlayer) {
+            this.currentRoomPlayers = this.currentRoomPlayers.map((player) =>
+              player.id === newPlayer.id ? newPlayer : player,
+            );
+
+            if (this.currentPlayer?.id === newPlayer.id) {
+              this.currentPlayer = newPlayer;
+            }
+          } else if (eventType === "DELETE" && oldPlayer) {
+            this.currentRoomPlayers = this.currentRoomPlayers.filter(
+              (player) => player.id !== oldPlayer.id,
+            );
+          }
+        });
+      },
+      onRoomChange: (updatedRoom) => {
+        runInAction(() => {
+          this.currentRoom = updatedRoom;
+        });
+      },
+    });
+  }
+
+  stopRoomRealtimeSync() {
+    if (this.roomSubscription) {
+      this.roomSubscription();
+      this.roomSubscription = null;
+    }
+  }
+
   async setCurrentPlayerReady(isReady) {
     if (this.isLoading || !this.currentRoom || !this.currentPlayer) {
       return false;

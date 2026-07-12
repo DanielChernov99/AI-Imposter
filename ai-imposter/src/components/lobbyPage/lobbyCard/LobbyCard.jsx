@@ -1,6 +1,6 @@
 import { Card, Stack, Text } from "@mantine/core";
 import LobbyTitle from "../lobbyTitle/LobbyTitle";
-import LobbyPlayerList from "../lobbyPlayerList/LobbyPlayerList";
+import LobbyPlayerList from "../LobbyPlayerList/LobbyPlayerList";
 import LobbyReadyButton from "../LobbyReadyButton/LobbyReadyButton";
 import styles from "./LobbyCard.module.css";
 import { observer } from "mobx-react-lite";

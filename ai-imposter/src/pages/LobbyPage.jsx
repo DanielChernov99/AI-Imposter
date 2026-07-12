@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 
 import LobbyCard from "../components/lobbyPage/lobbyCard/LobbyCard.jsx";
 import styles from "../styles/LobbyPage.module.css";
@@ -10,6 +11,11 @@ function LobbyPage() {
 
   useEffect(() => {
     roomStore.loadCurrentRoomPlayers();
+    roomStore.startRoomRealtimeSync();
+
+    return () => {
+      roomStore.stopRoomRealtimeSync();
+    };
   }, [roomStore]);
 
   return (
@@ -20,4 +26,4 @@ function LobbyPage() {
   );
 }
 
-export default LobbyPage;
+export default observer(LobbyPage);
