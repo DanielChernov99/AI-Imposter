@@ -4,6 +4,7 @@ import LobbyPage from "./pages/LobbyPage.jsx";
 import GamePage from "./pages/GamePage.jsx";
 import ResultPage from "./pages/ResultPage.jsx";
 import ProtectedRoute from "./components/routing/ProtectedRoute.jsx";
+import { ROOM_STATUS } from "./domain/constants.js";
 
 function App() {
   return (
@@ -17,7 +18,17 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/game" element={<GamePage />} />
+      <Route
+        path="/game"
+        element={
+          <ProtectedRoute
+            requiredStatus={ROOM_STATUS.IN_GAME}
+            fallbackPath="/lobby"
+          >
+            <GamePage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/result" element={<ResultPage />} />
     </Routes>
   );
