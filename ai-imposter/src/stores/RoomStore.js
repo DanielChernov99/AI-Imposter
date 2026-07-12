@@ -10,6 +10,7 @@ import {
   RoomServiceError,
   ROOM_SERVICE_ERRORS,
 } from "../services/roomService.js";
+import { ROOM_STATUS } from "../domain/constants.js";
 
 export default class RoomStore {
   currentRoom = null;
@@ -29,17 +30,43 @@ export default class RoomStore {
       error: observable,
 
       joinedPlayersCount: computed,
+      isRoomFull: computed,
+      areAllPlayersReady: computed,
+      canStartGame: computed,
 
       createRoom: action,
       clearError: action,
       setCurrentPlayerReady: action,
       joinRoom: action,
       leaveRoom: action,
+      loadCurrentRoomPlayers: action,
     });
   }
 
   get joinedPlayersCount() {
     return this.currentRoomPlayers.length;
+  }
+
+  get isRoomFull() {
+    return (
+      Boolean(this.currentRoom) &&
+      this.currentRoomPlayers.length === this.currentRoom.capacity
+    );
+  }
+
+  get areAllPlayersReady() {
+    return (
+      this.currentRoomPlayers.length > 0 &&
+      this.currentRoomPlayers.every((player) => player.isReady)
+    );
+  }
+
+  get canStartGame() {
+    return (
+      this.currentRoom?.status === ROOM_STATUS.WAITING &&
+      this.isRoomFull &&
+      this.areAllPlayersReady
+    );
   }
 
   clearError() {
@@ -213,6 +240,49 @@ export default class RoomStore {
             source: "leave",
             code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
             message: "Failed to leave room",
+          };
+        }
+      });
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  async loadCurrentRoomPlayers() {
+    if (this.isLoading || !this.currentRoom) {
+      return false;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const players = await this.roomService.getPlayersByRoomId(
+        this.currentRoom.id,
+      );
+
+      runInAction(() => {
+        this.currentRoomPlayers = players;
+      });
+
+      return true;
+    } catch (caughtError) {
+      runInAction(() => {
+        if (caughtError instanceof RoomServiceError) {
+          this.error = {
+            source: "loadPlayers",
+            code: caughtError.code,
+            message: caughtError.message,
+          };
+        } else {
+          this.error = {
+            source: "loadPlayers",
+            code: ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+            message: "Failed to load room players",
           };
         }
       });
