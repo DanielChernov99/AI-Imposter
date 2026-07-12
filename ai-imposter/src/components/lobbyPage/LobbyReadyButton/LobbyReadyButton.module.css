@@ -8,14 +8,24 @@
   color: var(--text-main);
   font-size: 1.4rem;
   font-weight: 900;
-
+}
+.becomeReady {
   background: linear-gradient(90deg, var(--primary), var(--accent-pink));
-
   box-shadow: var(--glow-purple-soft), var(--glow-pink-soft);
 }
 
-.button:hover {
+.becomeReady:hover {
   background: linear-gradient(90deg, var(--primary-hover), var(--accent-pink));
+}
+.cancelReady {
+  color: var(--orange-accent);
+  background: rgba(249, 115, 22, 0.14);
+  border: 1px solid var(--orange-accent);
+  box-shadow: 0 0 18px rgba(249, 115, 22, 0.3);
+}
+
+.cancelReady:hover {
+  background: rgba(249, 115, 22, 0.24);
 }
 
 @media (max-width: 768px) {

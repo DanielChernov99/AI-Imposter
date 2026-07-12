@@ -1,15 +1,18 @@
 import { Button } from "@mantine/core";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, XCircle } from "lucide-react";
 import styles from "./LobbyReadyButton.module.css";
 
 export default function LobbyReadyButton({ isReady, onClick }) {
   return (
     <Button
-      className={styles.button}
+      className={`${styles.button} ${
+        isReady ? styles.cancelReady : styles.becomeReady
+      }`}
       onClick={onClick}
-      leftSection={<CheckCircle size={24} />}
+      leftSection={isReady ? <XCircle size={24} /> : <CheckCircle size={24} />}
+      aria-pressed={isReady}
     >
-      {isReady ? "YOU'RE READY" : "READY"}
+      {isReady ? "CANCEL READY" : "READY"}
     </Button>
   );
 }
