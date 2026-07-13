@@ -248,7 +248,7 @@ export default function createMockRoomService() {
     }
 
     room.activeGameId = cleanGameId;
-    room.status = ROOM_STATUS.IN_GAME;
+    room.status = ROOM_STATUS.PLAYING;
 
     return room;
   }

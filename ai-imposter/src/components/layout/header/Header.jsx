@@ -4,23 +4,33 @@ import { observer } from "mobx-react-lite";
 
 import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { useStores } from "../../../context/StoreContext.jsx";
-import {
-  GAME_START_COUNTDOWN_SECONDS,
-  ROOM_STATUS,
-} from "../../../domain/constants.js";
+import { ROOM_STATUS } from "../../../domain/constants.js";
 import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
 
-const Header = observer(function Header({ onGameStart, onLeaveRoom }) {
-  const { roomStore } = useStores();
+function secondsUntil(isoTimestamp) {
+  if (!isoTimestamp) {
+    return 0;
+  }
+
+  return Math.max(
+    0,
+    Math.ceil((new Date(isoTimestamp).getTime() - Date.now()) / 1000),
+  );
+}
+
+const Header = observer(function Header({ onLeaveRoom }) {
+  const { roomStore, gameStore } = useStores();
   const { currentRoom } = roomStore;
+  const { currentGame } = gameStore;
 
   const roomCode = currentRoom?.code ?? "------";
   const roomStatus = currentRoom?.status;
 
   const isWaitingRoom = roomStatus === ROOM_STATUS.WAITING;
-  const isGameInProgress = roomStatus === ROOM_STATUS.IN_GAME;
+  const isCountdown = roomStatus === ROOM_STATUS.COUNTDOWN;
+  const isGameInProgress = roomStatus === ROOM_STATUS.PLAYING;
 
   return (
     <header className={Classes["header-wrapper"]}>
@@ -74,14 +84,21 @@ const Header = observer(function Header({ onGameStart, onLeaveRoom }) {
         <GameRoundStatus completedRounds={1} totalRounds={5} />
       )}
 
-      {roomStore.canStartGame && (
+      {/*
+        The countdown is server-driven: when everyone is ready, the game is
+        started via RPC (a RootStore reaction), the room status becomes
+        "countdown" and the deadline arrives in games.phase_ends_at — so all
+        players see the same synchronized timer. Navigation to /game happens
+        automatically (ProtectedRoute) when the server flips the room to
+        "playing"; no onComplete callback is needed here.
+      */}
+      {isCountdown && currentGame?.phaseEndsAt && (
         <>
           <div className={Classes.verticalDivider} />
 
           <Timer
-            duration={GAME_START_COUNTDOWN_SECONDS}
+            duration={secondsUntil(currentGame.phaseEndsAt)}
             label="GAME STARTS IN"
-            onComplete={onGameStart}
           />
         </>
       )}

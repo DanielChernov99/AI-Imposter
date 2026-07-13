@@ -17,6 +17,7 @@ export default class RoomStore {
   currentPlayer = null;
   currentRoomPlayers = [];
   isLoading = false;
+  isStartingGame = false;
   error = null;
 
   roomSubscription = null;
@@ -29,6 +30,7 @@ export default class RoomStore {
       currentPlayer: observable,
       currentRoomPlayers: observable,
       isLoading: observable,
+      isStartingGame: observable,
       error: observable,
 
       joinedPlayersCount: computed,
@@ -313,38 +315,39 @@ export default class RoomStore {
     }
   }
 
-  async startCurrentGame(gameId) {
-    if (
-      this.isLoading ||
-      !this.currentRoom ||
-      !this.canStartGame ||
-      typeof gameId !== "string" ||
-      !gameId.trim()
-    ) {
+  /**
+   * Asks the server to start the game (start_game RPC). Every client whose
+   * canStartGame turns true calls this; the server accepts exactly one and
+   * rejects the rest with ROOM_ALREADY_STARTED, which we treat as success —
+   * the game did start, just not by us. Room status/activeGameId updates
+   * arrive through the room Realtime subscription.
+   */
+  async startCurrentGame() {
+    if (this.isStartingGame || !this.currentRoom || !this.canStartGame) {
       return false;
     }
 
-    this.isLoading = true;
+    this.isStartingGame = true;
     this.error = null;
 
     try {
-      const updatedRoom = await this.roomService.startGame({
-        roomId: this.currentRoom.id,
-        gameId,
-      });
-
-      runInAction(() => {
-        this.currentRoom = updatedRoom;
-      });
+      await this.roomService.startGame({ roomId: this.currentRoom.id });
 
       return true;
     } catch (caughtError) {
+      if (
+        caughtError instanceof RoomServiceError &&
+        caughtError.code === ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED
+      ) {
+        return true;
+      }
+
       this.setServiceError("startGame", caughtError, "Failed to start game");
 
       return false;
     } finally {
       runInAction(() => {
-        this.isLoading = false;
+        this.isStartingGame = false;
       });
     }
   }

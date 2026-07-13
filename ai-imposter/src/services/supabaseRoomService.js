@@ -106,6 +106,27 @@ function toRoomServiceError(error, fallbackMessage) {
     return new RoomServiceError(ROOM_SERVICE_ERRORS.ROOM_NOT_FOUND, "Could not find that room.");
   }
 
+  if (message.startsWith("PLAYERS_NOT_READY")) {
+    return new RoomServiceError(
+      ROOM_SERVICE_ERRORS.PLAYERS_NOT_READY,
+      "All players must be ready before the game can start.",
+    );
+  }
+
+  if (message.startsWith("NOT_ENOUGH_PLAYERS")) {
+    return new RoomServiceError(
+      ROOM_SERVICE_ERRORS.ROOM_NOT_FULL,
+      "Not enough players to start the game.",
+    );
+  }
+
+  if (message.startsWith("NOT_A_MEMBER")) {
+    return new RoomServiceError(
+      ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
+      "You are not a member of this room.",
+    );
+  }
+
   return new RoomServiceError(ROOM_SERVICE_ERRORS.UNKNOWN_ERROR, fallbackMessage);
 }
 
@@ -319,6 +340,30 @@ async function leaveRoom({ roomId, playerId }) {
 }
 
 /**
+ * Starts the game via the start_game RPC. The server validates everything
+ * atomically (room is waiting, caller is a member, >= 2 players, everyone
+ * ready), creates the game in its countdown phase and flips rooms.status
+ * to "countdown" — which reaches all clients through Realtime.
+ *
+ * @returns {Promise<{gameId: string}>}
+ */
+async function startGame({ roomId, totalRounds } = {}) {
+  const params = { p_room_id: roomId };
+
+  if (Number.isInteger(totalRounds) && totalRounds > 0) {
+    params.p_total_rounds = totalRounds;
+  }
+
+  const { data, error } = await supabase.rpc("start_game", params);
+
+  if (error) {
+    throw toRoomServiceError(error, "Failed to start the game.");
+  }
+
+  return { gameId: data };
+}
+
+/**
  * Opens a Realtime channel for one room: player joins/leaves/ready-state
  * changes, and room status changes. Returns an unsubscribe function.
  *
@@ -376,6 +421,7 @@ export default function createSupabaseRoomService() {
     joinRoom,
     setPlayerReady,
     leaveRoom,
+    startGame,
     subscribeToRoom,
   };
 }

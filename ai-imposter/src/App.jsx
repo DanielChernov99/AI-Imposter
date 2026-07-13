@@ -14,7 +14,7 @@ function App() {
         path="/lobby"
         element={
           <ProtectedRoute
-            requiredStatus={ROOM_STATUS.WAITING}
+            allowedStatuses={[ROOM_STATUS.WAITING, ROOM_STATUS.COUNTDOWN]}
             fallbackPath="/game"
           >
             <LobbyPage />
@@ -25,7 +25,7 @@ function App() {
         path="/game"
         element={
           <ProtectedRoute
-            requiredStatus={ROOM_STATUS.IN_GAME}
+            allowedStatuses={[ROOM_STATUS.PLAYING]}
             fallbackPath="/lobby"
           >
             <GamePage />

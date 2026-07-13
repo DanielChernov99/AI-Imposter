@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { observer } from "mobx-react-lite";
 
 import LobbyCard from "../components/lobbyPage/lobbyCard/LobbyCard.jsx";
 import styles from "../styles/LobbyPage.module.css";
@@ -11,23 +12,16 @@ function LobbyPage() {
   const { roomStore } = rootStore;
   const navigate = useNavigate();
 
+  // Room Realtime sync is managed by RootStore for the room's whole
+  // lifetime (lobby -> countdown -> game -> results), so it must not be
+  // stopped when this page unmounts — only refresh the player list here.
   useEffect(() => {
     roomStore.loadCurrentRoomPlayers();
-    roomStore.startRoomRealtimeSync();
-
-    return () => {
-      roomStore.stopRoomRealtimeSync();
-    };
   }, [roomStore]);
 
-  const handleGameStart = async () => {
-    const didStart = await rootStore.startCurrentRoomGame();
-
-    if (didStart) {
-      navigate("/game");
-    }
-  };
-
+  // Game start + navigation are handled automatically: when everyone is
+  // ready a RootStore reaction calls the start_game RPC, and ProtectedRoute
+  // redirects to /game once the room status flips to "playing".
   const handleLeaveRoom = async () => {
     const didLeave = await roomStore.leaveRoom();
 
@@ -38,7 +32,7 @@ function LobbyPage() {
 
   return (
     <main className={styles.page}>
-      <Header onGameStart={handleGameStart} onLeaveRoom={handleLeaveRoom} />
+      <Header onLeaveRoom={handleLeaveRoom} />
       <LobbyCard />
     </main>
   );

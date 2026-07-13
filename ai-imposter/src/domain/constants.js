@@ -13,12 +13,17 @@ export const ROUND_RESULTS_DURATION_SECONDS = 10;
 
 export const TOTAL_ROUNDS = 5;
 
+// Values must match the CHECK constraint on rooms.status in the database.
 export const ROOM_STATUS = Object.freeze({
   WAITING: "waiting",
-  IN_GAME: "in_game",
+  COUNTDOWN: "countdown",
+  PLAYING: "playing",
+  FINISHED: "finished",
 });
 
+// Values must match the CHECK constraint on games.phase in the database.
 export const GAME_PHASE = Object.freeze({
+  COUNTDOWN: "countdown",
   ANSWERING: "answering",
   VOTING: "voting",
   REVEAL: "reveal",
