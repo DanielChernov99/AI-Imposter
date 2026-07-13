@@ -1,5 +1,8 @@
 import { supabase } from "./supabaseClient.js";
-import { GAME_SERVICE_ERRORS, GameServiceError } from "./gameService.js";
+import {
+  GAME_SERVICE_ERRORS,
+  GameServiceError,
+} from "../contracts/gameService.js";
 
 function mapStanding(entry) {
   return {

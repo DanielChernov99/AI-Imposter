@@ -3,7 +3,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import {
   ANSWER_SERVICE_ERRORS,
   AnswerServiceError,
-} from "../services/answerService.js";
+} from "../services/contracts/answerService.js";
 
 export default class AnswerStore {
   hasSubmittedAnswer = false;

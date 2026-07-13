@@ -11,7 +11,7 @@ import { GAME_PHASE } from "../domain/constants.js";
 import {
   GAME_SERVICE_ERRORS,
   GameServiceError,
-} from "../services/gameService.js";
+} from "../services/contracts/gameService.js";
 
 /**
  * Random extra wait (ms) before calling advancePhase, so clients whose

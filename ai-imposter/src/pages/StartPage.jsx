@@ -6,7 +6,7 @@ import styles from "../styles/StartPage.module.css";
 import logoImg from "../assets/images/logo_img.png";
 import logoText from "../assets/images/logo_text.png";
 import { MIN_NICKNAME_LENGTH, MAX_NICKNAME_LENGTH } from "../domain/constants";
-import { ROOM_SERVICE_ERRORS } from "../services/roomService.js";
+import { ROOM_SERVICE_ERRORS } from "../services/contracts/roomService.js";
 import { useState } from "react";
 import { useStores } from "../context/StoreContext.jsx";
 

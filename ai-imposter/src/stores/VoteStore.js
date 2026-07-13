@@ -3,7 +3,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import {
   VOTE_SERVICE_ERRORS,
   VoteServiceError,
-} from "../services/voteService.js";
+} from "../services/contracts/voteService.js";
 
 export default class VoteStore {
   votingOptions = [];

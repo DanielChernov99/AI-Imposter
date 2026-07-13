@@ -3,7 +3,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import {
   REVEAL_SERVICE_ERRORS,
   RevealServiceError,
-} from "../services/revealService.js";
+} from "../services/contracts/revealService.js";
 
 function collectVotes(roundAnswers) {
   return roundAnswers.flatMap((answer) =>

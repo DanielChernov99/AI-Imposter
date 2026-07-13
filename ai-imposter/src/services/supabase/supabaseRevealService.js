@@ -2,7 +2,7 @@ import { supabase } from "./supabaseClient.js";
 import {
   REVEAL_SERVICE_ERRORS,
   RevealServiceError,
-} from "./revealService.js";
+} from "../contracts/revealService.js";
 
 async function getRoundResults({ gameId, roundNumber }) {
   const [answersResult, votesResult] = await Promise.all([

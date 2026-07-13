@@ -1,9 +1,12 @@
-import { TOTAL_ROUNDS } from "../domain/constants.js";
+import { TOTAL_ROUNDS } from "../../domain/constants.js";
 import {
   ANSWER_SERVICE_ERRORS,
   AnswerServiceError,
-} from "./answerService.js";
-import { VOTE_SERVICE_ERRORS, VoteServiceError } from "./voteService.js";
+} from "../contracts/answerService.js";
+import {
+  VOTE_SERVICE_ERRORS,
+  VoteServiceError,
+} from "../contracts/voteService.js";
 
 export default function createMockVoteService({ answerService }) {
   const votes = [];

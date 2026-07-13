@@ -1,7 +1,7 @@
 import {
   QUESTION_SERVICE_ERRORS,
   QuestionServiceError,
-} from "./questionService.js";
+} from "../contracts/questionService.js";
 
 export default function createMockQuestionService() {
   const questions = [

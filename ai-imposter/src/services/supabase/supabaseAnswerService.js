@@ -2,7 +2,7 @@ import { supabase } from "./supabaseClient.js";
 import {
   ANSWER_SERVICE_ERRORS,
   AnswerServiceError,
-} from "./answerService.js";
+} from "../contracts/answerService.js";
 
 const UNIQUE_VIOLATION = "23505";
 

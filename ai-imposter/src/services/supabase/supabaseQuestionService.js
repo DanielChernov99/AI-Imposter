@@ -2,7 +2,7 @@ import { supabase } from "./supabaseClient.js";
 import {
   QUESTION_SERVICE_ERRORS,
   QuestionServiceError,
-} from "./questionService.js";
+} from "../contracts/questionService.js";
 
 // Note: ai_answers is intentionally never selected — the database revokes
 // column-level SELECT on it (migration 017) so players can't identify the

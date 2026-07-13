@@ -1,6 +1,9 @@
-import { createGame as createGameSession } from "../domain/models.js";
-import { GAME_PHASE } from "../domain/constants.js";
-import { GAME_SERVICE_ERRORS, GameServiceError } from "./gameService.js";
+import { createGame as createGameSession } from "../../domain/models.js";
+import { GAME_PHASE } from "../../domain/constants.js";
+import {
+  GAME_SERVICE_ERRORS,
+  GameServiceError,
+} from "../contracts/gameService.js";
 
 export default function createMockGameService() {
   const games = [];

@@ -1,8 +1,8 @@
-import { MAX_ANSWER_LENGTH, TOTAL_ROUNDS } from "../domain/constants.js";
+import { MAX_ANSWER_LENGTH, TOTAL_ROUNDS } from "../../domain/constants.js";
 import {
   ANSWER_SERVICE_ERRORS,
   AnswerServiceError,
-} from "./answerService.js";
+} from "../contracts/answerService.js";
 
 export default function createMockAnswerService() {
   const answers = [];

@@ -1,5 +1,8 @@
 import { supabase } from "./supabaseClient.js";
-import { VOTE_SERVICE_ERRORS, VoteServiceError } from "./voteService.js";
+import {
+  VOTE_SERVICE_ERRORS,
+  VoteServiceError,
+} from "../contracts/voteService.js";
 
 const UNIQUE_VIOLATION = "23505";
 

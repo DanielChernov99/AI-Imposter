@@ -5,9 +5,12 @@ import {
   MIN_PLAYERS,
   ROOM_CODE_LENGTH,
   ROOM_STATUS,
-} from "../domain/constants.js";
+} from "../../domain/constants.js";
 
-import { ROOM_SERVICE_ERRORS, RoomServiceError } from "./roomService.js";
+import {
+  ROOM_SERVICE_ERRORS,
+  RoomServiceError,
+} from "../contracts/roomService.js";
 
 export default function createMockRoomService() {
   const rooms = [];

@@ -3,7 +3,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import {
   QUESTION_SERVICE_ERRORS,
   QuestionServiceError,
-} from "../services/questionService.js";
+} from "../services/contracts/questionService.js";
 
 function toDisplayQuestion(question) {
   return {

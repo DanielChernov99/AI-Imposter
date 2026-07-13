@@ -46,13 +46,15 @@ export async function createAppServices(provider) {
 
   switch (provider) {
     case DATA_PROVIDERS.MOCK: {
-      const { createMockServices } = await import("./createMockServices.js");
+      const { createMockServices } = await import(
+        "./mock/createMockServices.js"
+      );
       services = createMockServices();
       break;
     }
     case DATA_PROVIDERS.SUPABASE: {
       const { createSupabaseServices } = await import(
-        "./createSupabaseServices.js"
+        "./supabase/createSupabaseServices.js"
       );
       services = createSupabaseServices();
       break;

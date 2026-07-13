@@ -9,7 +9,7 @@ import {
 import {
   RoomServiceError,
   ROOM_SERVICE_ERRORS,
-} from "../services/roomService.js";
+} from "../services/contracts/roomService.js";
 import { ROOM_STATUS } from "../domain/constants.js";
 
 export default class RoomStore {
