@@ -18,6 +18,8 @@ export default class RoomStore {
   currentRoomPlayers = [];
   isLoading = false;
   isStartingGame = false;
+  isRequestingPlayAgain = false;
+  playAgainRequested = false;
   error = null;
 
   roomSubscription = null;
@@ -31,12 +33,15 @@ export default class RoomStore {
       currentRoomPlayers: observable,
       isLoading: observable,
       isStartingGame: observable,
+      isRequestingPlayAgain: observable,
+      playAgainRequested: observable,
       error: observable,
 
       joinedPlayersCount: computed,
       isRoomFull: computed,
       areAllPlayersReady: computed,
       canStartGame: computed,
+      hasRequestedPlayAgain: computed,
 
       createRoom: action,
       joinRoom: action,
@@ -46,6 +51,7 @@ export default class RoomStore {
       leaveRoom: action,
       loadCurrentRoomPlayers: action,
       startCurrentGame: action,
+      requestPlayAgain: action,
     });
   }
 
@@ -72,6 +78,13 @@ export default class RoomStore {
       this.currentRoom?.status === ROOM_STATUS.WAITING &&
       this.isRoomFull &&
       this.areAllPlayersReady
+    );
+  }
+
+  get hasRequestedPlayAgain() {
+    return (
+      this.currentRoom?.status === ROOM_STATUS.FINISHED &&
+      this.playAgainRequested
     );
   }
 
@@ -113,6 +126,7 @@ export default class RoomStore {
         this.currentRoom = result.room;
         this.currentPlayer = result.player;
         this.currentRoomPlayers = result.players;
+        this.playAgainRequested = false;
       });
 
       return true;
@@ -170,6 +184,28 @@ export default class RoomStore {
       },
       onRoomChange: (updatedRoom) => {
         runInAction(() => {
+          const returnedToWaiting =
+            this.currentRoom?.status === ROOM_STATUS.FINISHED &&
+            updatedRoom.status === ROOM_STATUS.WAITING;
+
+          if (returnedToWaiting) {
+            this.currentRoomPlayers = this.currentRoomPlayers.map((player) => ({
+              ...player,
+              isReady: false,
+              totalScore: 0,
+            }));
+            this.currentPlayer =
+              this.currentRoomPlayers.find(
+                (player) => player.id === this.currentPlayer?.id,
+              ) ?? this.currentPlayer;
+            this.playAgainRequested = false;
+            this.isRequestingPlayAgain = false;
+
+            if (this.error?.source === "playAgain") {
+              this.error = null;
+            }
+          }
+
           this.currentRoom = updatedRoom;
         });
       },
@@ -257,6 +293,7 @@ export default class RoomStore {
         this.currentRoom = result.room;
         this.currentPlayer = result.player;
         this.currentRoomPlayers = result.players;
+        this.playAgainRequested = false;
       });
 
       return true;
@@ -289,6 +326,8 @@ export default class RoomStore {
         this.currentRoom = null;
         this.currentPlayer = null;
         this.currentRoomPlayers = [];
+        this.playAgainRequested = false;
+        this.isRequestingPlayAgain = false;
         this.error = null;
       });
 
@@ -370,6 +409,59 @@ export default class RoomStore {
     } finally {
       runInAction(() => {
         this.isStartingGame = false;
+      });
+    }
+  }
+
+  async requestPlayAgain() {
+    if (
+      this.isRequestingPlayAgain ||
+      this.isLoading ||
+      this.hasRequestedPlayAgain ||
+      this.currentRoom?.status !== ROOM_STATUS.FINISHED ||
+      !this.currentPlayer
+    ) {
+      return null;
+    }
+
+    this.isRequestingPlayAgain = true;
+    this.error = null;
+
+    try {
+      const result = await this.roomService.requestPlayAgain({
+        roomId: this.currentRoom.id,
+        playerId: this.currentPlayer.id,
+      });
+
+      runInAction(() => {
+        const roomIsStillFinished =
+          this.currentRoom?.status === ROOM_STATUS.FINISHED;
+
+        this.playAgainRequested =
+          roomIsStillFinished && result.optedIn === true;
+
+        if (roomIsStillFinished && result.optedIn && !result.reset) {
+          this.currentPlayer = { ...this.currentPlayer, isReady: true };
+          this.currentRoomPlayers = this.currentRoomPlayers.map((player) =>
+            player.id === this.currentPlayer.id
+              ? this.currentPlayer
+              : player,
+          );
+        }
+      });
+
+      return result;
+    } catch (caughtError) {
+      this.setServiceError(
+        "playAgain",
+        caughtError,
+        "Failed to request Play Again",
+      );
+
+      return null;
+    } finally {
+      runInAction(() => {
+        this.isRequestingPlayAgain = false;
       });
     }
   }

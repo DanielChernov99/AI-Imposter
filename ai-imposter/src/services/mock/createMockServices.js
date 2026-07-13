@@ -6,13 +6,14 @@ import createMockRoomService from "./mockRoomService.js";
 import createMockVoteService from "./mockVoteService.js";
 
 export function createMockServices() {
-  const roomService = createMockRoomService();
+  const gameService = createMockGameService();
+  const roomService = createMockRoomService({ gameService });
   const answerService = createMockAnswerService();
   const voteService = createMockVoteService({ answerService });
 
   return {
     roomService,
-    gameService: createMockGameService(),
+    gameService,
     questionService: createMockQuestionService(),
     answerService,
     voteService,

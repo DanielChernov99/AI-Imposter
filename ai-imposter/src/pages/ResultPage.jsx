@@ -21,6 +21,10 @@ const ResultPage = observer(() => {
     }
   };
 
+  const handlePlayAgain = async () => {
+    await roomStore.requestPlayAgain();
+  };
+
   // Prefer the snapshot taken by the server at the moment the game finished:
   // it still includes players who left the room afterwards. Fall back to the
   // live player list (e.g. if this page is somehow reached mid-game).
@@ -52,7 +56,18 @@ const ResultPage = observer(() => {
       <main className={styles.content}>
         <Podium players={podiumPlayers} />
         <FinalPlayersList players={otherPlayers} />
-        <ResultActions onQuit={handleQuit} isQuitting={roomStore.isLoading} />
+        <ResultActions
+          onPlayAgain={handlePlayAgain}
+          onQuit={handleQuit}
+          hasRequestedPlayAgain={roomStore.hasRequestedPlayAgain}
+          isRequestingPlayAgain={roomStore.isRequestingPlayAgain}
+          isQuitting={roomStore.isLoading}
+          playAgainError={
+            roomStore.error?.source === "playAgain"
+              ? roomStore.error.message
+              : null
+          }
+        />
       </main>
     </Box>
   );

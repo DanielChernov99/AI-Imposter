@@ -145,8 +145,22 @@ function toRoomServiceError(error, fallbackMessage) {
 
   if (message.startsWith("AUTH_REQUIRED")) {
     return new RoomServiceError(
-      ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
-      "Authentication is required to cancel the countdown.",
+      ROOM_SERVICE_ERRORS.AUTH_REQUIRED,
+      "Authentication is required for this room action.",
+    );
+  }
+
+  if (message.startsWith("ROOM_NOT_FINISHED")) {
+    return new RoomServiceError(
+      ROOM_SERVICE_ERRORS.ROOM_NOT_FINISHED,
+      "Play Again is available only after the game has finished.",
+    );
+  }
+
+  if (message.startsWith("GAME_NOT_FINISHED")) {
+    return new RoomServiceError(
+      ROOM_SERVICE_ERRORS.GAME_NOT_FINISHED,
+      "The room does not reference a finished game.",
     );
   }
 
@@ -425,6 +439,23 @@ async function startGame({ roomId, totalRounds } = {}) {
   return { gameId: data };
 }
 
+async function requestPlayAgain({ roomId }) {
+  const { data, error } = await supabase.rpc("request_play_again", {
+    p_room_id: roomId,
+  });
+
+  if (error) {
+    throw toRoomServiceError(error, "Failed to request Play Again.");
+  }
+
+  return {
+    reset: data?.reset === true,
+    optedIn: data?.optedIn === true,
+    optedInCount: Number(data?.optedInCount ?? 0),
+    playerCount: Number(data?.playerCount ?? 0),
+  };
+}
+
 /**
  * Opens a Realtime channel for one room: player joins/leaves/ready-state
  * changes, and room status changes. Returns an unsubscribe function.
@@ -485,6 +516,7 @@ export default function createSupabaseRoomService() {
     cancelGameCountdown,
     leaveRoom,
     startGame,
+    requestPlayAgain,
     subscribeToRoom,
   };
 }

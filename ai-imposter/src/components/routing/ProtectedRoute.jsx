@@ -29,7 +29,10 @@ const ProtectedRoute = observer(function ProtectedRoute({
 
   const { status } = roomStore.currentRoom;
 
-  if (status === ROOM_STATUS.FINISHED) {
+  if (
+    status === ROOM_STATUS.FINISHED &&
+    !allowedStatuses?.includes(ROOM_STATUS.FINISHED)
+  ) {
     return <Navigate to="/result" replace />;
   }
 

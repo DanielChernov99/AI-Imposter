@@ -32,7 +32,17 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/result" element={<ResultPage />} />
+      <Route
+        path="/result"
+        element={
+          <ProtectedRoute
+            allowedStatuses={[ROOM_STATUS.FINISHED]}
+            fallbackPath="/lobby"
+          >
+            <ResultPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

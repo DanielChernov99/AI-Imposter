@@ -1,29 +1,33 @@
-import { Button, Group, Tooltip } from "@mantine/core";
+import { Button, Group, Text } from "@mantine/core";
 import { LogOut, Play } from "lucide-react";
 import styles from "./ResultActions.module.css";
 
-export default function ResultActions({ onQuit, isQuitting = false }) {
+export default function ResultActions({
+  onPlayAgain,
+  onQuit,
+  hasRequestedPlayAgain = false,
+  isRequestingPlayAgain = false,
+  isQuitting = false,
+  playAgainError = null,
+}) {
   return (
     <div className={styles.buttonsContainer}>
       <Group justify="center" gap="xl">
-        {/* Play-again requires server-side support (resetting the room to
-            "waiting" / starting a fresh game) that isn't built yet. */}
-        <Tooltip label="Coming soon" withArrow>
-          <Button
-            radius="xl"
-            size="xl"
-            data-disabled
-            onClick={(event) => event.preventDefault()}
-            classNames={{
-              root: styles.playButton,
-              label: styles.buttonLabel,
-              section: styles.buttonSection,
-            }}
-            leftSection={<Play size={26} fill="white" strokeWidth={0} />}
-          >
-            PLAY AGAIN
-          </Button>
-        </Tooltip>
+        <Button
+          radius="xl"
+          size="xl"
+          onClick={onPlayAgain}
+          loading={isRequestingPlayAgain}
+          disabled={hasRequestedPlayAgain || isQuitting}
+          classNames={{
+            root: styles.playButton,
+            label: styles.buttonLabel,
+            section: styles.buttonSection,
+          }}
+          leftSection={<Play size={26} fill="white" strokeWidth={0} />}
+        >
+          {hasRequestedPlayAgain ? "WAITING..." : "PLAY AGAIN"}
+        </Button>
 
         <Button
           radius="xl"
@@ -31,6 +35,7 @@ export default function ResultActions({ onQuit, isQuitting = false }) {
           variant="outline"
           onClick={onQuit}
           loading={isQuitting}
+          disabled={isRequestingPlayAgain}
           classNames={{
             root: styles.quitButton,
             label: styles.buttonLabel,
@@ -41,6 +46,18 @@ export default function ResultActions({ onQuit, isQuitting = false }) {
           QUIT GAME
         </Button>
       </Group>
+
+      {hasRequestedPlayAgain && (
+        <Text ta="center" mt="md" aria-live="polite">
+          Waiting for other players...
+        </Text>
+      )}
+
+      {playAgainError && (
+        <Text c="red" ta="center" mt="md" role="alert">
+          {playAgainError}
+        </Text>
+      )}
     </div>
   );
 }

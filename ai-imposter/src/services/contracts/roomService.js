@@ -13,6 +13,8 @@
  * startGame({ roomId, totalRounds? }) -> { gameId }
  *   With Supabase this calls the start_game RPC: the server creates the
  *   game in its countdown phase and flips rooms.status to "countdown".
+ * requestPlayAgain({ roomId, playerId })
+ *   -> { reset, optedIn, optedInCount, playerCount }
  * subscribeToRoom({ roomId, onPlayersChange, onRoomChange }) -> unsubscribe
  *
  */
@@ -25,6 +27,9 @@ export const ROOM_SERVICE_ERRORS = Object.freeze({
   ROOM_NOT_FULL: "ROOM_NOT_FULL",
   ROOM_ALREADY_STARTED: "ROOM_ALREADY_STARTED",
   PLAYERS_NOT_READY: "PLAYERS_NOT_READY",
+  ROOM_NOT_FINISHED: "ROOM_NOT_FINISHED",
+  GAME_NOT_FINISHED: "GAME_NOT_FINISHED",
+  AUTH_REQUIRED: "AUTH_REQUIRED",
   NICKNAME_TAKEN: "NICKNAME_TAKEN",
   PLAYER_NOT_FOUND: "PLAYER_NOT_FOUND",
   INVALID_READY_STATE: "INVALID_READY_STATE",

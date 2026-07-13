@@ -53,11 +53,20 @@ export default class RootStore {
           // deadline callback even if the room's finished event arrives first.
           this.gameStore.clearScheduledPhaseAdvance();
         } else if (
-          previousRoomGameState?.status === ROOM_STATUS.COUNTDOWN &&
+          [ROOM_STATUS.COUNTDOWN, ROOM_STATUS.FINISHED].includes(
+            previousRoomGameState?.status,
+          ) &&
           status === ROOM_STATUS.WAITING &&
           !gameId
         ) {
           this.gameStore.resetGame();
+
+          if (previousRoomGameState?.status === ROOM_STATUS.FINISHED) {
+            this.questionStore.resetQuestions();
+            this.answerStore.reset();
+            this.voteStore.reset();
+            this.revealStore.reset();
+          }
         }
       },
     );

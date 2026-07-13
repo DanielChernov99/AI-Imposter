@@ -21,6 +21,7 @@ const ADVANCE_JITTER_MS = 400;
 
 /** Retry delay when the client clock reaches the deadline before the server. */
 const ADVANCE_RETRY_MS = 500;
+const MAX_ADVANCE_RETRIES = 2;
 
 export default class GameStore {
   currentGame = null;
@@ -32,6 +33,7 @@ export default class GameStore {
   phaseTimeoutId = null;
   phaseReactionDisposer = null;
   gameLoadRequestId = 0;
+  phaseAdvanceGeneration = 0;
   activePhaseAdvanceKeys = new Set();
 
   constructor(gameService) {
@@ -162,6 +164,7 @@ export default class GameStore {
       this.phaseReactionDisposer = null;
     }
 
+    this.phaseAdvanceGeneration += 1;
     this.#clearPhaseTimeout();
     this.syncedGameId = null;
   }
@@ -175,6 +178,7 @@ export default class GameStore {
   }
 
   clearScheduledPhaseAdvance() {
+    this.phaseAdvanceGeneration += 1;
     this.#clearPhaseTimeout();
   }
 
@@ -184,6 +188,10 @@ export default class GameStore {
    */
   #schedulePhaseAdvance() {
     this.#clearPhaseTimeout();
+
+    if (this.error?.source === "advance") {
+      this.clearError();
+    }
 
     if (!this.phaseEndsAt || this.currentPhase === GAME_PHASE.FINISHED) {
       return;
@@ -198,6 +206,7 @@ export default class GameStore {
       phase: this.currentPhase,
       round: this.currentRound,
       endsAt: this.phaseEndsAt,
+      generation: this.phaseAdvanceGeneration,
     };
 
     this.phaseTimeoutId = window.setTimeout(() => {
@@ -206,13 +215,23 @@ export default class GameStore {
     }, delay);
   }
 
-  #isCurrentPhase({ gameId, phase, round, endsAt }) {
+  #isCurrentPhase({ gameId, phase, round, endsAt, generation }) {
     return (
       gameId === this.gameId &&
+      gameId === this.syncedGameId &&
       phase === this.currentPhase &&
       round === this.currentRound &&
-      endsAt === this.phaseEndsAt
+      endsAt === this.phaseEndsAt &&
+      generation === this.phaseAdvanceGeneration
     );
+  }
+
+  #schedulePhaseRetry(phaseIdentity, retryAttempt) {
+    this.#clearPhaseTimeout();
+    this.phaseTimeoutId = window.setTimeout(() => {
+      this.phaseTimeoutId = null;
+      void this.advancePhase({ ...phaseIdentity, retryAttempt });
+    }, ADVANCE_RETRY_MS);
   }
 
   /**
@@ -225,9 +244,11 @@ export default class GameStore {
     phase = this.currentPhase,
     round = this.currentRound,
     endsAt = this.phaseEndsAt,
+    generation = this.phaseAdvanceGeneration,
+    retryAttempt = 0,
   } = {}) {
-    const phaseIdentity = { gameId, phase, round, endsAt };
-    const advanceKey = `${gameId}:${round}:${phase}:${endsAt}`;
+    const phaseIdentity = { gameId, phase, round, endsAt, generation };
+    const advanceKey = `${gameId}:${round}:${phase}:${endsAt}:${generation}`;
 
     if (
       !gameId ||
@@ -253,17 +274,52 @@ export default class GameStore {
         result.phase === phase;
 
       if (serverSaysTooEarly) {
-        this.#clearPhaseTimeout();
-        this.phaseTimeoutId = window.setTimeout(() => {
-          this.phaseTimeoutId = null;
-          void this.advancePhase(phaseIdentity);
-        }, ADVANCE_RETRY_MS);
+        if (retryAttempt < MAX_ADVANCE_RETRIES) {
+          this.#schedulePhaseRetry(phaseIdentity, retryAttempt + 1);
+        } else {
+          this.setServiceError(
+            "advance",
+            new GameServiceError(
+              GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
+              "The server did not advance the expired game phase.",
+            ),
+            "Failed to advance the game phase",
+          );
+        }
       }
 
       return result;
-    } catch {
-      // Best effort per client: another client can advance the game, and a
-      // later Realtime update will schedule the next deadline.
+    } catch (caughtError) {
+      const didReload = await this.loadGameById(gameId);
+
+      if (!didReload || !this.#isCurrentPhase(phaseIdentity)) {
+        if (!didReload && this.#isCurrentPhase(phaseIdentity)) {
+          this.setServiceError(
+            "advance",
+            caughtError,
+            "Failed to advance the game phase",
+          );
+        }
+
+        return null;
+      }
+
+      const deadlineHasExpired =
+        new Date(endsAt).getTime() <= Date.now();
+
+      if (
+        deadlineHasExpired &&
+        retryAttempt < MAX_ADVANCE_RETRIES
+      ) {
+        this.#schedulePhaseRetry(phaseIdentity, retryAttempt + 1);
+      } else {
+        this.setServiceError(
+          "advance",
+          caughtError,
+          "Failed to advance the game phase",
+        );
+      }
+
       return null;
     } finally {
       this.activePhaseAdvanceKeys.delete(advanceKey);

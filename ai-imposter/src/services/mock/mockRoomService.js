@@ -4,6 +4,7 @@ import {
   MIN_NICKNAME_LENGTH,
   MIN_PLAYERS,
   ROOM_CODE_LENGTH,
+  GAME_PHASE,
   ROOM_STATUS,
 } from "../../domain/constants.js";
 import {
@@ -11,7 +12,7 @@ import {
   RoomServiceError,
 } from "../contracts/roomService.js";
 
-export default function createMockRoomService() {
+export default function createMockRoomService({ gameService } = {}) {
   const rooms = [];
   const players = [];
 
@@ -280,6 +281,75 @@ export default function createMockRoomService() {
     );
   }
 
+  async function requestPlayAgain({ roomId, playerId }) {
+    const room = await getRoomById(roomId);
+    const playerIndex = findPlayerIndexOrThrow({ roomId, playerId });
+
+    if (room.status !== ROOM_STATUS.FINISHED) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_NOT_FINISHED,
+        "Play Again is available only after the game has finished.",
+      );
+    }
+
+    let activeGame;
+
+    try {
+      activeGame = room.activeGameId
+        ? await gameService?.getGameById(room.activeGameId)
+        : null;
+    } catch {
+      activeGame = null;
+    }
+
+    if (activeGame?.phase !== GAME_PHASE.FINISHED) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.GAME_NOT_FINISHED,
+        "The room does not reference a finished game.",
+      );
+    }
+
+    const roomPlayers = findPlayersByRoomId(roomId);
+
+    // A completed game may still carry the unanimous Ready state that began
+    // its countdown. That state predates replay consent, so normalize it once
+    // before recording the first Play Again request.
+    if (roomPlayers.every((player) => player.isReady)) {
+      for (const player of roomPlayers) {
+        player.isReady = false;
+      }
+    }
+
+    players[playerIndex].isReady = true;
+
+    const optedInCount = roomPlayers.filter((player) => player.isReady).length;
+    const playerCount = roomPlayers.length;
+
+    if (optedInCount < playerCount) {
+      return {
+        reset: false,
+        optedIn: true,
+        optedInCount,
+        playerCount,
+      };
+    }
+
+    for (const player of roomPlayers) {
+      player.totalScore = 0;
+      player.isReady = false;
+    }
+
+    room.status = ROOM_STATUS.WAITING;
+    room.activeGameId = null;
+
+    return {
+      reset: true,
+      optedIn: true,
+      optedInCount,
+      playerCount,
+    };
+  }
+
   function subscribeToRoom() {
     return () => {};
   }
@@ -293,6 +363,7 @@ export default function createMockRoomService() {
     cancelGameCountdown,
     leaveRoom,
     startGame,
+    requestPlayAgain,
     subscribeToRoom,
   };
 }

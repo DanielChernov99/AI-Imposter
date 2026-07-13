@@ -9,6 +9,7 @@ const REQUIRED_SERVICE_METHODS = Object.freeze({
     "leaveRoom",
     "getPlayersByRoomId",
     "startGame",
+    "requestPlayAgain",
     "subscribeToRoom",
   ],
   gameService: ["getGameById", "advancePhase", "subscribeToGame"],
