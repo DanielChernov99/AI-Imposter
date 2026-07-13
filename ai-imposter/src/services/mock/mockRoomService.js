@@ -207,6 +207,36 @@ export default function createMockRoomService() {
     return players[playerIndex];
   }
 
+  async function cancelGameCountdown({ roomId, playerId }) {
+    const room = await getRoomById(roomId);
+    const playerIndex = findPlayerIndexOrThrow({ roomId, playerId });
+
+    if (
+      room.status === ROOM_STATUS.WAITING &&
+      room.activeGameId === null
+    ) {
+      players[playerIndex].isReady = false;
+
+      return { room, player: players[playerIndex] };
+    }
+
+    if (
+      room.status !== ROOM_STATUS.COUNTDOWN ||
+      !room.activeGameId
+    ) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
+        "The countdown can no longer be cancelled.",
+      );
+    }
+
+    players[playerIndex].isReady = false;
+    room.status = ROOM_STATUS.WAITING;
+    room.activeGameId = null;
+
+    return { room, player: players[playerIndex] };
+  }
+
   async function leaveRoom({ roomId, playerId }) {
     await getRoomById(roomId);
 
@@ -258,6 +288,7 @@ export default function createMockRoomService() {
     getPlayersByRoomId,
     joinRoom,
     setPlayerReady,
+    cancelGameCountdown,
     leaveRoom,
     startGame,
     subscribeToRoom,

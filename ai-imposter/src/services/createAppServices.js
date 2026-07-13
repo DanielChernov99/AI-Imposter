@@ -5,6 +5,7 @@ const REQUIRED_SERVICE_METHODS = Object.freeze({
     "createRoom",
     "joinRoom",
     "setPlayerReady",
+    "cancelGameCountdown",
     "leaveRoom",
     "getPlayersByRoomId",
     "startGame",

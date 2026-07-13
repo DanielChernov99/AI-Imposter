@@ -142,6 +142,23 @@ function toRoomServiceError(error, fallbackMessage) {
     );
   }
 
+  if (message.startsWith("AUTH_REQUIRED")) {
+    return new RoomServiceError(
+      ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+      "Authentication is required to cancel the countdown.",
+    );
+  }
+
+  if (
+    message.startsWith("COUNTDOWN_NOT_ACTIVE") ||
+    message.startsWith("COUNTDOWN_GAME_NOT_FOUND")
+  ) {
+    return new RoomServiceError(
+      ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
+      "The countdown can no longer be cancelled.",
+    );
+  }
+
   return new RoomServiceError(ROOM_SERVICE_ERRORS.UNKNOWN_ERROR, fallbackMessage);
 }
 
@@ -335,6 +352,35 @@ async function setPlayerReady({ roomId, playerId, isReady }) {
   return mapPlayer(data);
 }
 
+async function cancelGameCountdown({ roomId, playerId }) {
+  const { error } = await supabase.rpc("cancel_game_countdown", {
+    p_room_id: roomId,
+  });
+
+  if (error) {
+    throw toRoomServiceError(error, "Failed to cancel the countdown.");
+  }
+
+  const [room, playerResult] = await Promise.all([
+    getRoomById(roomId),
+    supabase
+      .from("players")
+      .select()
+      .eq("id", playerId)
+      .eq("room_id", roomId)
+      .maybeSingle(),
+  ]);
+
+  if (playerResult.error || !playerResult.data) {
+    throw new RoomServiceError(
+      ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
+      `player with id: ${playerId} in roomID: ${roomId} was not found`,
+    );
+  }
+
+  return { room, player: mapPlayer(playerResult.data) };
+}
+
 async function leaveRoom({ roomId, playerId }) {
   const { data, error } = await supabase
     .from("players")
@@ -435,6 +481,7 @@ export default function createSupabaseRoomService() {
     getPlayersByRoomId,
     joinRoom,
     setPlayerReady,
+    cancelGameCountdown,
     leaveRoom,
     startGame,
     subscribeToRoom,

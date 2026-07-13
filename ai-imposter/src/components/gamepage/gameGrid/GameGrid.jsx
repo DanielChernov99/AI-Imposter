@@ -1,10 +1,11 @@
-import { Grid } from "@mantine/core";
+import { Button, Grid } from "@mantine/core";
 import { observer } from "mobx-react-lite";
 
 import VotingCard from "../votingCard/VotingCard";
 import ResultCard from "../resultCard/ResultCard";
 import { useStores } from "../../../context/StoreContext.jsx";
 import { GAME_PHASE } from "../../../domain/constants.js";
+import styles from "./GameGrid.module.css";
 
 const CARD_COLORS = [
   "purple",
@@ -26,32 +27,72 @@ const GameGrid = observer(({ phase }) => {
   );
 
   if (phase === GAME_PHASE.VOTING) {
+    const selectedVotingAnswer = voteStore.votingOptions.find(
+      (answer) => answer.id === voteStore.selectedAnswerId,
+    );
+    const hasValidSelection =
+      Boolean(selectedVotingAnswer) &&
+      selectedVotingAnswer.isValid !== false &&
+      selectedVotingAnswer.id !== answerStore.submittedAnswerId;
+
+    const handleSubmitVote = () => {
+      if (
+        !hasValidSelection ||
+        voteStore.hasVoted ||
+        voteStore.isSubmitting
+      ) {
+        return;
+      }
+
+      void rootStore.castCurrentVote(voteStore.selectedAnswerId);
+    };
+
     return (
-      <Grid>
-        {voteStore.votingOptions.map((votingAnswer, index) => (
-          <Grid.Col key={votingAnswer.id} span={{ base: 12, sm: 6, md: 4 }}>
-            <VotingCard
-              answer={votingAnswer.text}
-              color={CARD_COLORS[index % CARD_COLORS.length]}
-              isSelected={
-                voteStore.selectedAnswerId === votingAnswer.id ||
-                voteStore.submittedVoteAnswerId === votingAnswer.id
-              }
-              isOwn={answerStore.submittedAnswerId === votingAnswer.id}
-              isValid
-              onClick={
-                voteStore.hasVoted || voteStore.isSubmitting
-                  ? undefined
-                  : () => {
-                      if (voteStore.selectAnswer(votingAnswer.id)) {
-                        void rootStore.castCurrentVote(votingAnswer.id);
-                      }
-                    }
-              }
-            />
-          </Grid.Col>
-        ))}
-      </Grid>
+      <>
+        <Grid>
+          {voteStore.votingOptions.map((votingAnswer, index) => {
+            const isOwn =
+              answerStore.submittedAnswerId === votingAnswer.id;
+            const isValid = votingAnswer.isValid !== false;
+
+            return (
+              <Grid.Col
+                key={votingAnswer.id}
+                span={{ base: 12, sm: 6, md: 4 }}
+              >
+                <VotingCard
+                  answer={votingAnswer.text}
+                  color={CARD_COLORS[index % CARD_COLORS.length]}
+                  isSelected={
+                    voteStore.selectedAnswerId === votingAnswer.id
+                  }
+                  isOwn={isOwn}
+                  isValid={isValid}
+                  onClick={
+                    voteStore.hasVoted ||
+                    voteStore.isSubmitting ||
+                    isOwn ||
+                    !isValid
+                      ? undefined
+                      : () => voteStore.selectAnswer(votingAnswer.id)
+                  }
+                />
+              </Grid.Col>
+            );
+          })}
+        </Grid>
+
+        <Button
+          className={styles.submitVoteButton}
+          onClick={handleSubmitVote}
+          disabled={
+            !hasValidSelection || voteStore.hasVoted || voteStore.isSubmitting
+          }
+          loading={voteStore.isSubmitting}
+        >
+          {voteStore.hasVoted ? "VOTE SUBMITTED" : "SUBMIT VOTE"}
+        </Button>
+      </>
     );
   }
 

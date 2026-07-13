@@ -33,6 +33,7 @@ function LobbyCard() {
 
         <LobbyReadyButton
           isReady={currentPlayer?.isReady ?? false}
+          isLoading={roomStore.isLoading}
           onClick={handleReadyClick}
         />
 

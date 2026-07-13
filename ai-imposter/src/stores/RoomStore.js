@@ -190,6 +190,26 @@ export default class RoomStore {
     this.isLoading = true;
     this.error = null;
     try {
+      if (
+        this.currentRoom.status === ROOM_STATUS.COUNTDOWN &&
+        isReady === false
+      ) {
+        const result = await this.roomService.cancelGameCountdown({
+          roomId: this.currentRoom.id,
+          playerId: this.currentPlayer.id,
+        });
+
+        runInAction(() => {
+          this.currentRoom = result.room;
+          this.currentPlayer = result.player;
+          this.currentRoomPlayers = this.currentRoomPlayers.map((player) =>
+            player.id === result.player.id ? result.player : player,
+          );
+        });
+
+        return true;
+      }
+
       const updatedPlayer = await this.roomService.setPlayerReady({
         roomId: this.currentRoom.id,
         playerId: this.currentPlayer.id,
@@ -207,7 +227,9 @@ export default class RoomStore {
       this.setServiceError(
         "ready",
         caughtError,
-        "Failed to update ready state",
+        this.currentRoom?.status === ROOM_STATUS.COUNTDOWN
+          ? "Failed to cancel the countdown"
+          : "Failed to update ready state",
       );
       return false;
     } finally {

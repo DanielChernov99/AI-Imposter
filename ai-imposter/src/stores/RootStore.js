@@ -45,9 +45,15 @@ export default class RootStore {
         gameId: this.roomStore.currentRoom?.activeGameId,
         status: this.roomStore.currentRoom?.status,
       }),
-      ({ gameId, status }) => {
+      ({ gameId, status }, previousRoomGameState) => {
         if (gameId && GAME_ACTIVE_ROOM_STATUSES.includes(status)) {
           this.gameStore.startGameSync(gameId);
+        } else if (
+          previousRoomGameState?.status === ROOM_STATUS.COUNTDOWN &&
+          status === ROOM_STATUS.WAITING &&
+          !gameId
+        ) {
+          this.gameStore.resetGame();
         }
       },
     );

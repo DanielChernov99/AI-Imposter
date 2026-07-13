@@ -8,6 +8,7 @@
  * getRoomById(roomId)
  * getPlayersByRoomId(roomId)
  * setPlayerReady({ roomId, playerId, isReady })
+ * cancelGameCountdown({ roomId, playerId }) -> { room, player }
  * leaveRoom({ roomId, playerId })
  * startGame({ roomId, totalRounds? }) -> { gameId }
  *   With Supabase this calls the start_game RPC: the server creates the
