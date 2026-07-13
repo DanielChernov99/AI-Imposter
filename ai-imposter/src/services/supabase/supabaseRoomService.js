@@ -79,6 +79,17 @@ function avatarUrlFor(playerId) {
   return `https://api.dicebear.com/9.x/bottts/svg?seed=${playerId}`;
 }
 
+async function ensurePlayerSession(fallbackMessage) {
+  try {
+    return await ensureAnonymousSession();
+  } catch {
+    throw new RoomServiceError(
+      ROOM_SERVICE_ERRORS.UNKNOWN_ERROR,
+      fallbackMessage,
+    );
+  }
+}
+
 /**
  * Translates a Postgres/PostgREST error into a RoomServiceError. The
  * `players_enforce_join_rules` trigger (see migration 006) raises plain
@@ -187,7 +198,7 @@ async function createRoom({ nickname, capacity }) {
   const cleanNickname = validateNickname(nickname);
   validateCapacity(capacity);
 
-  const authUserId = await ensureAnonymousSession();
+  const authUserId = await ensurePlayerSession("Failed to create room.");
 
   const room = await insertRoomWithUniqueCode(capacity);
 
@@ -251,7 +262,7 @@ async function joinRoom({ nickname, roomCode }) {
   const cleanNickname = validateNickname(nickname);
   const cleanRoomCode = typeof roomCode === "string" ? roomCode.trim() : "";
 
-  const authUserId = await ensureAnonymousSession();
+  const authUserId = await ensurePlayerSession("Failed to join room.");
 
   const { data: roomRow, error: roomError } = await supabase
     .from("rooms")

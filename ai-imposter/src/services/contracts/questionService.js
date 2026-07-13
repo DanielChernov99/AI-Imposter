@@ -5,6 +5,7 @@
  *
  * getQuestionById(questionId)
  * getRandomQuestion({ excludedQuestionIds })
+ *   -> display-safe Question objects containing only id and text
  *
  */
 

@@ -6,7 +6,6 @@ import {
   ROOM_CODE_LENGTH,
   ROOM_STATUS,
 } from "../../domain/constants.js";
-
 import {
   ROOM_SERVICE_ERRORS,
   RoomServiceError,
@@ -104,6 +103,7 @@ export default function createMockRoomService() {
       nickname: cleanNickname,
       avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${playerId}`,
       isReady: false,
+      totalScore: 0,
     };
 
     rooms.push(room);
@@ -176,6 +176,7 @@ export default function createMockRoomService() {
       nickname: cleanNickname,
       avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${playerId}`,
       isReady: false,
+      totalScore: 0,
     };
     players.push(newPlayer);
     return {

@@ -1,4 +1,5 @@
 import { supabase } from "./supabaseClient.js";
+import { MAX_ANSWER_LENGTH } from "../../domain/constants.js";
 import {
   ANSWER_SERVICE_ERRORS,
   AnswerServiceError,
@@ -15,10 +16,10 @@ async function submitPlayerAnswer({
 }) {
   const cleanText = typeof text === "string" ? text.trim() : "";
 
-  if (!cleanText) {
+  if (!cleanText || cleanText.length > MAX_ANSWER_LENGTH) {
     throw new AnswerServiceError(
       ANSWER_SERVICE_ERRORS.INVALID_ANSWER_TEXT,
-      "Answer text must be a non-empty string.",
+      `Answer must contain between 1 and ${MAX_ANSWER_LENGTH} characters.`,
     );
   }
 
@@ -48,7 +49,16 @@ async function submitPlayerAnswer({
     );
   }
 
-  return { id: data.id, text: cleanText };
+  return {
+    id: data.id,
+    gameId,
+    roundNumber,
+    questionId,
+    playerId,
+    text: cleanText,
+    isValid: true,
+    isAi: false,
+  };
 }
 
 export default function createSupabaseAnswerService() {

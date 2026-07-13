@@ -4,6 +4,7 @@
  * Every Answer Service implementation should expose:
  *
  * submitPlayerAnswer({ gameId, roundNumber, questionId, playerId, text })
+ *   -> Answer
  */
 
 export const ANSWER_SERVICE_ERRORS = Object.freeze({

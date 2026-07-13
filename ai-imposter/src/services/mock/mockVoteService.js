@@ -141,7 +141,7 @@ export default function createMockVoteService({ answerService }) {
 
     votes.push(vote);
 
-    return vote;
+    return true;
   }
 
   async function getVotingAnswers({ gameId, roundNumber }) {

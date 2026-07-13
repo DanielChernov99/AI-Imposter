@@ -6,6 +6,7 @@
  * getVotingAnswers({ gameId, roundNumber, playerId })
  *   -> [{ id, text }] without answer ownership or AI metadata.
  * submitVote({ gameId, roundNumber, voterPlayerId, answerId })
+ *   -> true
  */
 
 export const VOTE_SERVICE_ERRORS = Object.freeze({

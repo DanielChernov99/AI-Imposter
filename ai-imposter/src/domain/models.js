@@ -5,10 +5,11 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  *
  * @typedef {Object} Player
  * @property {string} id
- * @property {string} roomID
+ * @property {string} roomId
  * @property {string} nickname
- * @property {string} avatarUrl
+ * @property {string | null} avatarUrl
  * @property {boolean} isReady
+ * @property {number} totalScore
  */
 
 /**
@@ -20,7 +21,7 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  * @property {string} id
  * @property {string} code
  * @property {number} capacity
- * @property {string} status - One of the ROOM_STATUS values.
+ * @property {string} status
  * @property {string | null} activeGameId
  */
 
@@ -30,19 +31,21 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  * @typedef {Object} Game
  * @property {string} id
  * @property {string} roomId
- * @property {string} phase - One of the GAME_PHASE values.
+ * @property {string} phase
  * @property {number} currentRound
  * @property {number} totalRounds
- * @property {string} currentQuestionId
+ * @property {string | null} currentQuestionId
+ * @property {string | null} phaseStartedAt
+ * @property {string | null} phaseEndsAt
+ * @property {Array<Object> | null} finalStandings
  */
 
 /**
- * A question and its prepared AI answer.
+ * A display-safe question. Prepared AI-answer data is deliberately excluded.
  *
  * @typedef {Object} Question
  * @property {string} id
  * @property {string} text
- * @property {string} aiAnswer
  */
 
 /**
@@ -70,13 +73,26 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  * @property {string} answerId
  */
 
-export function createGame({ id, roomId, currentQuestionId }) {
+export function createGame({
+  id,
+  roomId,
+  phase = GAME_PHASE.ANSWERING,
+  currentRound = 1,
+  totalRounds = TOTAL_ROUNDS,
+  currentQuestionId = null,
+  phaseStartedAt = null,
+  phaseEndsAt = null,
+  finalStandings = null,
+}) {
   return {
     id,
     roomId,
-    phase: GAME_PHASE.ANSWERING,
-    currentRound: 1,
-    totalRounds: TOTAL_ROUNDS,
+    phase,
+    currentRound,
+    totalRounds,
     currentQuestionId,
+    phaseStartedAt,
+    phaseEndsAt,
+    finalStandings,
   };
 }

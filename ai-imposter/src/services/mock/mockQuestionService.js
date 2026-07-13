@@ -8,32 +8,26 @@ export default function createMockQuestionService() {
     {
       id: "late-to-work",
       text: "What is the worst excuse for being late to work?",
-      aiAnswer: "My alarm clock entered a different time zone overnight.",
     },
     {
       id: "useless-superpower",
       text: "What would be the least useful superpower?",
-      aiAnswer: "The ability to know exactly when toast has gone cold.",
     },
     {
       id: "office-rule",
       text: "What is a strange new rule for the office?",
-      aiAnswer: "Every meeting must begin with a dramatic weather report.",
     },
     {
       id: "robot-advice",
       text: "What is the worst advice a robot could give you?",
-      aiAnswer: "Have you tried turning your personality off and on again?",
     },
     {
       id: "treasure-chest",
       text: "What is the most disappointing thing to find in a treasure chest?",
-      aiAnswer: "A note explaining that the real treasure was paperwork.",
     },
     {
       id: "time-travel-slogan",
       text: "What is a terrible slogan for a time travel agency?",
-      aiAnswer: "We will get you there eventually, probably yesterday.",
     },
   ];
 
