@@ -16,8 +16,9 @@
   display: flex;
   margin-inline: auto;
   border-radius: 20px;
-  background: linear-gradient(90deg, var(--primary), var(--accent-pink));
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #ec4899 100%);
   box-shadow: var(--glow-purple-soft), var(--glow-pink-soft);
+  border: none;
 }
 .submit-button:hover {
   background: linear-gradient(90deg, var(--primary-hover), var(--accent-pink));
