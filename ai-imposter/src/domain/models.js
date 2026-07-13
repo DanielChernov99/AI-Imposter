@@ -10,6 +10,7 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  * @property {string | null} avatarUrl
  * @property {boolean} isReady
  * @property {number} totalScore
+ * @property {string | null} joinedAt
  */
 
 /**
@@ -71,6 +72,36 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  * @property {number} roundNumber
  * @property {string} voterPlayerId
  * @property {string} answerId
+ */
+
+/**
+ * A human player's points earned in one round.
+ *
+ * @typedef {Object} RoundPoint
+ * @property {string} playerId
+ * @property {string} nickname
+ * @property {string | null} avatarUrl
+ * @property {number} pointsEarned
+ */
+
+/**
+ * A human player's cumulative standing.
+ *
+ * @typedef {Object} Standing
+ * @property {string} playerId
+ * @property {string} nickname
+ * @property {string | null} avatarUrl
+ * @property {number} totalScore
+ * @property {number} rank
+ */
+
+/**
+ * All display data required by the Reveal phase.
+ *
+ * @typedef {Object} RoundResult
+ * @property {Array<Object>} answers
+ * @property {Array<RoundPoint>} roundPoints
+ * @property {Array<Standing>} leaderboard
  */
 
 export function createGame({

@@ -17,7 +17,11 @@ export default function RoundPoints({ players = [] }) {
 
       <Stack gap={0}>
         {players.map((player, index) => (
-          <RoundPointPlayer key={player.id} player={player} rank={index + 1} />
+          <RoundPointPlayer
+            key={player.playerId}
+            player={player}
+            rank={index + 1}
+          />
         ))}
       </Stack>
     </Card>

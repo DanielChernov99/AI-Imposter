@@ -3,8 +3,12 @@
  *
  * Every Reveal Service implementation should expose:
  *
- * getRoundResults({ gameId, roundNumber })
- *   -> [{ id, text, isAi, isValid, playerId, voterPlayerIds }]
+ * getRoundResults({ gameId, roundNumber, roomId })
+ *   -> {
+ *     answers: [{ id, text, isAi, isValid, playerId, voterPlayerIds }],
+ *     roundPoints: [{ playerId, nickname, avatarUrl, pointsEarned }],
+ *     leaderboard: [{ playerId, nickname, avatarUrl, totalScore, rank }]
+ *   }
  */
 
 export const REVEAL_SERVICE_ERRORS = Object.freeze({

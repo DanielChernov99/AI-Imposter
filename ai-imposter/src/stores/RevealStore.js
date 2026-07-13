@@ -66,25 +66,32 @@ export default class RevealStore {
     }
   }
 
-  async loadRoundReveal({ gameId, roundNumber }) {
-    if (this.isLoading || !gameId) {
+  async loadRoundReveal({ gameId, roundNumber, roomId }) {
+    if (this.isLoading || !gameId || !roomId) {
       return false;
     }
 
     const requestId = ++this.revealRequestId;
     this.isLoading = true;
     this.error = null;
+    this.roundAnswers = [];
+    this.votes = [];
+    this.roundPoints = [];
+    this.leaderboard = [];
 
     try {
-      const roundAnswers = await this.revealService.getRoundResults({
+      const roundResult = await this.revealService.getRoundResults({
         gameId,
         roundNumber,
+        roomId,
       });
 
       if (requestId === this.revealRequestId) {
         runInAction(() => {
-          this.roundAnswers = roundAnswers;
-          this.votes = collectVotes(roundAnswers);
+          this.roundAnswers = [...roundResult.answers];
+          this.votes = collectVotes(roundResult.answers);
+          this.roundPoints = [...roundResult.roundPoints];
+          this.leaderboard = [...roundResult.leaderboard];
         });
       }
 
@@ -119,13 +126,13 @@ export default class RevealStore {
     this.roundAnswers = [];
     this.votes = [];
     this.roundPoints = [];
+    this.leaderboard = [];
     this.isLoading = false;
     this.error = null;
   }
 
   reset() {
     this.resetForRound();
-    this.leaderboard = [];
     this.finalStandings = [];
   }
 }

@@ -104,6 +104,7 @@ export default function createMockRoomService() {
       avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${playerId}`,
       isReady: false,
       totalScore: 0,
+      joinedAt: new Date().toISOString(),
     };
 
     rooms.push(room);
@@ -177,6 +178,7 @@ export default function createMockRoomService() {
       avatarUrl: `https://api.dicebear.com/9.x/bottts/svg?seed=${playerId}`,
       isReady: false,
       totalScore: 0,
+      joinedAt: new Date().toISOString(),
     };
     players.push(newPlayer);
     return {

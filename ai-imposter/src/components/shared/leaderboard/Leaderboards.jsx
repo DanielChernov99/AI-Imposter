@@ -26,8 +26,8 @@ export default function Leaderboards({ players = [] }) {
       </Group>
 
       <Stack gap={0}>
-        {players.map((player, index) => (
-          <LeaderboardPlayer key={player.id} player={player} rank={index + 1} />
+        {players.map((player) => (
+          <LeaderboardPlayer key={player.playerId} player={player} />
         ))}
       </Stack>
 

@@ -3,7 +3,7 @@ import styles from "./RoundPointPlayer.module.css";
 import star from "../../../assets/icons/star.svg";
 
 export default function RoundPointPlayer({ player, rank }) {
-  const hasPoints = player.points > 0;
+  const hasPoints = player.pointsEarned > 0;
 
   const rankClassName = [
     styles.rank,
@@ -29,7 +29,7 @@ export default function RoundPointPlayer({ player, rank }) {
         <Box className={rankClassName}>{rank}</Box>
 
         <Avatar
-          src={player.img}
+          src={player.avatarUrl}
           alt={player.nickname}
           size={38}
           radius="xl"
@@ -42,7 +42,7 @@ export default function RoundPointPlayer({ player, rank }) {
       </Group>
 
       <Group className={styles.score} gap={6} wrap="nowrap">
-        <Text className={pointsClassName}>+{player.points}</Text>
+        <Text className={pointsClassName}>+{player.pointsEarned}</Text>
         <img src={star} alt="star" className={starClassName} />
       </Group>
     </Group>

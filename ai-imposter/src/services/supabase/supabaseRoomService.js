@@ -72,6 +72,7 @@ function mapPlayer(dbPlayer) {
     avatarUrl: dbPlayer.avatar_url,
     isReady: dbPlayer.is_ready,
     totalScore: dbPlayer.total_score ?? 0,
+    joinedAt: dbPlayer.joined_at ?? null,
   };
 }
 

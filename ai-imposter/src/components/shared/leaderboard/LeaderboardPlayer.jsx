@@ -2,7 +2,8 @@ import { Group, Box, Avatar, Text } from "@mantine/core";
 import styles from "./LeaderboardPlayer.module.css";
 import star from "../../../assets/icons/star.svg";
 
-export default function LeaderboardPlayer({ player, rank }) {
+export default function LeaderboardPlayer({ player }) {
+  const { rank } = player;
   const rankClassName =
     rank <= 3 ? styles.rank : `${styles.rank} ${styles.rankMuted}`;
 
@@ -12,7 +13,7 @@ export default function LeaderboardPlayer({ player, rank }) {
         <Box className={rankClassName}>{rank}</Box>
 
         <Avatar
-          src={player.img}
+          src={player.avatarUrl}
           alt={player.nickname}
           size={56}
           radius="xl"
@@ -25,7 +26,7 @@ export default function LeaderboardPlayer({ player, rank }) {
       </Group>
 
       <Group className={styles.score} gap={10} wrap="nowrap">
-        <Text className={styles.points}>{player.points}</Text>
+        <Text className={styles.points}>{player.totalScore}</Text>
         <img src={star} alt="star" className={styles.star} />
       </Group>
     </Group>

@@ -94,6 +94,11 @@ export default class RootStore {
           this.answerStore.resetForRound();
           this.voteStore.resetForRound();
           this.revealStore.resetForRound();
+        } else if (
+          previousGameState?.phase === GAME_PHASE.REVEAL &&
+          phase !== GAME_PHASE.REVEAL
+        ) {
+          this.revealStore.resetForRound();
         }
 
         if (
@@ -115,7 +120,11 @@ export default class RootStore {
         }
 
         if (enteredPhase && phase === GAME_PHASE.REVEAL) {
-          void this.revealStore.loadRoundReveal({ gameId, roundNumber });
+          void this.revealStore.loadRoundReveal({
+            gameId,
+            roundNumber,
+            roomId: this.roomStore.currentRoom?.id,
+          });
         }
 
         const finalStandingsChanged =

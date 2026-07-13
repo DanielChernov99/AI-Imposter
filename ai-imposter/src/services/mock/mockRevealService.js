@@ -1,14 +1,18 @@
+import { buildRoundResult } from "../../domain/roundResult.js";
+
 export default function createMockRevealService({
   answerService,
   voteService,
+  roomService,
 }) {
-  async function getRoundResults({ gameId, roundNumber }) {
-    const [answers, votes] = await Promise.all([
+  async function getRoundResults({ gameId, roundNumber, roomId }) {
+    const [answers, votes, players] = await Promise.all([
       answerService.getAnswersByRound({ gameId, roundNumber }),
       voteService.getVotesByRound({ gameId, roundNumber }),
+      roomService.getPlayersByRoomId(roomId),
     ]);
 
-    return answers.map((answer) => ({
+    const roundAnswers = answers.map((answer) => ({
       id: answer.id,
       text: answer.text,
       isAi: answer.isAi,
@@ -18,6 +22,8 @@ export default function createMockRevealService({
         .filter((vote) => vote.answerId === answer.id)
         .map((vote) => vote.voterPlayerId),
     }));
+
+    return buildRoundResult({ answers: roundAnswers, players });
   }
 
   return { getRoundResults };
