@@ -1,3 +1,5 @@
+import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
+
 /**
  * A player currently connected to a room.
  *
@@ -22,4 +24,25 @@
  * @property {string | null} activeGameId
  */
 
-export {};
+/**
+ * One five-round game session belonging to a room.
+ *
+ * @typedef {Object} Game
+ * @property {string} id
+ * @property {string} roomId
+ * @property {"answering" | "voting" | "reveal" | "finished"} phase
+ * @property {number} currentRound
+ * @property {number} totalRounds
+ * @property {string | null} currentQuestionId
+ */
+
+export function createGame({ id, roomId }) {
+  return {
+    id,
+    roomId,
+    phase: GAME_PHASE.ANSWERING,
+    currentRound: 1,
+    totalRounds: TOTAL_ROUNDS,
+    currentQuestionId: null,
+  };
+}

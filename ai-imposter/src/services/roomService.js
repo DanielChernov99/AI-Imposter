@@ -9,14 +9,8 @@
  * getPlayersByRoomId(roomId)
  * setPlayerReady({ roomId, playerId, isReady })
  * leaveRoom({ roomId, playerId })
+ * startGame({ roomId })
  *
- * createRoom and joinRoom should return:
- *
- * {
- *   room,
- *   player,
- *   players
- * }
  */
 
 export const ROOM_SERVICE_ERRORS = Object.freeze({
@@ -24,7 +18,9 @@ export const ROOM_SERVICE_ERRORS = Object.freeze({
   INVALID_CAPACITY: "INVALID_CAPACITY",
   ROOM_NOT_FOUND: "ROOM_NOT_FOUND",
   ROOM_FULL: "ROOM_FULL",
+  ROOM_NOT_FULL: "ROOM_NOT_FULL",
   ROOM_ALREADY_STARTED: "ROOM_ALREADY_STARTED",
+  PLAYERS_NOT_READY: "PLAYERS_NOT_READY",
   NICKNAME_TAKEN: "NICKNAME_TAKEN",
   PLAYER_NOT_FOUND: "PLAYER_NOT_FOUND",
   INVALID_READY_STATE: "INVALID_READY_STATE",

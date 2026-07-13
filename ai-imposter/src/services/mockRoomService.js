@@ -13,6 +13,34 @@ export default function createMockRoomService() {
   const rooms = [];
   const players = [];
 
+  function findPlayersByRoomId(roomId) {
+    return players.filter((player) => player.roomId === roomId);
+  }
+
+  function assertRoomWaiting(room, errorMessage) {
+    if (room.status !== ROOM_STATUS.WAITING) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
+        errorMessage,
+      );
+    }
+  }
+
+  function findPlayerIndexOrThrow({ roomId, playerId }) {
+    const playerIndex = players.findIndex(
+      (player) => player.id === playerId && player.roomId === roomId,
+    );
+
+    if (playerIndex === -1) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
+        `player with id: ${playerId} in roomID: ${roomId} was not found`,
+      );
+    }
+
+    return playerIndex;
+  }
+
   function validateNickname(nickname) {
     const cleanNickname = typeof nickname === "string" ? nickname.trim() : "";
 
@@ -101,7 +129,7 @@ export default function createMockRoomService() {
   async function getPlayersByRoomId(roomId) {
     await getRoomById(roomId);
 
-    return players.filter((player) => player.roomId === roomId);
+    return findPlayersByRoomId(roomId);
   }
 
   async function joinRoom({ nickname, roomCode }) {
@@ -116,14 +144,9 @@ export default function createMockRoomService() {
         `No such room with code ${cleanRoomCode}`,
       );
     }
-    if (room.status !== ROOM_STATUS.WAITING) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
-        "Game already started in this room",
-      );
-    }
+    assertRoomWaiting(room, "Game already started in this room");
 
-    const roomPlayers = players.filter((player) => player.roomId === room.id);
+    const roomPlayers = findPlayersByRoomId(room.id);
 
     if (roomPlayers.length >= room.capacity) {
       throw new RoomServiceError(
@@ -162,12 +185,10 @@ export default function createMockRoomService() {
   async function setPlayerReady({ roomId, playerId, isReady }) {
     const room = await getRoomById(roomId);
 
-    if (room.status !== ROOM_STATUS.WAITING) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED,
-        "Cannot change ready state after the game has started",
-      );
-    }
+    assertRoomWaiting(
+      room,
+      "Cannot change ready state after the game has started",
+    );
 
     if (typeof isReady !== "boolean") {
       throw new RoomServiceError(
@@ -176,16 +197,7 @@ export default function createMockRoomService() {
       );
     }
 
-    const playerIndex = players.findIndex(
-      (player) => player.id === playerId && player.roomId === roomId,
-    );
-
-    if (playerIndex === -1) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
-        `player with id: ${playerId} in roomID: ${roomId} was not found`,
-      );
-    }
+    const playerIndex = findPlayerIndexOrThrow({ roomId, playerId });
     players[playerIndex].isReady = isReady;
 
     return players[playerIndex];
@@ -194,20 +206,41 @@ export default function createMockRoomService() {
   async function leaveRoom({ roomId, playerId }) {
     await getRoomById(roomId);
 
-    const playerIndex = players.findIndex(
-      (player) => player.id === playerId && player.roomId === roomId,
-    );
-
-    if (playerIndex === -1) {
-      throw new RoomServiceError(
-        ROOM_SERVICE_ERRORS.PLAYER_NOT_FOUND,
-        `player with id: ${playerId} in roomID: ${roomId} was not found`,
-      );
-    }
+    const playerIndex = findPlayerIndexOrThrow({ roomId, playerId });
 
     const [removedPlayer] = players.splice(playerIndex, 1);
 
     return removedPlayer;
+  }
+
+  async function startGame({ roomId }) {
+    const room = await getRoomById(roomId);
+
+    assertRoomWaiting(room, "The game has already started in this room.");
+
+    const roomPlayers = findPlayersByRoomId(roomId);
+
+    if (roomPlayers.length !== room.capacity) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.ROOM_NOT_FULL,
+        "The room must be full before the game can start.",
+      );
+    }
+
+    const areAllPlayersReady = roomPlayers.every(
+      (player) => player.isReady === true,
+    );
+
+    if (!areAllPlayersReady) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.PLAYERS_NOT_READY,
+        "All players must be ready before the game can start.",
+      );
+    }
+
+    room.status = ROOM_STATUS.IN_GAME;
+
+    return room;
   }
 
   return {
@@ -217,5 +250,6 @@ export default function createMockRoomService() {
     joinRoom,
     setPlayerReady,
     leaveRoom,
+    startGame,
   };
 }
