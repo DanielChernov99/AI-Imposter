@@ -32,6 +32,7 @@ export default class GameStore {
   phaseTimeoutId = null;
   phaseReactionDisposer = null;
   gameLoadRequestId = 0;
+  activePhaseAdvanceKeys = new Set();
 
   constructor(gameService) {
     this.gameService = gameService;
@@ -52,6 +53,7 @@ export default class GameStore {
       clearError: action,
       setServiceError: action,
       loadGameById: action,
+      clearScheduledPhaseAdvance: action,
       resetGame: action,
     });
   }
@@ -127,6 +129,10 @@ export default class GameStore {
           }
 
           runInAction(() => {
+            // A Realtime update is newer than any initial fetch still in
+            // flight, so prevent that fetch from restoring an older phase.
+            this.gameLoadRequestId += 1;
+            this.isLoading = false;
             this.currentGame = game;
           });
         },
@@ -168,6 +174,10 @@ export default class GameStore {
     this.error = null;
   }
 
+  clearScheduledPhaseAdvance() {
+    this.#clearPhaseTimeout();
+  }
+
   /**
    * Wait until phaseEndsAt (plus a small jitter), then ask the server to
    * advance its idempotent phase state machine.
@@ -183,11 +193,26 @@ export default class GameStore {
       new Date(this.phaseEndsAt).getTime() - Date.now();
     const delay =
       Math.max(0, millisecondsLeft) + Math.random() * ADVANCE_JITTER_MS;
-    const gameId = this.gameId;
+    const phaseIdentity = {
+      gameId: this.gameId,
+      phase: this.currentPhase,
+      round: this.currentRound,
+      endsAt: this.phaseEndsAt,
+    };
 
     this.phaseTimeoutId = window.setTimeout(() => {
-      void this.advancePhase({ gameId });
+      this.phaseTimeoutId = null;
+      void this.advancePhase(phaseIdentity);
     }, delay);
+  }
+
+  #isCurrentPhase({ gameId, phase, round, endsAt }) {
+    return (
+      gameId === this.gameId &&
+      phase === this.currentPhase &&
+      round === this.currentRound &&
+      endsAt === this.phaseEndsAt
+    );
   }
 
   /**
@@ -195,26 +220,43 @@ export default class GameStore {
    * responsible for deciding whether the deadline was reached and whether
    * another client already advanced the game.
    */
-  async advancePhase({ gameId = this.gameId } = {}) {
+  async advancePhase({
+    gameId = this.gameId,
+    phase = this.currentPhase,
+    round = this.currentRound,
+    endsAt = this.phaseEndsAt,
+  } = {}) {
+    const phaseIdentity = { gameId, phase, round, endsAt };
+    const advanceKey = `${gameId}:${round}:${phase}:${endsAt}`;
+
     if (
       !gameId ||
-      gameId !== this.gameId ||
-      this.currentPhase === GAME_PHASE.FINISHED
+      phase === GAME_PHASE.FINISHED ||
+      !this.#isCurrentPhase(phaseIdentity) ||
+      this.activePhaseAdvanceKeys.has(advanceKey)
     ) {
       return null;
     }
 
+    this.activePhaseAdvanceKeys.add(advanceKey);
+
     try {
       const result = await this.gameService.advancePhase(gameId);
+
+      if (!this.#isCurrentPhase(phaseIdentity)) {
+        return result;
+      }
+
       const serverSaysTooEarly =
         result &&
         result.advanced === false &&
-        result.phase === this.currentPhase;
+        result.phase === phase;
 
-      if (serverSaysTooEarly && gameId === this.gameId) {
+      if (serverSaysTooEarly) {
         this.#clearPhaseTimeout();
         this.phaseTimeoutId = window.setTimeout(() => {
-          void this.advancePhase({ gameId });
+          this.phaseTimeoutId = null;
+          void this.advancePhase(phaseIdentity);
         }, ADVANCE_RETRY_MS);
       }
 
@@ -223,6 +265,8 @@ export default class GameStore {
       // Best effort per client: another client can advance the game, and a
       // later Realtime update will schedule the next deadline.
       return null;
+    } finally {
+      this.activePhaseAdvanceKeys.delete(advanceKey);
     }
   }
 

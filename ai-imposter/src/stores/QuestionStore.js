@@ -33,6 +33,7 @@ export default class QuestionStore {
       setServiceError: action,
       loadQuestionById: action,
       loadRandomQuestion: action,
+      resetForRound: action,
       resetQuestions: action,
     });
   }
@@ -136,11 +137,15 @@ export default class QuestionStore {
     }
   }
 
-  resetQuestions() {
+  resetForRound() {
     this.questionRequestId += 1;
     this.currentQuestion = null;
-    this.usedQuestionIds = [];
     this.isLoading = false;
     this.error = null;
+  }
+
+  resetQuestions() {
+    this.resetForRound();
+    this.usedQuestionIds = [];
   }
 }

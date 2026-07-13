@@ -1,10 +1,35 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
-import { buildVotingAnswerSlots } from "../domain/answerSlots.js";
+import { MISSING_ANSWER_TEXT } from "../domain/constants.js";
 import {
   VOTE_SERVICE_ERRORS,
   VoteServiceError,
 } from "../services/contracts/voteService.js";
+
+function buildVotingAnswerSlots({
+  answers,
+  humanPlayerCount,
+  gameId,
+  roundNumber,
+}) {
+  const validHumanAnswerCount = Math.max(0, answers.length - 1);
+  const missingCount = Math.max(
+    0,
+    humanPlayerCount - validHumanAnswerCount,
+  );
+  const placeholders = Array.from({ length: missingCount }, (_, index) => ({
+    id: `placeholder:${gameId}:${roundNumber}:voting:${index + 1}`,
+    text: MISSING_ANSWER_TEXT,
+    isPlaceholder: true,
+    isValid: false,
+    isAi: false,
+    isDisabled: true,
+    playerId: null,
+    voterPlayerIds: [],
+  }));
+
+  return [...answers, ...placeholders];
+}
 
 export default class VoteStore {
   votingOptions = [];
@@ -17,6 +42,8 @@ export default class VoteStore {
 
   optionsRequestId = 0;
   submissionRequestId = 0;
+  activeOptionsLoadKey = null;
+  loadedOptionsKey = null;
 
   constructor(voteService) {
     this.voteService = voteService;
@@ -66,11 +93,19 @@ export default class VoteStore {
     playerId,
     humanPlayerCount,
   }) {
-    if (this.isLoadingOptions || !gameId) {
+    const loadKey = `${gameId}:${roundNumber}:voting`;
+
+    if (
+      this.isLoadingOptions ||
+      !gameId ||
+      this.activeOptionsLoadKey === loadKey ||
+      this.loadedOptionsKey === loadKey
+    ) {
       return false;
     }
 
     const requestId = ++this.optionsRequestId;
+    this.activeOptionsLoadKey = loadKey;
     this.isLoadingOptions = true;
     this.error = null;
 
@@ -83,12 +118,14 @@ export default class VoteStore {
       const votingOptions = buildVotingAnswerSlots({
         answers: votingAnswers,
         humanPlayerCount,
-        slotKey: `${gameId}:${roundNumber}:voting`,
+        gameId,
+        roundNumber,
       });
 
       if (requestId === this.optionsRequestId) {
         runInAction(() => {
           this.votingOptions = votingOptions;
+          this.loadedOptionsKey = loadKey;
         });
       }
 
@@ -106,6 +143,7 @@ export default class VoteStore {
     } finally {
       if (requestId === this.optionsRequestId) {
         runInAction(() => {
+          this.activeOptionsLoadKey = null;
           this.isLoadingOptions = false;
         });
       }
@@ -211,6 +249,8 @@ export default class VoteStore {
   resetForRound() {
     this.optionsRequestId += 1;
     this.submissionRequestId += 1;
+    this.activeOptionsLoadKey = null;
+    this.loadedOptionsKey = null;
     this.votingOptions = [];
     this.selectedAnswerId = null;
     this.hasVoted = false;
