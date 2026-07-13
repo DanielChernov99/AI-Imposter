@@ -2,42 +2,73 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  padding: var(--space-4);
 }
 
 .startPageContainer {
-  width: 600px;
+  width: 100%;
+  max-width: 100%;
+  flex-direction: column;
+  gap: var(--space-5);
 
-  padding: var(--space-8);
+  padding: var(--space-5);
 
   background: rgba(16, 26, 51, 0.82);
   border: 1px solid var(--border-active-color);
   border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-lg), var(--glow-purple-soft);
+
+  /* Pure blur, no spread — each layer just wider and fainter than the last,
+     so it dissipates like real light instead of stacking hard rings */
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(139, 92, 246, 0.15),
+    0 0 70px rgba(139, 92, 246, 0.1),
+    0 0 140px rgba(56, 189, 248, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  transition: box-shadow 0.3s ease;
 }
 
 .logoContainer {
+  flex-direction: column;
   align-items: center;
   gap: var(--space-2);
 }
 
 .mascotBlock {
   margin: auto;
-  width: min(45%, 160px);
+  width: min(50%, 7.5rem);
+  transition: transform 0.3s ease;
+}
+
+.mascotBlock:hover {
+  transform: translateY(-2px) scale(1.03);
 }
 
 .mascotImg {
   width: 100%;
   height: auto;
   display: block;
-  filter:
-    drop-shadow(0 0 18px rgba(139, 92, 246, 0.45))
-    drop-shadow(0 0 28px rgba(56, 189, 248, 0.25));
+
+  filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.45))
+    drop-shadow(0 0 24px rgba(139, 92, 246, 0.3))
+    drop-shadow(0 0 50px rgba(139, 92, 246, 0.18))
+    drop-shadow(0 0 90px rgba(56, 189, 248, 0.12));
+
+  transition: filter 0.3s ease;
+}
+
+.mascotBlock:hover .mascotImg {
+  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.6))
+    drop-shadow(0 0 30px rgba(139, 92, 246, 0.4))
+    drop-shadow(0 0 60px rgba(139, 92, 246, 0.25))
+    drop-shadow(0 0 110px rgba(56, 189, 248, 0.16));
 }
 
 .wordmarkBlock {
   margin: auto;
-  width: min(70%, 280px);
+  width: min(75%, 13.75rem);
 }
 
 .wordmarkImg {
@@ -52,7 +83,7 @@
 
 .nicknameInput label {
   font-family: var(--font-main);
-  font-size: 18px;
+  font-size: var(--font-size-lg); /* 18px */
   font-weight: 500;
   color: var(--text-soft);
   margin-bottom: var(--space-2);
@@ -62,21 +93,36 @@
   background: rgba(16, 26, 51, 0.9);
   border: 1px solid var(--border-purple);
   border-radius: var(--radius-lg);
-  padding-block: 16px;
-  padding-inline-end: 20px;
+  padding-block: 0.875rem;
+  padding-inline-end: 1rem;
   padding-inline-start: var(--space-10);
   color: var(--text-main);
   font-family: var(--font-main);
-  font-size: 16px;
+  font-size: var(--font-size-md); /* 16px */
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .nicknameInput input::placeholder {
   color: var(--text-muted);
 }
 
+/* No spread anywhere — border color shift does the "ring" job,
+   box-shadow only adds soft ambient bloom around it */
+.nicknameInput input:hover {
+  box-shadow:
+    0 0 18px rgba(168, 85, 247, 0.14),
+    0 0 40px rgba(168, 85, 247, 0.08);
+}
+
 .nicknameInput input:focus {
   border-color: var(--border-active-color);
-  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.16);
+  box-shadow:
+    0 0 24px rgba(168, 85, 247, 0.22),
+    0 0 55px rgba(168, 85, 247, 0.14),
+    0 0 100px rgba(56, 189, 248, 0.08);
 }
 
 .nicknameInput svg {
@@ -84,33 +130,35 @@
 }
 
 .enterGameOptions {
+  flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  gap: var(--space-6);
+  gap: var(--space-4);
 
   background: var(--surface-dark-purple);
   border: 1px solid var(--border-purple);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  padding: var(--space-4);
 }
 
 .orDivider {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: var(--space-2);
 }
 
 .orDividerLine {
   flex: 1;
-  width: 1px;
+  height: 1px;
+  width: auto;
   background-color: var(--border-purple);
 }
 
 .orCircle {
-  width: 40px;
-  height: 40px;
-  min-height: 40px;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-height: 2.25rem;
   flex: none;
   background: var(--surface-modal);
   border: 1px solid var(--border-active-color);
@@ -118,11 +166,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.12);
 }
 
 .orText {
   font-family: var(--font-main);
-  font-size: 12px;
+  font-size: var(--font-size-xs); /* 12px */
   font-weight: 700;
   color: var(--text-soft);
 }
@@ -130,7 +180,122 @@
 .footerText {
   text-align: center;
   font-family: var(--font-main);
-  font-size: 14px;
+  font-size: var(--font-size-sm); /* 14px */
   font-weight: 500;
   color: var(--text-muted);
+}
+
+/* Tablet: 768px */
+@media (min-width: 48rem) {
+  .startPageContainer {
+    max-width: 32.5rem;
+    padding: var(--space-6);
+    gap: var(--space-6);
+  }
+
+  .mascotBlock {
+    width: min(45%, 8.75rem);
+  }
+
+  .wordmarkBlock {
+    width: min(70%, 16.25rem);
+  }
+
+  .nicknameInput input {
+    padding-block: 0.9375rem;
+  }
+
+  .enterGameOptions {
+    flex-direction: row;
+    gap: var(--space-5);
+    padding: var(--space-5);
+  }
+
+  .orDivider {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .orDividerLine {
+    width: 1px;
+    height: auto;
+    flex: 1;
+  }
+}
+
+/* Laptop: 1024px */
+@media (min-width: 64rem) {
+  .startPageContainer {
+    max-width: 37.5rem;
+    padding: var(--space-8);
+    gap: var(--space-8);
+  }
+
+  .mascotBlock {
+    width: min(45%, 10rem);
+  }
+
+  .wordmarkBlock {
+    width: min(70%, 17.5rem);
+  }
+
+  .enterGameOptions {
+    gap: var(--space-6);
+    padding: var(--space-6);
+  }
+
+  .orCircle {
+    width: 2.5rem;
+    height: 2.5rem;
+    min-height: 2.5rem;
+  }
+}
+
+/* Desktop: 1440px */
+@media (min-width: 90rem) {
+  .startPageContainer {
+    max-width: 40rem;
+  }
+
+  .nicknameInput input {
+    padding-block: 1.0625rem;
+  }
+}
+
+/* Ultrawide: 1920px */
+@media (min-width: 120rem) {
+  .startPageContainer {
+    max-width: 43.75rem;
+    padding: var(--space-10);
+    gap: var(--space-10);
+  }
+
+  .mascotBlock {
+    width: min(45%, 11.25rem);
+  }
+
+  .wordmarkBlock {
+    width: min(70%, 20rem);
+  }
+
+  .footerText {
+    font-size: var(--font-size-md); /* 16px */
+  }
+}
+
+/* 4K: 2560px */
+@media (min-width: 160rem) {
+  .startPageContainer {
+    max-width: 47.5rem;
+    padding: var(--space-12);
+    gap: var(--space-12);
+  }
+
+  .nicknameInput label {
+    font-size: var(--font-size-xl); /* 20px */
+  }
+
+  .nicknameInput input {
+    font-size: var(--font-size-lg); /* 18px */
+  }
 }
