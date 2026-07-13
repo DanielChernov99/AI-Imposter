@@ -213,10 +213,19 @@ export default function createMockRoomService() {
     return removedPlayer;
   }
 
-  async function startGame({ roomId }) {
+  async function startGame({ roomId, gameId }) {
     const room = await getRoomById(roomId);
 
     assertRoomWaiting(room, "The game has already started in this room.");
+
+    const cleanGameId = typeof gameId === "string" ? gameId.trim() : "";
+
+    if (!cleanGameId) {
+      throw new RoomServiceError(
+        ROOM_SERVICE_ERRORS.INVALID_GAME_ID,
+        "Game ID must be a non-empty string.",
+      );
+    }
 
     const roomPlayers = findPlayersByRoomId(roomId);
 
@@ -238,6 +247,7 @@ export default function createMockRoomService() {
       );
     }
 
+    room.activeGameId = cleanGameId;
     room.status = ROOM_STATUS.IN_GAME;
 
     return room;

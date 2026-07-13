@@ -255,27 +255,33 @@ export default class RoomStore {
     }
   }
 
-  async startCurrentGame() {
-    if (this.isLoading || !this.currentRoom || !this.canStartGame) {
+  async startCurrentGame(gameId) {
+    if (
+      this.isLoading ||
+      !this.currentRoom ||
+      !this.canStartGame ||
+      typeof gameId !== "string" ||
+      !gameId.trim()
+    ) {
       return false;
     }
+
     this.isLoading = true;
     this.error = null;
 
     try {
       const updatedRoom = await this.roomService.startGame({
         roomId: this.currentRoom.id,
+        gameId,
       });
+
       runInAction(() => {
         this.currentRoom = updatedRoom;
       });
+
       return true;
     } catch (caughtError) {
-      this.setServiceError(
-        "startGame",
-        caughtError,
-        "Failed to start game",
-      );
+      this.setServiceError("startGame", caughtError, "Failed to start game");
 
       return false;
     } finally {

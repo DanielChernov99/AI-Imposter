@@ -60,11 +60,11 @@ export default class GameStore {
         this.currentGame = game;
       });
 
-      return true;
+      return game;
     } catch (caughtError) {
       this.setServiceError("create", caughtError, "Failed to create the game");
 
-      return false;
+      return null;
     } finally {
       runInAction(() => {
         this.isLoading = false;
