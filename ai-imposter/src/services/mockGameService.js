@@ -4,8 +4,10 @@ import { GAME_SERVICE_ERRORS, GameServiceError } from "./gameService.js";
 export default function createMockGameService() {
   const games = [];
 
-  async function createGame({ roomId }) {
+  async function createGame({ roomId, currentQuestionId }) {
     const cleanRoomId = typeof roomId === "string" ? roomId.trim() : "";
+    const cleanQuestionId =
+      typeof currentQuestionId === "string" ? currentQuestionId.trim() : "";
 
     if (!cleanRoomId) {
       throw new GameServiceError(
@@ -14,9 +16,17 @@ export default function createMockGameService() {
       );
     }
 
+    if (!cleanQuestionId) {
+      throw new GameServiceError(
+        GAME_SERVICE_ERRORS.INVALID_QUESTION_ID,
+        "Question ID must be a non-empty string.",
+      );
+    }
+
     const game = createGameSession({
       id: crypto.randomUUID(),
       roomId: cleanRoomId,
+      currentQuestionId: cleanQuestionId,
     });
 
     games.push(game);

@@ -20,29 +20,38 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  * @property {string} id
  * @property {string} code
  * @property {number} capacity
- * @property {"waiting" | "in_game"} status
+ * @property {string} status - One of the ROOM_STATUS values.
  * @property {string | null} activeGameId
  */
 
 /**
- * One five-round game session belonging to a room.
+ * One game session belonging to a room.
  *
  * @typedef {Object} Game
  * @property {string} id
  * @property {string} roomId
- * @property {"answering" | "voting" | "reveal" | "finished"} phase
+ * @property {string} phase - One of the GAME_PHASE values.
  * @property {number} currentRound
  * @property {number} totalRounds
- * @property {string | null} currentQuestionId
+ * @property {string} currentQuestionId
  */
 
-export function createGame({ id, roomId }) {
+/**
+ * A question and its prepared AI answer.
+ *
+ * @typedef {Object} Question
+ * @property {string} id
+ * @property {string} text
+ * @property {string} aiAnswer
+ */
+
+export function createGame({ id, roomId, currentQuestionId }) {
   return {
     id,
     roomId,
     phase: GAME_PHASE.ANSWERING,
     currentRound: 1,
     totalRounds: TOTAL_ROUNDS,
-    currentQuestionId: null,
+    currentQuestionId,
   };
 }

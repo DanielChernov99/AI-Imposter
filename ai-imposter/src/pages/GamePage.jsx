@@ -8,10 +8,11 @@ import { useStores } from "../context/StoreContext.jsx";
 import { GAME_PHASE } from "../domain/constants.js";
 
 const GamePage = observer(() => {
-  const { gameStore } = useStores();
+  const { gameStore, questionStore } = useStores();
   const { currentGame } = gameStore;
+  const { currentQuestion } = questionStore;
 
-  if (!currentGame) {
+  if (!currentGame || !currentQuestion) {
     return null;
   }
 
@@ -30,7 +31,7 @@ const GamePage = observer(() => {
         minHeight: "100vh",
       }}
     >
-      <QuestionBox />
+      <QuestionBox question={currentQuestion.text} />
       <InstructionLabel phase={phase} />
       {phase === GAME_PHASE.ANSWERING && <AnswerBox />}
       <GameGrid phase={phase} />
