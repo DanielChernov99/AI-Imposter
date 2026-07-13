@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Stack, Group, Box, Text, Button } from "@mantine/core";
+import { Flex, Box, Text, Button } from "@mantine/core";
 import { Play, Minus, Plus } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router";
@@ -38,13 +38,13 @@ function StartNewGame({ nickname }) {
   };
 
   return (
-    <Stack className={styles.elementContainer}>
-      <Group className={styles.titleRow} gap={8}>
+    <Flex className={styles.elementContainer}>
+      <Flex className={styles.titleRow} gap={8}>
         <Play size={16} color="var(--accent-violet)" />
         <Text className={styles.title}>Start new game</Text>
-      </Group>
+      </Flex>
 
-      <Group className={styles.stepperRow} gap={8}>
+      <Flex className={styles.stepperRow} gap={8}>
         <Button
           variant="default"
           className={styles.stepperButton}
@@ -66,7 +66,7 @@ function StartNewGame({ nickname }) {
         >
           <Plus size={16} />
         </Button>
-      </Group>
+      </Flex>
 
       <Button
         className={styles.startGameButton}
@@ -84,7 +84,7 @@ function StartNewGame({ nickname }) {
           </Text>
         )}
       </Box>
-    </Stack>
+    </Flex>
   );
 }
 

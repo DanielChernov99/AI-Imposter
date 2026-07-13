@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, Button, Input, Stack, Group, Box } from "@mantine/core";
+import { Flex, Text, Button, Input, Box } from "@mantine/core";
 import { ArrowUpRight } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router";
@@ -38,11 +38,11 @@ function JoinRoom({ nickname }) {
   };
 
   return (
-    <Stack className={styles.elementContainer}>
-      <Group className={styles.titleRow} gap={8}>
+    <Flex className={styles.elementContainer}>
+      <Flex className={styles.titleRow} gap={8}>
         <ArrowUpRight size={16} color="var(--accent-blue)" />
         <Text className={styles.title}>Join a room</Text>
-      </Group>
+      </Flex>
 
       <Input
         className={styles.inputRoomID}
@@ -70,7 +70,7 @@ function JoinRoom({ nickname }) {
           </Text>
         )}
       </Box>
-    </Stack>
+    </Flex>
   );
 }
 
