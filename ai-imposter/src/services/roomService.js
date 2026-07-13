@@ -9,7 +9,7 @@
  * getPlayersByRoomId(roomId)
  * setPlayerReady({ roomId, playerId, isReady })
  * leaveRoom({ roomId, playerId })
- * startGame({ roomId })
+ * startGame({ roomId, gameId })
  *
  */
 
@@ -25,6 +25,7 @@ export const ROOM_SERVICE_ERRORS = Object.freeze({
   PLAYER_NOT_FOUND: "PLAYER_NOT_FOUND",
   INVALID_READY_STATE: "INVALID_READY_STATE",
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
+  INVALID_GAME_ID: "INVALID_GAME_ID",
 });
 
 export class RoomServiceError extends Error {

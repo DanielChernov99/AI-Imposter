@@ -45,26 +45,29 @@ export default class GameStore {
     }
   }
 
-  async createGame({ roomId }) {
+  async createGame({ roomId, currentQuestionId }) {
     if (this.isLoading) {
-      return false;
+      return null;
     }
 
     this.isLoading = true;
     this.error = null;
 
     try {
-      const game = await this.gameService.createGame({ roomId });
+      const game = await this.gameService.createGame({
+        roomId,
+        currentQuestionId,
+      });
 
       runInAction(() => {
         this.currentGame = game;
       });
 
-      return true;
+      return game;
     } catch (caughtError) {
       this.setServiceError("create", caughtError, "Failed to create the game");
 
-      return false;
+      return null;
     } finally {
       runInAction(() => {
         this.isLoading = false;

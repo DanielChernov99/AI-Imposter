@@ -1,7 +1,6 @@
 import { ActionIcon, Flex, Text } from "@mantine/core";
 import { LogOut, UsersRound } from "lucide-react";
 import { observer } from "mobx-react-lite";
-import { useNavigate } from "react-router";
 
 import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { useStores } from "../../../context/StoreContext.jsx";
@@ -13,32 +12,15 @@ import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
 
-const Header = observer(function Header() {
+const Header = observer(function Header({ onGameStart, onLeaveRoom }) {
   const { roomStore } = useStores();
   const { currentRoom } = roomStore;
-  const navigate = useNavigate();
 
   const roomCode = currentRoom?.code ?? "------";
   const roomStatus = currentRoom?.status;
 
   const isWaitingRoom = roomStatus === ROOM_STATUS.WAITING;
   const isGameInProgress = roomStatus === ROOM_STATUS.IN_GAME;
-
-  const handleLeaveRoom = async () => {
-    const didLeave = await roomStore.leaveRoom();
-
-    if (didLeave) {
-      navigate("/");
-    }
-  };
-
-  const handleGameStart = async () => {
-    const didStart = await roomStore.startCurrentGame();
-
-    if (didStart) {
-      navigate("/game");
-    }
-  };
 
   return (
     <header className={Classes["header-wrapper"]}>
@@ -63,7 +45,7 @@ const Header = observer(function Header() {
           variant="transparent"
           color="gray"
           aria-label="Leave room"
-          onClick={handleLeaveRoom}
+          onClick={onLeaveRoom}
           loading={roomStore.isLoading}
         >
           <LogOut className={Classes["room-icon"]} stroke="white" />
@@ -91,6 +73,7 @@ const Header = observer(function Header() {
       {isGameInProgress && (
         <GameRoundStatus completedRounds={1} totalRounds={5} />
       )}
+
       {roomStore.canStartGame && (
         <>
           <div className={Classes.verticalDivider} />
@@ -98,7 +81,7 @@ const Header = observer(function Header() {
           <Timer
             duration={GAME_START_COUNTDOWN_SECONDS}
             label="GAME STARTS IN"
-            onComplete={handleGameStart}
+            onComplete={onGameStart}
           />
         </>
       )}

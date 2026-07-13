@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
-
 import { Grid } from "@mantine/core";
 import VotingCard from "../votingCard/VotingCard";
 import ResultCard from "../resultCard/ResultCard";
+import { GAME_PHASE } from "../../../domain/constants.js";
 
 const GameGrid = ({ phase }) => {
   // const votes = Array.from({ length: numOfPlayers }, (_, i) => i + 1);
@@ -46,12 +45,18 @@ const GameGrid = ({ phase }) => {
   ];
   const resultGrid = [1, 2, 3, 4];
   const displayCards =
-    phase === "ANSWERING" ? [] : phase === "VOTING" ? dynamicVotes : resultGrid;
+    phase === GAME_PHASE.ANSWERING
+      ? []
+      : phase === GAME_PHASE.VOTING
+        ? dynamicVotes
+        : phase === GAME_PHASE.REVEAL
+          ? resultGrid
+          : [];
 
   return (
     <Grid>
       {displayCards.map((vote, index) => {
-        if (phase === "VOTING") {
+        if (phase === GAME_PHASE.VOTING) {
           return (
             <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
               <VotingCard
@@ -64,7 +69,7 @@ const GameGrid = ({ phase }) => {
           );
         }
 
-        if (phase === "REVEALING") {
+        if (phase === GAME_PHASE.REVEAL) {
           return (
             <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
               <ResultCard index={index} />

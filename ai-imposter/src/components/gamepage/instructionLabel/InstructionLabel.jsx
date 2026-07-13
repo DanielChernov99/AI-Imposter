@@ -1,21 +1,22 @@
 import { Flex, Text } from "@mantine/core";
 import { PencilLine, Wand, MoveRight, MoveLeft, Astroid } from "lucide-react";
+import { GAME_PHASE } from "../../../domain/constants.js";
 import classes from "./InstructionLabel.module.css";
 
-const InstructionLabel = ({ phase = "REVEALING" }) => {
+const InstructionLabel = ({ phase }) => {
   const instructions = {
-    ANSWERING: {
-      instruction: "Write A funny answer that might be mistaken for AI",
+    [GAME_PHASE.ANSWERING]: {
+      instruction: "Write a funny answer that might be mistaken for AI",
       leftIcon: <PencilLine className={classes["instruction-icon"]} />,
       rightIcon: <Wand className={classes["instruction-icon"]} />,
     },
-    VOTING: {
+    [GAME_PHASE.VOTING]: {
       instruction: "Pick the answer you think was written by AI",
       leftIcon: <MoveRight className={classes["instruction-icon"]} />,
       rightIcon: <MoveLeft className={classes["instruction-icon"]} />,
     },
-    REVEALING: {
-      instruction: "Here's what happend this round",
+    [GAME_PHASE.REVEAL]: {
+      instruction: "Here's what happened this round",
       leftIcon: (
         <Astroid
           className={classes["instruction-icon"]}
@@ -30,13 +31,19 @@ const InstructionLabel = ({ phase = "REVEALING" }) => {
       ),
     },
   };
+  const currentInstruction = instructions[phase];
+
+  if (!currentInstruction) {
+    return null;
+  }
+
   return (
     <Flex className={classes["questionBox-instructions-container"]}>
-      {instructions[phase]?.leftIcon}
+      {currentInstruction.leftIcon}
       <Text span className={classes["questionBox-instructions-label"]}>
-        {instructions[phase].instruction}
+        {currentInstruction.instruction}
       </Text>
-      {instructions[phase]?.rightIcon}
+      {currentInstruction.rightIcon}
     </Flex>
   );
 };
