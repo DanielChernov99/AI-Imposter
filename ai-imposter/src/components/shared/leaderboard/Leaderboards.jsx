@@ -3,16 +3,48 @@ import LeaderboardPlayer from "./LeaderboardPlayer.jsx";
 import styles from "./Leaderboards.module.css";
 import { SCORING_POINTS } from "../../../domain/constants.js";
 
+function normalizePlayers(players) {
+  const sourcePlayers = Array.isArray(players) ? players : [];
+  const humanPlayers = sourcePlayers.filter((player) => player?.isAi !== true);
+  const hasAuthoritativeRanks = humanPlayers.every((player) => {
+    const numericRank = Number(player.rank);
+
+    return Number.isFinite(numericRank) && numericRank > 0;
+  });
+  const orderedPlayers = humanPlayers
+    .map((player, sourceIndex) => ({ player, sourceIndex }))
+    .sort((left, right) => {
+      if (hasAuthoritativeRanks) {
+        return (
+          Number(left.player.rank) - Number(right.player.rank) ||
+          left.sourceIndex - right.sourceIndex
+        );
+      }
+
+      return (
+        (right.player.totalScore ?? 0) - (left.player.totalScore ?? 0) ||
+        left.sourceIndex - right.sourceIndex
+      );
+    });
+
+  return orderedPlayers.map(({ player, sourceIndex }, index) => ({
+    ...player,
+    playerId:
+      player.playerId ??
+      player.id ??
+      `${player.nickname ?? "player"}-${sourceIndex}`,
+    rank: hasAuthoritativeRanks ? Number(player.rank) : index + 1,
+    totalScore: player.totalScore ?? 0,
+  }));
+}
+
 export default function Leaderboards({ players = [] }) {
+  const displayPlayers = normalizePlayers(players);
+
   return (
-    <Card
-      className={styles.card}
-      shadow="sm"
-      radius="lg"
-      bg="rgba(8, 18, 43, 0.9)"
-    >
+    <Card className={styles.card}>
       <Group className={styles.header} wrap="nowrap">
-        <ThemeIcon className={styles.trophyIcon} size={58} radius="xl">
+        <ThemeIcon className={styles.trophyIcon} radius="xl">
           🏆
         </ThemeIcon>
 
@@ -26,7 +58,7 @@ export default function Leaderboards({ players = [] }) {
       </Group>
 
       <Stack gap={0}>
-        {players.map((player) => (
+        {displayPlayers.map((player) => (
           <LeaderboardPlayer key={player.playerId} player={player} />
         ))}
       </Stack>

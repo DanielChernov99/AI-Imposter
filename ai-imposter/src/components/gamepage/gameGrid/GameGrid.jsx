@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mantine/core";
+import { Button, SimpleGrid } from "@mantine/core";
 import { observer } from "mobx-react-lite";
 
 import VotingCard from "../votingCard/VotingCard";
@@ -51,7 +51,12 @@ const GameGrid = observer(({ phase }) => {
 
     return (
       <>
-        <Grid>
+        <SimpleGrid
+          className={styles.cardGrid}
+          cols={{ base: 1, md: 2, lg: 3 }}
+          spacing={{ base: "sm", md: "md" }}
+          verticalSpacing={{ base: "sm", md: "md" }}
+        >
           {voteStore.votingOptions.map((votingAnswer, index) => {
             const isOwn =
               answerStore.submittedAnswerId === votingAnswer.id;
@@ -61,34 +66,28 @@ const GameGrid = observer(({ phase }) => {
               votingAnswer.isDisabled === true || !isValid;
 
             return (
-              <Grid.Col
+              <VotingCard
                 key={votingAnswer.id}
-                span={{ base: 12, sm: 6, md: 4 }}
-              >
-                <VotingCard
-                  answer={votingAnswer.text}
-                  color={CARD_COLORS[index % CARD_COLORS.length]}
-                  isSelected={
-                    voteStore.selectedAnswerId === votingAnswer.id
-                  }
-                  isOwn={isOwn}
-                  isValid={isValid}
-                  isPlaceholder={isPlaceholder}
-                  isDisabled={isDisabled}
-                  onClick={
-                    voteStore.hasVoted ||
-                    voteStore.isSubmitting ||
-                    isOwn ||
-                    isDisabled ||
-                    isPlaceholder
-                      ? undefined
-                      : () => voteStore.selectAnswer(votingAnswer.id)
-                  }
-                />
-              </Grid.Col>
+                answer={votingAnswer.text}
+                color={CARD_COLORS[index % CARD_COLORS.length]}
+                isSelected={voteStore.selectedAnswerId === votingAnswer.id}
+                isOwn={isOwn}
+                isValid={isValid}
+                isPlaceholder={isPlaceholder}
+                isDisabled={isDisabled}
+                onClick={
+                  voteStore.hasVoted ||
+                  voteStore.isSubmitting ||
+                  isOwn ||
+                  isDisabled ||
+                  isPlaceholder
+                    ? undefined
+                    : () => voteStore.selectAnswer(votingAnswer.id)
+                }
+              />
             );
           })}
-        </Grid>
+        </SimpleGrid>
 
         <Button
           className={styles.submitVoteButton}
@@ -106,31 +105,35 @@ const GameGrid = observer(({ phase }) => {
 
   if (phase === GAME_PHASE.REVEAL) {
     return (
-      <Grid>
+      <SimpleGrid
+        className={styles.cardGrid}
+        cols={{ base: 1, md: 2, lg: 3 }}
+        spacing={{ base: "sm", md: "md" }}
+        verticalSpacing={{ base: "sm", md: "md" }}
+      >
         {revealStore.roundAnswers.map((result, index) => (
-          <Grid.Col key={result.id} span={{ base: 12, sm: 6, md: 4 }}>
-            <ResultCard
-              index={index}
-              answer={result.text}
-              isAi={result.isAi}
-              isPlaceholder={result.isPlaceholder === true}
-              isDisabled={result.isDisabled === true}
-              author={
-                result.isPlaceholder
-                  ? null
-                  : (playersById.get(result.playerId) ?? null)
-              }
-              voters={
-                result.isPlaceholder
-                  ? []
-                  : result.voterPlayerIds
-                      .map((voterId) => playersById.get(voterId))
-                      .filter(Boolean)
-              }
-            />
-          </Grid.Col>
+          <ResultCard
+            key={result.id}
+            index={index}
+            answer={result.text}
+            isAi={result.isAi}
+            isPlaceholder={result.isPlaceholder === true}
+            isDisabled={result.isDisabled === true}
+            author={
+              result.isPlaceholder
+                ? null
+                : (playersById.get(result.playerId) ?? null)
+            }
+            voters={
+              result.isPlaceholder
+                ? []
+                : result.voterPlayerIds
+                    .map((voterId) => playersById.get(voterId))
+                    .filter(Boolean)
+            }
+          />
         ))}
-      </Grid>
+      </SimpleGrid>
     );
   }
 

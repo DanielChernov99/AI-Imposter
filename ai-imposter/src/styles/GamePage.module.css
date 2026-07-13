@@ -1,42 +1,43 @@
 .pageLayout {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(var(--space-4), 2vw, var(--space-6));
   width: 100%;
-  max-width: 90rem;
+  max-width: 100rem;
   margin: 0 auto;
-  padding: var(--space-4);
+  padding: clamp(var(--space-3), 2vw, var(--space-6));
 }
 
 .mainColumn {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: clamp(var(--space-3), 1.5vw, var(--space-5));
   width: 100%;
+  min-width: 0;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: clamp(var(--space-3), 1.5vw, var(--space-5));
+  width: 100%;
+  min-width: 0;
+}
+
+.sidebar > * {
   width: 100%;
 }
 
-/* Laptop: 1024px */
-@media (min-width: 64rem) {
+/* Wide laptop / desktop: preserve readable cards beside the score panels. */
+@media (min-width: 80rem) {
   .pageLayout {
-    flex-direction: row;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 23.75rem);
     align-items: flex-start;
-    padding: var(--space-6);
   }
+}
 
-  .mainColumn {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .sidebar {
-    width: 23.75rem;
-    flex: none;
+@media (min-width: 100rem) {
+  .pageLayout {
+    padding-inline: var(--space-8);
   }
 }

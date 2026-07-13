@@ -1,29 +1,30 @@
 .questionBox-instructions-container {
+  width: 100%;
+  min-width: 0;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
 }
 
 .questionBox-instructions-label {
+  min-width: 0;
   text-align: center;
   color: var(--text-soft);
-  font-size: var(--font-size-xs); /* 12px */
+  font-size: clamp(var(--font-size-sm), 3.5vw, var(--font-size-md));
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .instruction-icon {
+  flex: 0 0 auto;
   stroke: var(--primary);
-  width: 0.75rem;
-  height: 0.75rem;
+  width: clamp(0.9rem, 3vw, 1.125rem);
+  height: clamp(0.9rem, 3vw, 1.125rem);
 }
 
 /* Tablet: 768px */
 @media (min-width: 48rem) {
-  .questionBox-instructions-label {
-    font-size: var(--font-size-sm); /* 14px */
-  }
-
-  .instruction-icon {
-    width: 0.875rem;
-    height: 0.875rem;
+  .questionBox-instructions-container {
+    gap: var(--space-3);
   }
 }

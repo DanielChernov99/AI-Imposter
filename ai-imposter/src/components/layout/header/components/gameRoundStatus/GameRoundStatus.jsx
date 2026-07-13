@@ -15,13 +15,13 @@ const GameRoundStatus = ({ completedRounds, totalRounds }) => {
         ROUND {currentRound} OF {totalRounds}
       </Text>
 
-      <Flex align="center" className={classes.progress}>
+      <Flex className={classes.progress}>
         {rounds.map((round, index) => {
           const isCompleted = round <= completed;
           const isCurrent = completed < totalRounds && round === currentRound;
 
           return (
-            <Flex key={round} align="center" className={classes.segment}>
+            <Flex key={round} className={classes.segment}>
               <div
                 className={[
                   classes.circle,

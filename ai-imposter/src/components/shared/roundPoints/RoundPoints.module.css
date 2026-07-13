@@ -1,9 +1,9 @@
 .card {
   width: 100%;
-  max-width: 360px;
+  min-width: 0;
   padding: 0;
 
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(168, 85, 247, 0.28);
 
   background:
@@ -20,17 +20,21 @@
 }
 
 .header {
-  height: 58px;
-  padding: 10px 16px;
+  min-height: 3.625rem;
+  padding: var(--space-2) var(--space-4);
+  gap: var(--space-3);
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .icon {
+  width: 2.625rem;
+  height: 2.625rem;
+  flex-shrink: 0;
   background: linear-gradient(
     135deg,
-    var(--electric-purple),
-    var(--neon-violet)
+    var(--primary),
+    var(--accent-violet)
   );
   color: white;
   box-shadow: 0 0 18px rgba(124, 58, 237, 0.45);
@@ -38,7 +42,9 @@
 }
 
 .title {
+  min-width: 0;
   color: var(--text-main);
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-sm), 4vw, var(--font-size-md));
   letter-spacing: 0.02em;
 }

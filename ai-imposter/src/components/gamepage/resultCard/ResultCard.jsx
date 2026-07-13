@@ -35,6 +35,8 @@ const ResultCard = ({
       className={[
         classes["resultCard-wrapper"],
         isUnavailable && classes.placeholder,
+        !isUnavailable && isAi && classes["result-ai"],
+        !isUnavailable && !isAi && classes["result-human"],
       ]
         .filter(Boolean)
         .join(" ")}

@@ -1,7 +1,9 @@
 .row {
   width: 100%;
+  min-width: 0;
   min-height: 42px;
-  padding: 6px 14px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -13,6 +15,7 @@
 .playerInfo {
   min-width: 0;
   flex: 1;
+  gap: var(--space-2);
 }
 
 .rank {
@@ -32,7 +35,7 @@
 }
 
 .rankFirst {
-  background: linear-gradient(135deg, #facc15, #fb923c);
+  background: linear-gradient(135deg, var(--warning), var(--orange-accent));
   box-shadow: 0 0 14px rgba(250, 204, 21, 0.45);
 }
 
@@ -41,7 +44,7 @@
 }
 
 .rankThird {
-  background: linear-gradient(135deg, #fb923c, #c2410c);
+  background: linear-gradient(135deg, var(--orange-accent), #c2410c);
 }
 
 .rankMuted {
@@ -50,24 +53,30 @@
 }
 
 .avatar {
+  width: clamp(2rem, 9vw, 2.375rem);
+  height: clamp(2rem, 9vw, 2.375rem);
   flex-shrink: 0;
   border: 1px solid rgba(168, 85, 247, 0.45);
 }
 
 .nickname {
+  min-width: 0;
+  flex: 1;
   color: var(--text-main);
-  font-size: 0.98rem;
+  font-size: clamp(var(--font-size-sm), 3.8vw, 0.98rem);
 }
 
 .score {
-  min-width: 56px;
+  min-width: 3.5rem;
   flex-shrink: 0;
+  gap: var(--space-1);
   justify-content: flex-end;
 }
 
 .points {
   color: var(--warning);
-  font-size: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: clamp(var(--font-size-md), 4vw, 1.1rem);
   line-height: 1;
   font-weight: 900;
 }

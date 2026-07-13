@@ -1,11 +1,9 @@
 .card {
   width: 100%;
-  max-width: 390px;
-  padding: 22px 28px 26px;
+  min-width: 0;
+  padding: clamp(var(--space-4), 4vw, var(--space-6));
 
-  border-radius: 22px;
-  border: 1px solid rgba(168, 85, 247, 0.35);
-
+  color: var(--text-main);
   background:
     radial-gradient(
       circle at top left,
@@ -13,49 +11,61 @@
       transparent 35%
     ),
     linear-gradient(180deg, rgba(16, 26, 51, 0.96), rgba(8, 18, 43, 0.96));
-
-  color: var(--text-main);
-  box-shadow: 0 0 30px rgba(124, 58, 237, 0.25);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glow-purple-soft);
 }
 
 .header {
-  padding-bottom: 18px;
+  min-width: 0;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.header > :last-child {
+  min-width: 0;
+}
+
 .trophyIcon {
-  background: rgba(124, 58, 237, 0.18);
-  border: 1px solid rgba(168, 85, 247, 0.75);
-  box-shadow: 0 0 24px rgba(124, 58, 237, 0.45);
+  width: clamp(3rem, 10vw, 3.625rem);
+  height: clamp(3rem, 10vw, 3.625rem);
+  flex-shrink: 0;
   font-size: 1.6rem;
+  background: rgba(124, 58, 237, 0.18);
+  border: 1px solid var(--accent-violet);
+  box-shadow: var(--glow-purple-soft);
 }
 
 .title {
   color: var(--text-main);
-  font-size: 1.45rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 5vw, 1.45rem);
   line-height: 1;
 }
 
 .subtitle {
-  margin-top: 4px;
-  color: var(--text-muted);
-  font-size: 1rem;
+  margin-top: var(--space-1);
+  color: var(--text-soft);
+  font-size: clamp(var(--font-size-sm), 3.5vw, var(--font-size-md));
 }
 
 .footer {
-  padding-top: 20px;
+  padding-top: var(--space-4);
 }
 
 .footerIcon {
-  background: var(--electric-purple);
-  color: white;
+  flex-shrink: 0;
+  color: var(--text-main);
   font-size: 0.95rem;
+  background: var(--primary);
 }
 
 .ruleText {
-  color: var(--text-muted);
-  font-size: 0.95rem;
+  color: var(--text-soft);
+  font-size: clamp(var(--font-size-xs), 3.5vw, 0.95rem);
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .green {
@@ -64,6 +74,6 @@
 }
 
 .yellow {
-  color: var(--warning,);
+  color: var(--warning);
   font-weight: 800;
 }

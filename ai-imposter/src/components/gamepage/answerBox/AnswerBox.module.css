@@ -1,42 +1,84 @@
 .answerBox-container {
   flex: 1;
+  width: 100%;
+  min-width: 0;
   flex-direction: column;
   gap: var(--space-4);
 }
+
 .textArea-bottomSection {
   width: 100%;
   justify-content: flex-end;
 }
 .answerBox-textArea {
+  min-height: clamp(9rem, 26vh, 16rem);
+  padding: var(--space-4);
+  padding-bottom: var(--space-10);
+  resize: vertical;
   background-color: var(--surface-card);
   color: var(--text-main);
   border: 1px solid var(--primary-active);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-main);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  box-shadow: var(--glow-purple-soft);
 }
+
+.answerBox-textArea:focus {
+  border-color: var(--active-violet);
+  box-shadow: var(--glow-purple-strong);
+}
+
 .submit-button {
   display: flex;
+  width: min(100%, 30rem);
+  min-height: 3.25rem;
   margin-inline: auto;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #ec4899 100%);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--accent-violet) 45%,
+    var(--accent-pink) 100%
+  );
   box-shadow: var(--glow-purple-soft), var(--glow-pink-soft);
   border: none;
 }
-.submit-button:hover {
+.submit-button:hover:not(:disabled):not([data-loading]) {
   background: linear-gradient(90deg, var(--primary-hover), var(--accent-pink));
 }
+
+.submit-button:focus-visible {
+  outline: 2px solid var(--text-main);
+  outline-offset: 3px;
+}
+
 .submit-button-content {
+  width: 100%;
   gap: var(--space-2);
   align-items: center;
+  justify-content: center;
 }
 
 .send-icon {
-  width: 16px;
-  height: 16px;
+  flex: 0 0 auto;
+  width: 1.125rem;
+  height: 1.125rem;
 }
+
 .submit-button-text {
   font-weight: 900;
+  font-size: clamp(var(--font-size-md), 3vw, var(--font-size-lg));
 }
+
 .submit-label-container {
   color: var(--text-soft);
-  font-size: 0.75em;
+  font-size: var(--font-size-sm);
   justify-content: center;
+  text-align: center;
+  line-height: 1.4;
 }

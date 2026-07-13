@@ -1,8 +1,7 @@
-import { Flex, Text, Tooltip } from "@mantine/core";
+import { Flex, Text } from "@mantine/core";
 import styles from "./VotingCard.module.css";
 import MaskIcon from "../maskIcon/MaskIcon";
 import { Check } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 
 const maskColors = {
   purple: "#b23cff",
@@ -27,20 +26,11 @@ const VotingCard = ({
   color = "gray",
   onClick,
 }) => {
-  const textRef = useRef(null);
-  const [isTruncated, setIsTruncated] = useState(false);
   const displayText = isPlaceholder
     ? answer
     : isValid
       ? answer
       : "Invalid answer was submitted";
-
-  useEffect(() => {
-    const el = textRef.current;
-    if (el) {
-      setIsTruncated(el.scrollHeight > el.clientHeight);
-    }
-  }, [displayText]);
 
   // You can't vote for your own answer (the server rejects it anyway).
   const isClickable =
@@ -65,14 +55,12 @@ const VotingCard = ({
         isSelected && styles.selected,
         !isValid && styles.invalid,
         isDisabled && styles.disabled,
+        isOwn && styles.own,
+        isClickable && styles.clickable,
       ]
         .filter(Boolean)
         .join(" ")}
       onClick={isClickable ? onClick : undefined}
-      style={{
-        cursor: isClickable ? "pointer" : "not-allowed",
-        opacity: isOwn ? 0.55 : 1,
-      }}
     >
       <Flex
         className={[
@@ -88,18 +76,10 @@ const VotingCard = ({
           maskColor={isValid ? maskColors[color] : maskColors.gray}
         />
       </Flex>
-      <Tooltip
-        label={isOwn ? "This is your answer" : displayText}
-        disabled={!isOwn && !isTruncated}
-        multiline
-        w={250}
-        transitionProps={{ transition: "pop", duration: 300 }}
-      >
-        <Text ref={textRef} className={styles["answer-text"]}>
-          {displayText}
-          {isOwn ? " (you)" : ""}
-        </Text>
-      </Tooltip>
+      <Text className={styles["answer-text"]}>
+        {displayText}
+        {isOwn ? " (you)" : ""}
+      </Text>
 
       {isSelected && isClickable && (
         <Flex className={styles["check-icon"]}>

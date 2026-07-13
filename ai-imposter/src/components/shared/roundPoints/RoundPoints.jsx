@@ -3,10 +3,14 @@ import RoundPointPlayer from "./RoundPointPlayer.jsx";
 import styles from "./RoundPoints.module.css";
 
 export default function RoundPoints({ players = [] }) {
+  const displayPlayers = (Array.isArray(players) ? players : []).filter(
+    (player) => player?.isAi !== true,
+  );
+
   return (
-    <Card className={styles.card} shadow="sm" radius="lg">
+    <Card className={styles.card}>
       <Group className={styles.header} wrap="nowrap">
-        <ThemeIcon className={styles.icon} size={42} radius="xl">
+        <ThemeIcon className={styles.icon} radius="xl">
           ✦
         </ThemeIcon>
 
@@ -16,9 +20,9 @@ export default function RoundPoints({ players = [] }) {
       </Group>
 
       <Stack gap={0}>
-        {players.map((player, index) => (
+        {displayPlayers.map((player, index) => (
           <RoundPointPlayer
-            key={player.playerId}
+            key={player.playerId ?? player.id ?? `round-player-${index}`}
             player={player}
             rank={index + 1}
           />

@@ -25,13 +25,12 @@ export default function RoundPointPlayer({ player, rank }) {
 
   return (
     <Group className={styles.row} justify="space-between" wrap="nowrap">
-      <Group className={styles.playerInfo} gap="sm" wrap="nowrap">
+      <Group className={styles.playerInfo} wrap="nowrap">
         <Box className={rankClassName}>{rank}</Box>
 
         <Avatar
           src={player.avatarUrl}
           alt={player.nickname}
-          size={38}
           radius="xl"
           className={styles.avatar}
         />
@@ -41,9 +40,14 @@ export default function RoundPointPlayer({ player, rank }) {
         </Text>
       </Group>
 
-      <Group className={styles.score} gap={6} wrap="nowrap">
+      <Group className={styles.score} wrap="nowrap">
         <Text className={pointsClassName}>+{player.pointsEarned}</Text>
-        <img src={star} alt="star" className={starClassName} />
+        <img
+          src={star}
+          alt=""
+          aria-hidden="true"
+          className={starClassName}
+        />
       </Group>
     </Group>
   );

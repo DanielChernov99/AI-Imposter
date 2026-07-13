@@ -76,8 +76,6 @@ const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
       <Clock angle={angle} className={Classes["timer-icon"]} />
 
       <Flex className={Classes["countdown-container"]}>
-        <span className={Classes["countdown-info"]}>{label}</span>
-
         <span
           className={Classes["countdown-timer"]}
           role="timer"
@@ -85,6 +83,8 @@ const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
         >
           {minutes}:{remainingSeconds}
         </span>
+
+        <span className={Classes["countdown-info"]}>{label}</span>
       </Flex>
     </Flex>
   );

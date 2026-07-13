@@ -1,65 +1,94 @@
 .wrapper {
   display: inline-flex;
+  width: min(100%, 20rem);
+  min-width: 0;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .label {
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  color: var(--text-main);
+  font-family: var(--font-display);
+  font-size: clamp(var(--font-size-xs), 3vw, var(--font-size-sm));
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
 .progress {
+  width: 100%;
+  min-width: 0;
   align-items: center;
+  justify-content: center;
 }
 
 .segment {
+  min-width: 0;
   align-items: center;
+}
+
+.segment:not(:last-child) {
+  flex: 1 1 auto;
+}
+
+.segment:last-child {
+  flex: 0 0 auto;
 }
 
 .circle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-
   display: flex;
+  width: clamp(1.75rem, 7vw, 2.125rem);
+  height: clamp(1.75rem, 7vw, 2.125rem);
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
 
-  font-weight: 700;
-  font-size: 15px;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: clamp(var(--font-size-xs), 3.5vw, 0.9375rem);
+  font-weight: 800;
 
-  transition: 0.25s;
+  border-radius: 50%;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.completed {
-  background: #22c55e;
-  color: white;
+.completed,
+.lineCompleted {
+  background: var(--success);
 }
 
 .current {
-  background: #6d28d9;
-  color: white;
+  background: var(--primary-hover);
+  box-shadow: var(--glow-purple-soft);
 }
 
 .future {
-  background: #2b2f42;
-  color: #8b91a7;
+  color: var(--text-muted);
+  background: var(--disabled-surface);
 }
 
 .line {
-  width: 34px;
-  height: 4px;
-  margin: 0 2px;
-  border-radius: 999px;
-}
-
-.lineCompleted {
-  background: #22c55e;
+  width: auto;
+  min-width: 0.35rem;
+  max-width: 2rem;
+  height: 0.2rem;
+  margin-inline: 0.125rem;
+  flex: 1 1 0.75rem;
+  border-radius: var(--radius-full);
 }
 
 .lineFuture {
-  background: #3b4155;
+  background: var(--disabled-gray);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circle {
+    transition: none;
+  }
 }

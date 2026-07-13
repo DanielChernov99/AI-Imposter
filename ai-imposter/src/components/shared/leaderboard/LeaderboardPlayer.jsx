@@ -9,13 +9,12 @@ export default function LeaderboardPlayer({ player }) {
 
   return (
     <Group className={styles.row} justify="space-between" wrap="nowrap">
-      <Group className={styles.playerInfo} gap="md" wrap="nowrap">
+      <Group className={styles.playerInfo} wrap="nowrap">
         <Box className={rankClassName}>{rank}</Box>
 
         <Avatar
           src={player.avatarUrl}
           alt={player.nickname}
-          size={56}
           radius="xl"
           className={styles.avatar}
         />
@@ -25,9 +24,9 @@ export default function LeaderboardPlayer({ player }) {
         </Text>
       </Group>
 
-      <Group className={styles.score} gap={10} wrap="nowrap">
+      <Group className={styles.score} wrap="nowrap">
         <Text className={styles.points}>{player.totalScore}</Text>
-        <img src={star} alt="star" className={styles.star} />
+        <img src={star} alt="" aria-hidden="true" className={styles.star} />
       </Group>
     </Group>
   );
