@@ -1,5 +1,5 @@
 import { Flex, Text, Tooltip } from "@mantine/core";
-import classes from "./VotingCard.module.css";
+import styles from "./VotingCard.module.css";
 import MaskIcon from "../maskIcon/MaskIcon";
 import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -44,11 +44,7 @@ const VotingCard = ({
 
   // You can't vote for your own answer (the server rejects it anyway).
   const isClickable =
-    Boolean(onClick) &&
-    isValid &&
-    !isOwn &&
-    !isPlaceholder &&
-    !isDisabled;
+    Boolean(onClick) && isValid && !isOwn && !isPlaceholder && !isDisabled;
 
   const handleKeyDown = (event) => {
     if (isClickable && (event.key === "Enter" || event.key === " ")) {
@@ -65,10 +61,10 @@ const VotingCard = ({
       aria-pressed={isClickable && isSelected}
       onKeyDown={handleKeyDown}
       className={[
-        classes["votingCard-wrapper"],
-        isSelected && classes.selected,
-        !isValid && classes.invalid,
-        isDisabled && classes.disabled,
+        styles["votingCard-wrapper"],
+        isSelected && styles.selected,
+        !isValid && styles.invalid,
+        isDisabled && styles.disabled,
       ]
         .filter(Boolean)
         .join(" ")}
@@ -80,9 +76,9 @@ const VotingCard = ({
     >
       <Flex
         className={[
-          classes["mask-icon-container"],
-          classes[`mask-${color}`],
-          !isValid && classes["mask-invalid"],
+          styles["mask-icon-container"],
+          styles[`mask-${color}`],
+          !isValid && styles["mask-invalid"],
         ]
           .filter(Boolean)
           .join(" ")}
@@ -99,14 +95,14 @@ const VotingCard = ({
         w={250}
         transitionProps={{ transition: "pop", duration: 300 }}
       >
-        <Text ref={textRef} className={classes["answer-text"]}>
+        <Text ref={textRef} className={styles["answer-text"]}>
           {displayText}
           {isOwn ? " (you)" : ""}
         </Text>
       </Tooltip>
 
       {isSelected && isClickable && (
-        <Flex className={classes["check-icon"]}>
+        <Flex className={styles["check-icon"]}>
           <Check stroke="white" />
         </Flex>
       )}

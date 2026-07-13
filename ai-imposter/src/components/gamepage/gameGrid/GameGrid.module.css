@@ -1,17 +1,18 @@
 .submitVoteButton {
-  min-width: 12rem;
+  width: 100%;
+  max-width: 20rem;
   height: auto;
   margin-inline: auto;
-  padding: 12px 28px;
+  padding: 0.75rem 1.5rem;
 
   color: var(--text-main);
   background: linear-gradient(90deg, var(--primary), var(--accent-pink));
   border: 1px solid transparent;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-full);
   box-shadow: var(--glow-purple-soft), var(--glow-pink-soft);
 
   font-family: var(--font-main);
-  font-size: 1rem;
+  font-size: var(--font-size-md); /* 16px */
   font-weight: 900;
   letter-spacing: 0.03em;
 
@@ -23,20 +24,12 @@
 }
 
 .submitVoteButton:hover:not(:disabled):not([data-loading]) {
-  background: linear-gradient(
-    90deg,
-    var(--primary-hover),
-    var(--accent-pink)
-  );
+  background: linear-gradient(90deg, var(--primary-hover), var(--accent-pink));
   box-shadow: var(--glow-purple-strong), var(--glow-pink-soft);
 }
 
 .submitVoteButton:active:not(:disabled):not([data-loading]) {
-  background: linear-gradient(
-    90deg,
-    var(--primary-active),
-    var(--accent-pink)
-  );
+  background: linear-gradient(90deg, var(--primary-active), var(--accent-pink));
   transform: translateY(1px);
 }
 
@@ -65,4 +58,13 @@
   box-shadow: var(--glow-purple-soft);
   cursor: wait;
   opacity: 0.8;
+}
+
+/* Tablet: 768px */
+@media (min-width: 48rem) {
+  .submitVoteButton {
+    width: auto;
+    min-width: 12rem;
+    max-width: none;
+  }
 }

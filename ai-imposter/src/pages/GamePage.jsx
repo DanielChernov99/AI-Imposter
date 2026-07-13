@@ -35,29 +35,27 @@ const GamePage = observer(() => {
     <>
       <Header onLeaveRoom={handleLeaveRoom} />
 
-      <section
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          width: "50%",
-          marginLeft: "auto",
-          marginRight: "auto",
-          gap: "20px",
-          minHeight: "80vh",
-        }}
-      >
-        <QuestionBox question={currentQuestion.text} />
-        <InstructionLabel phase={phase} />
-        {phase === GAME_PHASE.ANSWERING && <AnswerBox />}
-        <GameGrid phase={phase} />
-        {phase === GAME_PHASE.REVEAL && (
-          <div className={styles.revealScores}>
+      <main className={styles.pageLayout}>
+        <section className={styles.mainColumn}>
+          <QuestionBox question={currentQuestion.text} />
+          <InstructionLabel phase={phase} />
+          {phase === GAME_PHASE.ANSWERING && <AnswerBox />}
+          <GameGrid phase={phase} />
+        </section>
+
+        <aside className={styles.sidebar}>
+          {phase === GAME_PHASE.REVEAL && (
             <RoundPoints players={revealStore.roundPoints} />
-            <Leaderboards players={revealStore.leaderboard} />
-          </div>
-        )}
-      </section>
+          )}
+          <Leaderboards
+            players={
+              phase === GAME_PHASE.REVEAL
+                ? revealStore.leaderboard
+                : roomStore.currentRoomPlayers
+            }
+          />
+        </aside>
+      </main>
     </>
   );
 });

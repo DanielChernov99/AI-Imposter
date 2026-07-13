@@ -1,22 +1,25 @@
 .questionMark-wrapper {
   position: relative;
-  padding: 20px;
+  padding: 0.875rem;
 }
+
 .questionMark-Container {
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background-color: var(--primary);
   align-items: center;
   justify-content: center;
   aspect-ratio: 1/1;
-  padding: 30px;
+  padding: 1.25rem;
   overflow: hidden;
   position: relative;
 }
+
 .questionMark {
   color: white;
-  font-size: 60px;
+  font-size: 2.5rem;
   font-weight: bold;
 }
+
 .astroid {
   position: absolute;
   top: var(--astroid-top);
@@ -26,38 +29,93 @@
   fill: var(--astroid-fill);
   stroke: transparent;
 }
+
 .astroid1 {
   --astroid-fill: #91fbef;
-  --astroid-top: 10px;
-  --astroid-left: 20px;
-  --astroid-width: 24x;
-  --astroid-height: 24px;
+  --astroid-top: 0.4rem;
+  --astroid-left: 0.8rem;
+  --astroid-width: 1rem;
+  --astroid-height: 1rem;
 }
+
 .astroid2 {
   --astroid-fill: #4ee5e5;
-  --astroid-top: 80px;
-  --astroid-left: 4px;
-  --astroid-width: 20px;
-  --astroid-height: 20px;
+  --astroid-top: 3.25rem;
+  --astroid-left: 0.15rem;
+  --astroid-width: 0.8rem;
+  --astroid-height: 0.8rem;
 }
+
 .astroid3 {
   --astroid-fill: #f3b1b8;
-  --astroid-top: 50px;
-  --astroid-left: 110px;
-  --astroid-width: 12px;
-  --astroid-height: 12px;
+  --astroid-top: 2rem;
+  --astroid-left: 4.5rem;
+  --astroid-width: 0.5rem;
+  --astroid-height: 0.5rem;
 }
+
 .astroid4 {
   --astroid-fill: #f8d588;
-  --astroid-top: 2px;
-  --astroid-left: 70px;
-  --astroid-width: 16px;
-  --astroid-height: 16px;
+  --astroid-top: 0.1rem;
+  --astroid-left: 2.8rem;
+  --astroid-width: 0.65rem;
+  --astroid-height: 0.65rem;
 }
+
 .astroid5 {
   --astroid-fill: #cad0df;
-  --astroid-top: 100px;
-  --astroid-left: 90px;
-  --astroid-width: 10px;
-  --astroid-height: 10px;
+  --astroid-top: 4rem;
+  --astroid-left: 3.6rem;
+  --astroid-width: 0.4rem;
+  --astroid-height: 0.4rem;
+}
+
+/* Tablet: 768px */
+@media (min-width: 48rem) {
+  .questionMark-wrapper {
+    padding: 1.25rem;
+  }
+
+  .questionMark-Container {
+    padding: 1.875rem;
+  }
+
+  .questionMark {
+    font-size: 3.75rem;
+  }
+
+  .astroid1 {
+    --astroid-top: 0.625rem;
+    --astroid-left: 1.25rem;
+    --astroid-width: 1.5rem;
+    --astroid-height: 1.5rem;
+  }
+
+  .astroid2 {
+    --astroid-top: 5rem;
+    --astroid-left: 0.25rem;
+    --astroid-width: 1.25rem;
+    --astroid-height: 1.25rem;
+  }
+
+  .astroid3 {
+    --astroid-top: 3.125rem;
+    --astroid-left: 6.875rem;
+    --astroid-width: 0.75rem;
+    --astroid-height: 0.75rem;
+  }
+
+  .astroid4 {
+    --astroid-top: 0.125rem;
+    --astroid-left: 4.375rem;
+    --astroid-width: 1rem;
+    --astroid-height: 1rem;
+  }
+
+  .astroid5 {
+    --astroid-top: 6.25rem;
+    --astroid-left: 5.625rem;
+    --astroid-width: 0.625rem;
+    --astroid-height: 0.625rem;
+  }
 }
