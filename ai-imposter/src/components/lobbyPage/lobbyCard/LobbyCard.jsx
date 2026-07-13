@@ -1,4 +1,4 @@
-import { Card, Stack, Text } from "@mantine/core";
+import { Flex, Card, Text } from "@mantine/core";
 import LobbyTitle from "../lobbyTitle/LobbyTitle";
 import LobbyPlayerList from "../LobbyPlayerList/LobbyPlayerList";
 import LobbyReadyButton from "../LobbyReadyButton/LobbyReadyButton";
@@ -20,7 +20,7 @@ function LobbyCard() {
 
   return (
     <Card className={styles.card}>
-      <Stack align="center" className={styles.content}>
+      <Flex align="center" className={styles.content}>
         <LobbyTitle
           joinedCount={currentRoomPlayers.length}
           capacity={currentRoom?.capacity ?? 0}
@@ -37,10 +37,10 @@ function LobbyCard() {
           onClick={handleReadyClick}
         />
 
-        <Text className={styles.hint}>
+        <Text span className={styles.hint}>
           When all players are ready, the game starts automatically.
         </Text>
-      </Stack>
+      </Flex>
     </Card>
   );
 }

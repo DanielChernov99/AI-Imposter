@@ -31,10 +31,12 @@ function LobbyPage() {
   };
 
   return (
-    <main className={styles.page}>
+    <>
       <Header onLeaveRoom={handleLeaveRoom} />
-      <LobbyCard />
-    </main>
+      <main className={styles.page}>
+        <LobbyCard />
+      </main>
+    </>
   );
 }
 

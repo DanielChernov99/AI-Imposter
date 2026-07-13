@@ -1,6 +1,7 @@
 .wrapper {
   gap: var(--space-3);
   text-align: center;
+  flex-direction: column;
 }
 
 .titleRow {
@@ -17,14 +18,16 @@
 .title {
   color: var(--text-main);
   font-family: var(--font-display);
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 900;
   line-height: 1.1;
 }
 
 .subtitle {
   color: var(--text-soft);
-  font-size: 1.1rem;
+  max-width: 26rem;
+  font-size: var(--font-size-md); /* 16px */
+  line-height: 1.45;
 }
 
 .countRow {
@@ -41,22 +44,23 @@
 
 .countText {
   color: var(--text-main);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
 }
 
-@media (max-width: 768px) {
+/* Tablet: 768px */
+@media (min-width: 48rem) {
   .title {
-    font-size: 2rem;
+    font-size: var(--font-size-4xl); /* 36px */
   }
 
   .subtitle {
-    max-width: 26rem;
-    font-size: 1rem;
-    line-height: 1.45;
+    max-width: none;
+    font-size: 1.1rem;
+    line-height: normal;
   }
 
   .countText {
-    font-size: 1.15rem;
+    font-size: var(--font-size-xl); /* 20px */
   }
 }
