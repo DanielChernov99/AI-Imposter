@@ -50,17 +50,21 @@
   }
 
   .first {
-    top: 10%;
+    left: 51.4%;
+    top: auto;
+    bottom: calc(36% + 0.25rem);
   }
 
   .second {
-    left: 15%;
-    top: 20%;
+    left: 16.9%;
+    top: auto;
+    bottom: calc(26.8% + 0.25rem);
   }
 
   .third {
-    left: 77%;
-    top: 46%;
+    left: 84.4%;
+    top: auto;
+    bottom: calc(22.4% + 0.25rem);
   }
 }
 

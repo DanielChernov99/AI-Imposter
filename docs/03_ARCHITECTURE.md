@@ -1,21 +1,22 @@
-נכון. במסמך `Architecture` צריך להסביר **איך המערכת בנויה**, לא לחזור שוב על כל חוקי המשחק, ה־Flow וה־UI שכבר נמצאים במסמכים האחרים. הגרסה הקודמת כללה יותר מדי פירוט וחזרות.
-
-הנה גרסה קצרה וממוקדת יותר:
-
-````md
 # Architecture
 
 ## Main Principle
 
-Supabase is the source of truth for shared room and game data.
+The application follows this data flow:
 
-React and MobX manage the client-side state and UI, but the permanent and shared state is stored in Supabase.
+```txt
+React Component
+→ MobX Store
+→ Service Contract
+→ Supabase Service
+→ Supabase
+```
 
-The MVP supports multiple rooms. Each room has a randomly generated room code, supports 2–5 players, and can have one active game at a time.
+Supabase is the source of truth for shared Room and Game data.
 
 ## Frontend
 
-The frontend is built with:
+The frontend uses:
 
 - React
 - Vite
@@ -23,215 +24,94 @@ The frontend is built with:
 - React Router
 - MobX
 - Mantine UI
+- CSS Modules
 
-React components should focus mainly on presentation and user interaction.
+Components focus on UI and user interaction.
 
-Components should not contain direct Supabase calls or shared game logic.
-
-## Application Flow
-
-The application follows the game flow:
-
-```txt
-Start Page
-    ↓
-Create Room or Join Room
-    ↓
-Lobby
-    ↓
-Countdown
-    ↓
-Game Page
-    ├── Answering
-    ├── Voting
-    └── Reveal
-    ↓
-Final Results
-```
-
-The application does not use a traditional navigation bar.
+Components do not call Supabase directly.
 
 ## Routing
 
-React Router is used for navigation between the main pages.
+The application uses `HashRouter` for GitHub Pages.
 
-Because the application will be deployed to GitHub Pages, `HashRouter` should be used.
+Main routes:
 
-Recommended routes:
+```txt
+/
+/lobby
+/game
+/result
+```
 
-- `/`
-- `/room/:roomCode/lobby`
-- `/room/:roomCode/game`
-- `/room/:roomCode/results`
+Answering, Voting, and Reveal are displayed inside the same Game Page.
 
-The Answering, Voting, and Reveal phases are not separate routes.
+## Stores
 
-They are displayed as changing content inside the same Game Page, while shared components such as the Header, Timer, round status, and Leaderboard remain visible.
+### RootStore
 
-## Room and Game Separation
+Creates all feature stores and coordinates cross-store flow:
 
-A room and a game are separate entities.
+- Room and Game synchronization.
+- Phase-entry loading.
+- Store resets.
+- Realtime subscription lifecycle.
+- Final standings transfer.
 
-### Room
+It does not control authoritative game rules.
 
-A room represents the shared lobby that players create or join.
+### Feature Stores
 
-A room stores:
+- `RoomStore` — Room, Players, Ready state, Lobby, Play Again.
+- `GameStore` — Active Game, Realtime, deadlines, phase requests.
+- `QuestionStore` — Current question.
+- `AnswerStore` — Current player's answer.
+- `VoteStore` — Voting options, selection, and submission.
+- `RevealStore` — Reveal data, points, Leaderboard, and final standings.
 
-- Room ID
-- Room code
-- Maximum players
-- Room status
-- Active game ID
-
-### Game
-
-A game represents one complete 5-round match inside a room.
-
-A game stores:
-
-- Game ID
-- Room ID
-- Current phase
-- Current round
-- Current question
-- Phase start time
-- Phase end time
-
-When players choose Play Again, they return to the same room, but a new game session is created.
-
-## State Management
-
-MobX is used for client-side state management.
-
-The initial architecture uses three stores:
-
-### PlayerStore
-
-Manages the current player's identity:
-
-- Player ID
-- Authenticated user ID
-- Nickname
-- Current room ID
-- Current game ID
-
-### RoomStore
-
-Manages room and lobby state:
-
-- Current room
-- Room players
-- Ready states
-- Room creation
-- Room joining
-- Leaving the room
-- Room subscriptions
-
-### GameStore
-
-Manages the active game:
-
-- Current phase
-- Current round
-- Current question
-- Answers
-- Votes
-- Scores
-- Leaderboard
-- Phase timer
-- Play Again
-
-Temporary UI state, such as textarea content or an unsubmitted vote selection, should remain inside the relevant component.
+Each feature store depends on one service.
 
 ## Services
 
-Components should call MobX store actions, and stores should use service files.
+Service files handle:
 
-```txt
-React Component
-      ↓
-MobX Store
-      ↓
-Service
-      ↓
-Mock Service or Supabase
-```
+- Supabase queries.
+- RPC calls.
+- Realtime channels.
+- Error translation.
+- Database-to-client mapping.
 
-Main services:
+Database `snake_case` fields are mapped to frontend `camelCase`.
 
-- `authService`
-- `roomService`
-- `gameService`
-- `questionService`
-- `aiService`
+## Server Authority
 
-During the first development stage, mock services are used.
+Supabase functions control:
 
-After the complete local flow works, the mock services are replaced with Supabase services.
+- Game start.
+- Countdown cancellation.
+- Phase advancement.
+- Question selection.
+- Prepared AI-answer selection.
+- Scoring.
+- Final standings.
+- Play Again reset.
 
-## Authentication
-
-Players use only a nickname in the UI.
-
-Supabase Anonymous Auth is used behind the scenes to identify each browser session.
-
-Each player row is connected to an authenticated user through `auth_user_id`.
+The frontend reacts to server state.
 
 ## Realtime
 
-Supabase Realtime synchronizes players inside the same room and game.
+- `RoomStore` owns Room and Player synchronization.
+- `GameStore` owns Game synchronization.
+- Supabase services create and manage channels.
+- `RootStore` decides when subscriptions start and stop.
 
-Realtime updates are required for:
+## Timer
 
-- Players joining or leaving
-- Ready-state changes
-- Countdown
-- Game phases
-- Answers
-- Votes
-- Scores
-- Final results
+The Timer component only displays the remaining time.
 
-Subscriptions should be filtered by `room_id` and `game_id`.
+`GameStore` requests phase advancement when the deadline is reached.
 
-## Phase Management
+The server validates the deadline and performs the actual transition.
 
-The game starts automatically when the room is full and every player is ready.
+## Current Limitation
 
-Game phases are:
-
-- `countdown`
-- `answering`
-- `voting`
-- `reveal`
-- `finished`
-
-The game stores `phase_started_at` and `phase_ends_at`.
-
-The Timer component only displays the remaining time. It should not independently control phase transitions.
-
-During the mock stage, phase transitions are managed through the GameStore and mock game service.
-
-During the Supabase stage, transitions must be guarded so multiple clients cannot advance the game more than once.
-
-## Authorization
-
-Supabase Row Level Security should prevent players from:
-
-- Editing other players
-- Submitting answers for other players
-- Submitting votes for other players
-- Changing scores
-- Changing game phases directly
-
-Sensitive operations such as scoring and phase transitions should eventually use protected database or server-side functions.
-
-## Deployment
-
-The frontend will be deployed to GitHub Pages using `HashRouter`.
-
-Public Supabase values may be stored in frontend environment variables.
-
-Secret values, including the Google AI API key and Supabase service-role key, must not be exposed in frontend code.
-````
+Supabase Auth survives Refresh, but the frontend does not yet restore the related Player, Room, and Game into MobX.

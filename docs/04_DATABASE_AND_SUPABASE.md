@@ -2,317 +2,137 @@
 
 ## Main Principle
 
-Supabase is the source of truth for shared room and game data.
+Supabase stores and validates all shared Room and Game data.
 
-The MVP supports multiple independent rooms.
+The database uses:
 
-Each room has:
-
-- A unique room ID
-- A randomly generated room code
-- A selected capacity between 2 and 5 players
-- Its own players
-- One active game session at a time
-
-A game represents one complete 5-round match inside a room.
+- Tables.
+- Constraints.
+- Unique indexes.
+- Triggers.
+- Row Level Security.
+- Server functions.
+- Realtime.
 
 ## Main Tables
 
-The MVP uses these main tables:
+### rooms
 
-- `rooms`
-- `games`
-- `players`
-- `questions`
-- `answers`
-- `votes`
+Stores:
 
-## rooms
+- Room code.
+- Maximum players.
+- Room status.
+- Active Game ID.
 
-Stores the room that players create or join.
-
-Important fields:
-
-- `id`
-- `code`
-- `max_players`
-- `status`
-- `active_game_id`
-- `created_at`
-- `updated_at`
-
-Recommended statuses:
-
-- `waiting`
-- `countdown`
-- `playing`
-- `finished`
-
-The room code must be unique among active rooms.
-
-Players can join only when:
-
-- The room exists
-- The room status is `waiting`
-- The room is not full
-
-## games
-
-Stores one complete game session inside a room.
-
-Important fields:
-
-- `id`
-- `room_id`
-- `phase`
-- `current_round`
-- `total_rounds`
-- `current_question_id`
-- `phase_started_at`
-- `phase_ends_at`
-- `created_at`
-- `finished_at`
-
-Recommended phases:
-
-- `countdown`
-- `answering`
-- `voting`
-- `reveal`
-- `finished`
-
-Example phase flow:
+Statuses:
 
 ```txt
+waiting
 countdown
-    ->
-answering
-    ->
-voting
-    ->
-reveal
-    ->
-answering
-    ->
-...
-    ->
+playing
 finished
 ```
 
-Each room can have only one active game at a time.
+### games
 
-A new game record is created when the room is full and every player is ready.
+Stores:
 
-## players
+- Room ID.
+- Current phase and round.
+- Current question.
+- Phase deadlines.
+- Phase durations.
+- Final standings.
 
-Stores the players inside rooms.
+Phases:
 
-Important fields:
+```txt
+countdown
+answering
+voting
+reveal
+finished
+```
 
-- `id`
-- `room_id`
-- `auth_user_id`
-- `nickname`
-- `avatar_url`
-- `is_ready`
-- `is_connected`
-- `total_score`
-- `joined_at`
+### players
 
-Rules:
+Stores:
 
-- Nicknames must be unique inside the same room
-- Nickname comparison should be case-insensitive
-- A player may update only their own ready state
-- A player starts with `is_ready = false`
-- Scores are reset when a new game begins
+- Room ID.
+- Anonymous Auth user ID.
+- Nickname and avatar.
+- Ready state.
+- Total score.
 
-## questions
+### questions
 
-Stores the questions used during the game.
+Stores:
 
-Important fields:
+- Question text.
+- Active state.
+- Three prepared AI-style answers.
 
-- `id`
-- `text`
-- `fallback_ai_answer`
-- `is_active`
-- `created_at`
+```txt
+ai_answers text[]
+```
 
-The fallback AI answer is used when the Google AI API fails, times out, or returns an invalid answer.
+### game_rounds
 
-Questions should not repeat during the same game when enough questions are available.
+Stores the selected Question and AI answer for each round.
 
-## answers
+It prevents the same Question from appearing twice in one Game.
+
+### answers
 
 Stores human and AI answers.
 
-Important fields:
-
-- `id`
-- `game_id`
-- `round_number`
-- `question_id`
-- `player_id`
-- `text`
-- `is_valid`
-- `is_ai`
-- `submitted_at`
-
 Rules:
 
-- A human player can submit only one answer per round
-- A submitted answer cannot be edited
-- The AI answer uses `player_id = null`
-- Only one AI answer may exist per game and round
-- Missing or invalid answers cannot receive votes
-- Every answer belongs to a specific game and round
+- One human answer per player per round.
+- One AI answer per round.
+- AI answers use `player_id = null`.
 
-## votes
+### votes
 
-Stores player votes.
+Stores one Vote per player per round.
 
-Important fields:
+A trigger prevents:
 
-- `id`
-- `game_id`
-- `round_number`
-- `voter_player_id`
-- `answer_id`
-- `created_at`
+- Voting for an invalid answer.
+- Voting for the player's own answer.
 
-Rules:
+### round_scores
 
-- A player can vote only once per round
-- A player cannot vote for their own answer
-- A player cannot vote for an invalid answer
-- A submitted vote cannot be changed
-- Every vote belongs to a specific game and round
+Records which rounds were already scored.
 
-## Main Relationships
+This prevents duplicate scoring.
 
-```txt
-rooms
-  ├── players
-  └── games
-        ├── answers
-        └── votes
+## Main Server Functions
 
-questions
-  └── answers
-```
+- `start_game` — creates a Game and starts Countdown.
+- `cancel_game_countdown` — cancels Countdown and returns the Room to `waiting`.
+- `advance_game_phase` — controls phases, questions, AI answers, scoring, and completion.
+- `get_voting_answers` — returns anonymous valid answers.
+- `score_round` — calculates and stores round scoring.
+- `request_play_again` — waits for all players and resets the Room.
+- `cleanup_old_game_data` — removes old completed Game data.
 
-Relationships:
+## Important Database Rules
 
-- A room has many players
-- A room has many game sessions
-- A room has one active game at a time
-- A game has many answers
-- A game has many votes
-- An answer may belong to a human player or to the AI
-- A vote belongs to one player and one answer
-
-## Recommended Constraints
-
-The database should enforce:
-
-- Unique room code
-- Room capacity between 2 and 5
-- Unique nickname per room
-- One human answer per player per round
-- One AI answer per round
-- One vote per player per round
-- Valid foreign-key relationships
-- No duplicate game scoring
-- No joining a full or active room
-
-Some rules, such as preventing self-votes, may require a database function because they depend on data from multiple rows.
-
-## Scoring
-
-Scoring should not be trusted from the frontend.
-
-The scoring logic should:
-
-- Give 2 points to a player who votes for the AI answer
-- Give 1 point to the owner of a human answer that receives a vote
-- Give the incorrect voter 0 points
-- Ignore invalid answers
-- Prevent the AI from receiving points
-- Update player total scores
-- Prevent the same round from being scored twice
-
-During local development, scoring may be handled by the mock game service.
-
-In Supabase, scoring should be handled through a protected database function or Edge Function.
-
-## Supabase Anonymous Auth
-
-Players enter only a nickname.
-
-Behind the scenes, Supabase Anonymous Auth creates an authenticated user ID for each browser session.
-
-The authenticated user is connected to a player row through:
-
-```txt
-auth_user_id
-```
-
-This is used to:
-
-- Identify the current player
-- Prevent players from editing other players
-- Restore a session after refresh
-- Support Row Level Security
-
-## Row Level Security
-
-RLS should ensure that players can:
-
-- Create a room
-- Join an open room
-- Read the room they joined
-- Read players in their room
-- Update their own ready state
-- Submit their own answer
-- Submit one vote per round
-- Read the active game data
-
-Players should not be able to:
-
-- Edit another player
-- Change scores manually
-- Submit answers for another player
-- Submit votes for another player
-- Change the current game phase directly
-- Join a full room
-- Join a room after the game has started
+- Room capacity must be between 2 and 5.
+- Active Room codes are unique.
+- Nicknames are unique per Room, case-insensitively.
+- One unfinished Game is allowed per Room.
+- A Question cannot repeat in the same Game.
+- One Answer per player per round.
+- One AI Answer per round.
+- One Vote per player per round.
+- One scoring operation per round.
 
 ## Realtime
 
-Supabase Realtime is used to synchronize players in the same room and game.
-
-Realtime updates are needed for:
-
-- Players joining and leaving
-- Ready-state changes
-- Countdown start or cancellation
-- Game creation
-- Phase changes
-- Round changes
-- Answer submissions
-- Vote submissions
-- Reveal results
-- Leaderboard updates
-- Final results
-- Play Again
-
-Subscriptions should be filtered by:
-
-- `room_id`
-- `game_id`
-
-The main Realtime tables are:
+Realtime is enabled for:
 
 - `rooms`
 - `players`
@@ -320,14 +140,37 @@ The main Realtime tables are:
 - `answers`
 - `votes`
 
-## Play Again
+The frontend mainly listens to Room, Player, and Game changes.
 
-When players choose Play Again:
+## Authentication and RLS
 
-- The same room remains active
-- The room code remains unchanged
-- The completed game remains stored
-- Player scores are reset
-- Player ready states return to `false`
-- The room status returns to `waiting`
-- A new game session is created when the room is full and everyone is ready again
+Supabase Anonymous Auth identifies each browser session.
+
+The Player row is connected through:
+
+```txt
+players.auth_user_id
+```
+
+RLS and server functions restrict access according to the current player and Room.
+
+## Final Standings
+
+The server stores final results in:
+
+```txt
+games.final_standings
+```
+
+Ordering:
+
+```txt
+total_score DESC
+joined_at ASC
+```
+
+## Current Limitations
+
+- Frontend Refresh restoration is not implemented.
+- Room capacity does not change automatically when players leave.
+- Automatic scheduling of old-game cleanup is not managed by the frontend.

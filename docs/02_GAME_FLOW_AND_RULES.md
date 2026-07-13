@@ -1,130 +1,117 @@
 # Game Flow and Rules
 
-## Room and Player Limits
+## Room Rules
 
-- Minimum players per room: 2
-- Maximum players per room: 5
-- The room creator selects the required number of players when creating the room.
-- A game cannot start until the room reaches its selected player capacity.
-- The MVP supports multiple independent rooms.
-
-Each room has:
-
-- A unique internal room ID.
-- A randomly generated room code.
-- A selected player capacity between 2 and 5.
-- A list of players.
-- Player ready states.
-- A room status.
-- An active game ID when a game is running.
-
-Room codes must be unique among active rooms.
+- Room capacity is between 2 and 5 players.
+- The creator selects the room capacity.
+- The creator has no Host permissions.
+- Players join using a nickname and room code.
+- Nicknames must be unique inside the room.
+- Players may join only while the room is `waiting`.
+- The game starts only when the room is full and all players are ready.
 
 ## Room Statuses
 
-Recommended room statuses:
+```txt
+waiting
+countdown
+playing
+finished
+```
 
-- `waiting`
-- `countdown`
-- `playing`
-- `finished`
+## Game Phases
 
-### Waiting
+```txt
+countdown
+answering
+voting
+reveal
+finished
+```
 
-The room is open and players may join if it is not full.
+## Timers
 
-### Countdown
+| Phase     |   Duration |
+| --------- | ---------: |
+| Countdown |  5 seconds |
+| Answering | 20 seconds |
+| Voting    | 20 seconds |
+| Reveal    | 10 seconds |
 
-The room is full and every player is ready. A short countdown is displayed before the game starts.
+## Lobby
 
-New players cannot join during the countdown.
+Players can:
 
-### Playing
-
-The game has started.
-
-New players cannot join while the room is playing.
-
-### Finished
-
-The game has completed and the final results are displayed.
-
-Players may choose Play Again or leave the room.
-
-## Start Page Flow
-
-From the Start Page, a player can:
-
-1. Create a new room.
-2. Join an existing room.
-
-## Create Room
-
-When creating a room, the player enters:
-
-- A nickname.
-- The required number of players, between 2 and 5.
-
-The system then:
-
-1. Validates the nickname.
-2. Creates a new room.
-3. Generates a random and unique room code.
-4. Sets the selected player capacity.
-5. Adds the room creator as the first player.
-6. Sets the creator's ready state to `false`.
-7. Moves the creator to the room lobby.
-
-The room creator does not receive special host permissions in the MVP.
-
-The game does not require the creator to manually start it.
-
-## Join Room
-
-When joining an existing room, the player enters:
-
-- A nickname.
-- A room code.
-
-A player can join only if:
-
-- The room code belongs to an active room.
-- The room status is `waiting`.
-- The room is not full.
-- The nickname is valid.
-- The nickname is not already used in that room.
-
-If any condition fails, the player remains on the Start Page and sees an appropriate error message.
-
-## Nickname Rules
-
-- Minimum length: 2 characters.
-- Maximum length: 16 characters.
-- Cannot be empty.
-- Leading and trailing spaces should be removed.
-- Must be unique within the current room.
-- Nickname comparison should be case-insensitive.
-
-For example, `PlayerOne` and `playerone` are considered the same nickname inside the same room.
-
-The same nickname may exist in different rooms.
-
-## Lobby Flow
-
-After creating or joining a room, the player enters the room lobby.
-
-Inside the lobby, players can:
-
-- See the room code.
-- See the current number of players.
-- See the selected player capacity.
-- See the other players in the room.
-- See which players are ready.
-- Mark themselves as ready or not ready.
+- View the room code.
+- View all room players.
+- View Ready states.
+- Change their own Ready state.
 - Leave the room.
 
-Each player begins with:
+If a player becomes Not Ready during Countdown:
 
-```js
-isReady: false;
-```
+- The Countdown is cancelled.
+- The temporary Game is deleted.
+- The Room returns to `waiting`.
+
+## Answering
+
+- Every player may submit one answer per round.
+- A submitted answer cannot be edited.
+- Missing or invalid answers cannot receive votes.
+- The AI answer remains hidden during this phase.
+
+## Voting
+
+- Valid answers are displayed anonymously.
+- Players may change their selection before submitting.
+- A submitted vote is final.
+- A player may vote only once.
+- A player cannot vote for their own answer.
+- A player cannot vote for an invalid answer.
+
+## Reveal
+
+The Reveal displays:
+
+- The AI answer.
+- The owner of each human answer.
+- Player votes.
+- Round points.
+- Updated Leaderboard.
+
+## Scoring
+
+- Correct AI vote: +2 to the voter.
+- Vote for a human answer: +1 to its owner.
+- Incorrect voter: 0 points.
+- Invalid answers and the AI receive no points.
+
+## Game Completion
+
+The Answering, Voting, and Reveal flow repeats for 5 rounds.
+
+After Round 5:
+
+- The Game becomes `finished`.
+- Final standings are stored.
+- The podium and final scores are displayed.
+
+Ties are ordered by earlier room join time.
+
+## Play Again
+
+The Room resets only after every current player requests Play Again.
+
+The reset:
+
+- Keeps the room code.
+- Resets scores.
+- Resets Ready states.
+- Returns the Room to `waiting`.
+
+## Known Limitations
+
+- Refresh may return the player to the Start Page.
+- Room capacity does not shrink when a player leaves.
+- Full mid-game disconnect recovery is outside the MVP.
