@@ -21,6 +21,7 @@ export default class GameStore {
       clearError: action,
       setServiceError: action,
       createGame: action,
+      loadGameById: action,
     });
   }
 
@@ -61,7 +62,34 @@ export default class GameStore {
 
       return true;
     } catch (caughtError) {
-      this.setServiceError("create", caughtError, "Failed to create game");
+      this.setServiceError("create", caughtError, "Failed to create the game");
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  async loadGameById(gameId) {
+    if (this.isLoading) {
+      return false;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const game = await this.gameService.getGameById(gameId);
+
+      runInAction(() => {
+        this.currentGame = game;
+      });
+
+      return true;
+    } catch (caughtError) {
+      this.setServiceError("load", caughtError, "Failed to load the game");
 
       return false;
     } finally {
