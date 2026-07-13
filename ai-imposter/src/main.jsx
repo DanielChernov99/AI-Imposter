@@ -9,15 +9,18 @@ import App from "./App.jsx";
 import createMockRoomService from "./services/mockRoomService.js";
 import createMockGameService from "./services/mockGameService.js";
 import createMockQuestionService from "./services/mockQuestionService.js";
+import createMockAnswerService from "./services/mockAnswerService.js";
 import RootStore from "./stores/RootStore.js";
 import { StoreProvider } from "./context/StoreContext.jsx";
 
 const questionService = createMockQuestionService();
+const answerService = createMockAnswerService();
 
 const rootStore = new RootStore({
   roomService: createMockRoomService(),
   gameService: createMockGameService(),
   questionService,
+  answerService,
 });
 
 createRoot(document.getElementById("root")).render(

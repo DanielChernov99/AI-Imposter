@@ -8,9 +8,13 @@ import { useStores } from "../context/StoreContext.jsx";
 import { GAME_PHASE } from "../domain/constants.js";
 
 const GamePage = observer(() => {
-  const { gameStore, questionStore } = useStores();
+  const rootStore = useStores();
+  const { gameStore, questionStore, answerStore } = rootStore;
   const { currentGame } = gameStore;
   const { currentQuestion } = questionStore;
+
+  const handleSubmitAnswer = (text) =>
+    rootStore.submitCurrentPlayerAnswer(text);
 
   if (!currentGame || !currentQuestion) {
     return null;
@@ -33,7 +37,14 @@ const GamePage = observer(() => {
     >
       <QuestionBox question={currentQuestion.text} />
       <InstructionLabel phase={phase} />
-      {phase === GAME_PHASE.ANSWERING && <AnswerBox />}
+      {phase === GAME_PHASE.ANSWERING && (
+        <AnswerBox
+          onSubmit={handleSubmitAnswer}
+          isSubmitting={answerStore.isLoading}
+          isSubmitted={Boolean(answerStore.currentPlayerAnswer)}
+          errorMessage={answerStore.error?.message}
+        />
+      )}
       <GameGrid phase={phase} />
     </section>
   );
