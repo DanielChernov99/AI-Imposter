@@ -3,13 +3,27 @@
   justify-content: center;
   gap: var(--space-2);
 }
+
 .questionBox-instructions-label {
   text-align: center;
   color: var(--text-soft);
-  font-size: 12px;
+  font-size: var(--font-size-xs); /* 12px */
 }
+
 .instruction-icon {
   stroke: var(--primary);
-  width: 12px;
-  height: 12px;
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Tablet: 768px */
+@media (min-width: 48rem) {
+  .questionBox-instructions-label {
+    font-size: var(--font-size-sm); /* 14px */
+  }
+
+  .instruction-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
 }

@@ -1,11 +1,42 @@
-.revealScores {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  align-items: start;
+.pageLayout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 90rem;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-4);
   width: 100%;
 }
 
-.revealScores > * {
-  max-width: none;
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+/* Laptop: 1024px */
+@media (min-width: 64rem) {
+  .pageLayout {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: var(--space-6);
+  }
+
+  .mainColumn {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .sidebar {
+    width: 23.75rem;
+    flex: none;
+  }
 }
