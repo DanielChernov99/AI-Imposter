@@ -1,7 +1,7 @@
 .row {
   width: 100%;
-  min-height: 4rem;
-  padding: var(--space-3) var(--space-5);
+  min-height: 4.5rem;
+  padding: var(--space-3);
 
   border: var(--border-default);
   border-radius: var(--radius-md);
@@ -20,7 +20,7 @@
 }
 
 .playerInfo {
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-width: 0;
 }
 
@@ -30,7 +30,7 @@
 
 .nickname {
   color: var(--text-main);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -47,6 +47,7 @@
 .readyBadge {
   height: 2rem;
   padding-inline: var(--space-3);
+  min-width: 5.25rem;
 }
 
 .ready {
@@ -61,21 +62,22 @@
   border: 1px solid var(--orange-accent);
 }
 
-@media (max-width: 768px) {
+/* Tablet: 768px */
+@media (min-width: 48rem) {
   .row {
-    min-height: 4.5rem;
-    padding: var(--space-3);
+    min-height: 4rem;
+    padding: var(--space-3) var(--space-5);
   }
 
   .playerInfo {
-    gap: var(--space-3);
+    gap: var(--space-4);
   }
 
   .nickname {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .readyBadge {
-    min-width: 5.25rem;
+    min-width: unset;
   }
 }
