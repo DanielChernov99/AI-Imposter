@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 
 import {
   GameServiceError,
@@ -20,6 +20,7 @@ export default class GameStore {
 
       clearError: action,
       setServiceError: action,
+      createGame: action,
     });
   }
 
@@ -40,6 +41,33 @@ export default class GameStore {
         code: GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
         message: fallbackMessage,
       };
+    }
+  }
+
+  async createGame({ roomId }) {
+    if (this.isLoading) {
+      return false;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const game = await this.gameService.createGame({ roomId });
+
+      runInAction(() => {
+        this.currentGame = game;
+      });
+
+      return true;
+    } catch (caughtError) {
+      this.setServiceError("create", caughtError, "Failed to create game");
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
   }
 }
