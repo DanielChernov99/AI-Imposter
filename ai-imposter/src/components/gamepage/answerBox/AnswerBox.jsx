@@ -30,6 +30,16 @@ const AnswerBox = observer(() => {
     }
   };
 
+  const handleSubmit = async () => {
+    const cleanAnswer = answer.trim();
+
+    if (!cleanAnswer || isSubmitting || isSubmitted) {
+      return;
+    }
+
+    await onSubmit(cleanAnswer);
+  };
+
   return (
     <Flex className={classes["answerBox-container"]}>
       <Textarea
@@ -43,7 +53,7 @@ const AnswerBox = observer(() => {
         bottomSection={
           <Flex className={classes["textArea-bottomSection"]}>
             <Text size="xs" c="dimmed">
-              {answer.length}/{MAX_LENGTH} characters
+              {answer.length}/{MAX_ANSWER_LENGTH} characters
             </Text>
           </Flex>
         }

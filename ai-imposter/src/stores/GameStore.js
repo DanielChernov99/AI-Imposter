@@ -190,8 +190,7 @@ export default class GameStore {
       return;
     }
 
-    const millisecondsLeft =
-      new Date(game.phaseEndsAt).getTime() - Date.now();
+    const millisecondsLeft = new Date(game.phaseEndsAt).getTime() - Date.now();
     const delay =
       Math.max(0, millisecondsLeft) + Math.random() * ADVANCE_JITTER_MS;
 
@@ -401,6 +400,41 @@ export default class GameStore {
       );
 
       return false;
+    }
+  }
+
+  async transitionPhase({ expectedPhase, nextPhase }) {
+    if (this.isLoading || !this.currentGame) {
+      return false;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const game = await this.gameService.transitionGamePhase({
+        gameId: this.currentGame.id,
+        expectedPhase,
+        nextPhase,
+      });
+
+      runInAction(() => {
+        this.currentGame = game;
+      });
+
+      return true;
+    } catch (caughtError) {
+      this.setServiceError(
+        "transitionPhase",
+        caughtError,
+        "Failed to transition the game phase",
+      );
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
     }
   }
 }

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { Button, Text } from "@mantine/core";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router";
 
@@ -7,7 +9,11 @@ import InstructionLabel from "../components/gamepage/instructionLabel/Instructio
 import GameGrid from "../components/gamepage/gameGrid/GameGrid";
 import Header from "../components/layout/header/Header.jsx";
 import { useStores } from "../context/StoreContext.jsx";
-import { GAME_PHASE } from "../domain/constants.js";
+import {
+  ANSWERING_DURATION_SECONDS,
+  GAME_PHASE,
+  VOTING_DURATION_SECONDS,
+} from "../domain/constants.js";
 
 const GamePage = observer(() => {
   const { roomStore, gameStore, questionStore } = useStores();
@@ -27,7 +33,11 @@ const GamePage = observer(() => {
     return <Header onLeaveRoom={handleLeaveRoom} />;
   }
 
-  const { phase } = currentGame;
+  const isVoting = phase === GAME_PHASE.VOTING;
+  const playerVote = voteStore.currentPlayerVote;
+  const isVoteSubmitted =
+    playerVote?.gameId === currentGame.id &&
+    playerVote.roundNumber === currentGame.currentRound;
 
   return (
     <>

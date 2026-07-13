@@ -4,6 +4,9 @@ import MaskIcon from "../maskIcon/MaskIcon";
 import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import classes from "./VotingCard.module.css";
+import MaskIcon from "../maskIcon/MaskIcon";
+
 const maskColors = {
   purple: "#b23cff",
   cyan: "#3ccfff",
@@ -16,6 +19,7 @@ const maskColors = {
   teal: "#2dd4bf",
   gray: "#8a8f98",
 };
+
 const VotingCard = ({
   answer = "My GPS took me on a scenic route",
   isSelected = false,
@@ -40,10 +44,16 @@ const VotingCard = ({
 
   return (
     <Flex
+      role="button"
+      tabIndex={isDisabled ? -1 : 0}
+      aria-disabled={isDisabled}
+      aria-pressed={isSelected}
+      onClick={handleSelect}
+      onKeyDown={handleKeyDown}
       className={[
         classes["votingCard-wrapper"],
-        isSelected && classes["selected"],
-        !isValid && classes["invalid"],
+        isSelected && classes.selected,
+        !isValid && classes.invalid,
       ]
         .filter(Boolean)
         .join(" ")}
