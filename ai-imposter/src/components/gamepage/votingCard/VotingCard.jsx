@@ -4,9 +4,6 @@ import MaskIcon from "../maskIcon/MaskIcon";
 import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import classes from "./VotingCard.module.css";
-import MaskIcon from "../maskIcon/MaskIcon";
-
 const maskColors = {
   purple: "#b23cff",
   cyan: "#3ccfff",
@@ -42,13 +39,19 @@ const VotingCard = ({
   // You can't vote for your own answer (the server rejects it anyway).
   const isClickable = Boolean(onClick) && isValid && !isOwn;
 
+  const handleKeyDown = (event) => {
+    if (isClickable && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <Flex
       role="button"
-      tabIndex={isDisabled ? -1 : 0}
-      aria-disabled={isDisabled}
+      tabIndex={isClickable ? 0 : -1}
+      aria-disabled={!isClickable}
       aria-pressed={isSelected}
-      onClick={handleSelect}
       onKeyDown={handleKeyDown}
       className={[
         classes["votingCard-wrapper"],

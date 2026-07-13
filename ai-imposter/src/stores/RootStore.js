@@ -1,6 +1,7 @@
 import { reaction } from "mobx";
 
 import { ROOM_STATUS } from "../domain/constants.js";
+import AnswerStore from "./AnswerStore.js";
 import GameStore from "./GameStore.js";
 import QuestionStore from "./QuestionStore.js";
 import RoomStore from "./RoomStore.js";
@@ -21,6 +22,8 @@ export default class RootStore {
     this.roomStore = new RoomStore(roomService);
     this.gameStore = new GameStore(gameService);
     this.questionStore = new QuestionStore(questionService);
+    this.answerStore = answerService ? new AnswerStore(answerService) : null;
+    this.voteStore = voteService ? new VoteStore(voteService) : null;
 
     this.#wireCrossStoreReactions();
   }

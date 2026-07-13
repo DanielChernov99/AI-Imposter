@@ -4,10 +4,10 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 
 import { useStores } from "../../../context/StoreContext.jsx";
+import { MAX_ANSWER_LENGTH } from "../../../domain/constants.js";
 import classes from "./AnswerBox.module.css";
 
 const AnswerBox = observer(() => {
-  const MAX_LENGTH = 120;
   const rootStore = useStores();
   const { gameStore } = rootStore;
   const [answer, setAnswer] = useState("");
@@ -30,16 +30,6 @@ const AnswerBox = observer(() => {
     }
   };
 
-  const handleSubmit = async () => {
-    const cleanAnswer = answer.trim();
-
-    if (!cleanAnswer || isSubmitting || isSubmitted) {
-      return;
-    }
-
-    await onSubmit(cleanAnswer);
-  };
-
   return (
     <Flex className={classes["answerBox-container"]}>
       <Textarea
@@ -49,7 +39,9 @@ const AnswerBox = observer(() => {
         placeholder="Type your answer here"
         value={answer}
         disabled={hasSubmitted}
-        onChange={(e) => setAnswer(e.target.value.slice(0, MAX_LENGTH))}
+        onChange={(e) =>
+          setAnswer(e.target.value.slice(0, MAX_ANSWER_LENGTH))
+        }
         bottomSection={
           <Flex className={classes["textArea-bottomSection"]}>
             <Text size="xs" c="dimmed">
