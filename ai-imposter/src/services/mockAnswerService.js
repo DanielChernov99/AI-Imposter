@@ -109,6 +109,107 @@ export default function createMockAnswerService() {
     return answer;
   }
 
+  async function submitAiAnswer({ gameId, roundNumber, questionId, text }) {
+    const cleanGameId = validateGameId(gameId);
+    const validRoundNumber = validateRoundNumber(roundNumber);
+    const cleanQuestionId = validateQuestionId(questionId);
+    const cleanText = typeof text === "string" ? text.trim() : "";
+
+    if (!cleanText || cleanText.length > MAX_ANSWER_LENGTH) {
+      throw new AnswerServiceError(
+        ANSWER_SERVICE_ERRORS.INVALID_ANSWER_TEXT,
+        `Answer must contain between 1 and ${MAX_ANSWER_LENGTH} characters.`,
+      );
+    }
+
+    const hasAiAnswer = answers.some(
+      (answer) =>
+        answer.gameId === cleanGameId &&
+        answer.roundNumber === validRoundNumber &&
+        answer.isAi,
+    );
+
+    if (hasAiAnswer) {
+      throw new AnswerServiceError(
+        ANSWER_SERVICE_ERRORS.AI_ANSWER_ALREADY_EXISTS,
+        "An AI answer already exists for this round.",
+      );
+    }
+
+    const answer = {
+      id: crypto.randomUUID(),
+      gameId: cleanGameId,
+      roundNumber: validRoundNumber,
+      questionId: cleanQuestionId,
+      playerId: null,
+      text: cleanText,
+      isValid: true,
+      isAi: true,
+    };
+
+    answers.push(answer);
+
+    return answer;
+  }
+
+  async function createMissingPlayerAnswer({
+    gameId,
+    roundNumber,
+    questionId,
+    playerId,
+  }) {
+    const cleanGameId = validateGameId(gameId);
+    const validRoundNumber = validateRoundNumber(roundNumber);
+    const cleanQuestionId = validateQuestionId(questionId);
+    const cleanPlayerId = validatePlayerId(playerId);
+    const hasPlayerAnswer = answers.some(
+      (answer) =>
+        answer.gameId === cleanGameId &&
+        answer.roundNumber === validRoundNumber &&
+        answer.playerId === cleanPlayerId,
+    );
+
+    if (hasPlayerAnswer) {
+      throw new AnswerServiceError(
+        ANSWER_SERVICE_ERRORS.ANSWER_ALREADY_SUBMITTED,
+        "This player already has an answer for this round.",
+      );
+    }
+
+    const answer = {
+      id: crypto.randomUUID(),
+      gameId: cleanGameId,
+      roundNumber: validRoundNumber,
+      questionId: cleanQuestionId,
+      playerId: cleanPlayerId,
+      text: "",
+      isValid: false,
+      isAi: false,
+    };
+
+    answers.push(answer);
+
+    return answer;
+  }
+
+  async function getAnswerById(answerId) {
+    const cleanAnswerId = validateId(
+      answerId,
+      ANSWER_SERVICE_ERRORS.INVALID_ANSWER_ID,
+      "Answer ID",
+    );
+    const answer = answers.find((answer) => answer.id === cleanAnswerId);
+
+    if (!answer) {
+      throw new AnswerServiceError(
+        ANSWER_SERVICE_ERRORS.ANSWER_NOT_FOUND,
+        `Could not find answer with ID: ${cleanAnswerId}`,
+      );
+    }
+
+    return answer;
+  }
+
   async function getAnswersByRound({ gameId, roundNumber }) {
     const cleanGameId = validateGameId(gameId);
     const validRoundNumber = validateRoundNumber(roundNumber);
@@ -143,6 +244,9 @@ export default function createMockAnswerService() {
 
   return {
     submitPlayerAnswer,
+    submitAiAnswer,
+    createMissingPlayerAnswer,
+    getAnswerById,
     getAnswersByRound,
     getPlayerAnswerByRound,
   };

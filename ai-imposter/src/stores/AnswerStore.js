@@ -8,6 +8,7 @@ import {
 export default class AnswerStore {
   currentPlayerAnswer = null;
   currentRoundAnswers = [];
+  votingAnswers = [];
   isLoading = false;
   error = null;
 
@@ -17,13 +18,17 @@ export default class AnswerStore {
     makeObservable(this, {
       currentPlayerAnswer: observable,
       currentRoundAnswers: observable,
+      votingAnswers: observable,
       isLoading: observable,
       error: observable,
 
       clearError: action,
       setServiceError: action,
       submitPlayerAnswer: action,
+      submitAiAnswer: action,
+      createMissingPlayerAnswer: action,
       loadAnswersByRound: action,
+      prepareVotingAnswers: action,
       resetRoundAnswers: action,
     });
   }
@@ -99,6 +104,95 @@ export default class AnswerStore {
     }
   }
 
+  async submitAiAnswer({ gameId, roundNumber, questionId, text }) {
+    if (this.isLoading) {
+      return null;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const answer = await this.answerService.submitAiAnswer({
+        gameId,
+        roundNumber,
+        questionId,
+        text,
+      });
+
+      runInAction(() => {
+        if (
+          !this.currentRoundAnswers.some(
+            (roundAnswer) => roundAnswer.id === answer.id,
+          )
+        ) {
+          this.currentRoundAnswers = [...this.currentRoundAnswers, answer];
+        }
+      });
+
+      return answer;
+    } catch (caughtError) {
+      this.setServiceError(
+        "submitAi",
+        caughtError,
+        "Failed to submit the AI answer",
+      );
+
+      return null;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  async createMissingPlayerAnswer({
+    gameId,
+    roundNumber,
+    questionId,
+    playerId,
+  }) {
+    if (this.isLoading) {
+      return null;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const answer = await this.answerService.createMissingPlayerAnswer({
+        gameId,
+        roundNumber,
+        questionId,
+        playerId,
+      });
+
+      runInAction(() => {
+        if (
+          !this.currentRoundAnswers.some(
+            (roundAnswer) => roundAnswer.id === answer.id,
+          )
+        ) {
+          this.currentRoundAnswers = [...this.currentRoundAnswers, answer];
+        }
+      });
+
+      return answer;
+    } catch (caughtError) {
+      this.setServiceError(
+        "createMissing",
+        caughtError,
+        "Failed to create a missing player answer",
+      );
+
+      return null;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
   async loadAnswersByRound({ gameId, roundNumber }) {
     if (this.isLoading) {
       return null;
@@ -133,9 +227,30 @@ export default class AnswerStore {
     }
   }
 
+  prepareVotingAnswers() {
+    if (this.votingAnswers.length > 0) {
+      return this.votingAnswers;
+    }
+
+    const shuffledAnswers = [...this.currentRoundAnswers];
+
+    for (let index = shuffledAnswers.length - 1; index > 0; index--) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffledAnswers[index], shuffledAnswers[randomIndex]] = [
+        shuffledAnswers[randomIndex],
+        shuffledAnswers[index],
+      ];
+    }
+
+    this.votingAnswers = shuffledAnswers;
+
+    return this.votingAnswers;
+  }
+
   resetRoundAnswers() {
     this.currentPlayerAnswer = null;
     this.currentRoundAnswers = [];
+    this.votingAnswers = [];
     this.error = null;
   }
 }

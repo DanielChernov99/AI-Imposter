@@ -7,12 +7,22 @@ import { useStores } from "../../../context/StoreContext.jsx";
 import {
   GAME_START_COUNTDOWN_SECONDS,
   ROOM_STATUS,
+  TOTAL_ROUNDS,
 } from "../../../domain/constants.js";
 import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
 
-const Header = observer(function Header({ onGameStart, onLeaveRoom }) {
+const Header = observer(function Header({
+  onGameStart,
+  onLeaveRoom,
+  completedRounds = 0,
+  totalRounds = TOTAL_ROUNDS,
+  timerDuration,
+  timerKey,
+  timerLabel,
+  onTimerComplete,
+}) {
   const { roomStore } = useStores();
   const { currentRoom } = roomStore;
 
@@ -21,6 +31,7 @@ const Header = observer(function Header({ onGameStart, onLeaveRoom }) {
 
   const isWaitingRoom = roomStatus === ROOM_STATUS.WAITING;
   const isGameInProgress = roomStatus === ROOM_STATUS.IN_GAME;
+  const hasGameTimer = isGameInProgress && timerDuration != null;
 
   return (
     <header className={Classes["header-wrapper"]}>
@@ -71,7 +82,23 @@ const Header = observer(function Header({ onGameStart, onLeaveRoom }) {
       )}
 
       {isGameInProgress && (
-        <GameRoundStatus completedRounds={1} totalRounds={5} />
+        <GameRoundStatus
+          completedRounds={completedRounds}
+          totalRounds={totalRounds}
+        />
+      )}
+
+      {hasGameTimer && (
+        <>
+          <div className={Classes.verticalDivider} />
+
+          <Timer
+            key={timerKey ?? timerDuration}
+            duration={timerDuration}
+            label={timerLabel}
+            onComplete={onTimerComplete}
+          />
+        </>
       )}
 
       {roomStore.canStartGame && (

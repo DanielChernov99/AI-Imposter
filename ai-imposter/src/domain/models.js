@@ -59,6 +59,17 @@ import { GAME_PHASE, TOTAL_ROUNDS } from "./constants.js";
  * @property {boolean} isAi
  */
 
+/**
+ * A player's vote for an answer during a game round.
+ *
+ * @typedef {Object} Vote
+ * @property {string} id
+ * @property {string} gameId
+ * @property {number} roundNumber
+ * @property {string} voterPlayerId
+ * @property {string} answerId
+ */
+
 export function createGame({ id, roomId, currentQuestionId }) {
   return {
     id,

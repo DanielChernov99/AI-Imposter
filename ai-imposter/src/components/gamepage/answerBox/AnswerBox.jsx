@@ -62,7 +62,11 @@ const AnswerBox = ({
         </Flex>
       </Button>
       <Flex className={classes["submit-label-container"]}>
-        <span>You can submit before the timer ends</span>
+        <span>
+          {isSubmitted
+            ? "Waiting for other players"
+            : "You can submit before the timer ends"}
+        </span>
       </Flex>
     </Flex>
   );

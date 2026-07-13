@@ -14,9 +14,7 @@ function normalizeDuration(duration) {
   return Math.floor(numericDuration);
 }
 
-const Timer = ({ duration = 30, label = "GAME STARTS IN", onComplete }) => {
-  const normalizedDuration = normalizeDuration(duration);
-
+const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
   const [seconds, setSeconds] = useState(normalizedDuration);
 
   const hasCompleted = useRef(false);
@@ -27,9 +25,6 @@ const Timer = ({ duration = 30, label = "GAME STARTS IN", onComplete }) => {
   }, [onComplete]);
 
   useEffect(() => {
-    hasCompleted.current = false;
-    setSeconds(normalizedDuration);
-
     if (normalizedDuration === 0) {
       return;
     }
@@ -92,6 +87,19 @@ const Timer = ({ duration = 30, label = "GAME STARTS IN", onComplete }) => {
         </span>
       </Flex>
     </Flex>
+  );
+};
+
+const Timer = ({ duration, label = "GAME STARTS IN", onComplete }) => {
+  const normalizedDuration = normalizeDuration(duration);
+
+  return (
+    <CountdownTimer
+      key={normalizedDuration}
+      normalizedDuration={normalizedDuration}
+      label={label}
+      onComplete={onComplete}
+    />
   );
 };
 

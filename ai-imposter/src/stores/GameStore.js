@@ -22,6 +22,7 @@ export default class GameStore {
       setServiceError: action,
       createGame: action,
       loadGameById: action,
+      transitionPhase: action,
     });
   }
 
@@ -93,6 +94,41 @@ export default class GameStore {
       return true;
     } catch (caughtError) {
       this.setServiceError("load", caughtError, "Failed to load the game");
+
+      return false;
+    } finally {
+      runInAction(() => {
+        this.isLoading = false;
+      });
+    }
+  }
+
+  async transitionPhase({ expectedPhase, nextPhase }) {
+    if (this.isLoading || !this.currentGame) {
+      return false;
+    }
+
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const game = await this.gameService.transitionGamePhase({
+        gameId: this.currentGame.id,
+        expectedPhase,
+        nextPhase,
+      });
+
+      runInAction(() => {
+        this.currentGame = game;
+      });
+
+      return true;
+    } catch (caughtError) {
+      this.setServiceError(
+        "transitionPhase",
+        caughtError,
+        "Failed to transition the game phase",
+      );
 
       return false;
     } finally {

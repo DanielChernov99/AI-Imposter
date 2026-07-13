@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
-import { Button, Flex, Textarea, Text, Tooltip } from "@mantine/core";
-import classes from "./VotingCard.module.css";
-import MaskIcon from "../maskIcon/MaskIcon";
+import { Flex, Text, Tooltip } from "@mantine/core";
 import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+import classes from "./VotingCard.module.css";
+import MaskIcon from "../maskIcon/MaskIcon";
 
 const maskColors = {
   purple: "#b23cff",
@@ -17,30 +17,52 @@ const maskColors = {
   teal: "#2dd4bf",
   gray: "#8a8f98",
 };
+
 const VotingCard = ({
-  answer = "My GPS took me on a scenic route",
-  isSelected = true,
+  answer = "",
+  isSelected = false,
+  isDisabled = false,
   isValid = true,
   color = "gray",
+  onSelect,
 }) => {
   const textRef = useRef(null);
   const [isTruncated, setIsTruncated] = useState(false);
   const displayText = isValid ? answer : "Invalid answer was submitted";
 
   useEffect(() => {
-    const el = textRef.current;
-    console.log("🚀 ~ VotingCard ~ el.clientHeight:", el.clientHeight);
-    console.log("🚀 ~ VotingCard ~ el.scrollHeight:", el.scrollHeight);
-    if (el) {
-      setIsTruncated(el.scrollHeight > el.clientHeight);
+    const element = textRef.current;
+
+    if (element) {
+      setIsTruncated(element.scrollHeight > element.clientHeight);
     }
-  }, []);
+  }, [displayText]);
+
+  const handleSelect = () => {
+    if (!isDisabled) {
+      onSelect?.();
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleSelect();
+    }
+  };
+
   return (
     <Flex
+      role="button"
+      tabIndex={isDisabled ? -1 : 0}
+      aria-disabled={isDisabled}
+      aria-pressed={isSelected}
+      onClick={handleSelect}
+      onKeyDown={handleKeyDown}
       className={[
         classes["votingCard-wrapper"],
-        isSelected && classes["selected"],
-        !isValid && classes["invalid"],
+        isSelected && classes.selected,
+        !isValid && classes.invalid,
       ]
         .filter(Boolean)
         .join(" ")}
