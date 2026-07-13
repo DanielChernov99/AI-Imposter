@@ -1,28 +1,36 @@
-import { Button, Group } from "@mantine/core";
+import { Button, Group, Tooltip } from "@mantine/core";
 import { LogOut, Play } from "lucide-react";
 import styles from "./ResultActions.module.css";
 
-export default function ResultActions() {
+export default function ResultActions({ onQuit, isQuitting = false }) {
   return (
     <div className={styles.buttonsContainer}>
       <Group justify="center" gap="xl">
-        <Button
-          radius="xl"
-          size="xl"
-          classNames={{
-            root: styles.playButton,
-            label: styles.buttonLabel,
-            section: styles.buttonSection,
-          }}
-          leftSection={<Play size={26} fill="white" strokeWidth={0} />}
-        >
-          PLAY AGAIN
-        </Button>
+        {/* Play-again requires server-side support (resetting the room to
+            "waiting" / starting a fresh game) that isn't built yet. */}
+        <Tooltip label="Coming soon" withArrow>
+          <Button
+            radius="xl"
+            size="xl"
+            data-disabled
+            onClick={(event) => event.preventDefault()}
+            classNames={{
+              root: styles.playButton,
+              label: styles.buttonLabel,
+              section: styles.buttonSection,
+            }}
+            leftSection={<Play size={26} fill="white" strokeWidth={0} />}
+          >
+            PLAY AGAIN
+          </Button>
+        </Tooltip>
 
         <Button
           radius="xl"
           size="xl"
           variant="outline"
+          onClick={onQuit}
+          loading={isQuitting}
           classNames={{
             root: styles.quitButton,
             label: styles.buttonLabel,

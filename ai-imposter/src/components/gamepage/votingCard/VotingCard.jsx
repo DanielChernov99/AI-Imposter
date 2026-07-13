@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { Button, Flex, Textarea, Text, Tooltip } from "@mantine/core";
+import { Flex, Text, Tooltip } from "@mantine/core";
 import classes from "./VotingCard.module.css";
 import MaskIcon from "../maskIcon/MaskIcon";
 import { Check } from "lucide-react";
@@ -19,9 +18,11 @@ const maskColors = {
 };
 const VotingCard = ({
   answer = "My GPS took me on a scenic route",
-  isSelected = true,
+  isSelected = false,
   isValid = true,
+  isOwn = false,
   color = "gray",
+  onClick,
 }) => {
   const textRef = useRef(null);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -29,12 +30,14 @@ const VotingCard = ({
 
   useEffect(() => {
     const el = textRef.current;
-    console.log("🚀 ~ VotingCard ~ el.clientHeight:", el.clientHeight);
-    console.log("🚀 ~ VotingCard ~ el.scrollHeight:", el.scrollHeight);
     if (el) {
       setIsTruncated(el.scrollHeight > el.clientHeight);
     }
-  }, []);
+  }, [displayText]);
+
+  // You can't vote for your own answer (the server rejects it anyway).
+  const isClickable = Boolean(onClick) && isValid && !isOwn;
+
   return (
     <Flex
       className={[
@@ -44,6 +47,11 @@ const VotingCard = ({
       ]
         .filter(Boolean)
         .join(" ")}
+      onClick={isClickable ? onClick : undefined}
+      style={{
+        cursor: isClickable ? "pointer" : "default",
+        opacity: isOwn ? 0.55 : 1,
+      }}
     >
       <Flex
         className={[
@@ -60,14 +68,15 @@ const VotingCard = ({
         />
       </Flex>
       <Tooltip
-        label={displayText}
-        disabled={!isTruncated}
+        label={isOwn ? "This is your answer" : displayText}
+        disabled={!isOwn && !isTruncated}
         multiline
         w={250}
         transitionProps={{ transition: "pop", duration: 300 }}
       >
         <Text ref={textRef} className={classes["answer-text"]}>
           {displayText}
+          {isOwn ? " (you)" : ""}
         </Text>
       </Tooltip>
 

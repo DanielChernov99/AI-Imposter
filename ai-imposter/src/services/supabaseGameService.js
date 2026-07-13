@@ -3,6 +3,15 @@ import { GAME_SERVICE_ERRORS, GameServiceError } from "./gameService.js";
 
 const UNIQUE_VIOLATION = "23505";
 
+function mapStanding(entry) {
+  return {
+    playerId: entry.player_id,
+    nickname: entry.nickname,
+    avatarUrl: entry.avatar_url,
+    totalScore: entry.total_score,
+  };
+}
+
 function mapGame(dbGame) {
   return {
     id: dbGame.id,
@@ -13,6 +22,11 @@ function mapGame(dbGame) {
     currentQuestionId: dbGame.current_question_id,
     phaseStartedAt: dbGame.phase_started_at,
     phaseEndsAt: dbGame.phase_ends_at,
+    // Scoreboard frozen at the moment the game finished (null until then).
+    // Survives players leaving the room afterwards.
+    finalStandings: Array.isArray(dbGame.final_standings)
+      ? dbGame.final_standings.map(mapStanding)
+      : null,
   };
 }
 

@@ -31,6 +31,10 @@ export default class GameStore {
   roundResults = [];
   hasSubmittedAnswer = false;
   hasVoted = false;
+  /** The id of the answer the current player submitted this round (if any). */
+  myAnswerId = null;
+  /** The id of the answer the current player voted for this round (if any). */
+  myVoteAnswerId = null;
   isLoading = false;
   error = null;
 
@@ -47,6 +51,8 @@ export default class GameStore {
       roundResults: observable,
       hasSubmittedAnswer: observable,
       hasVoted: observable,
+      myAnswerId: observable,
+      myVoteAnswerId: observable,
       isLoading: observable,
       error: observable,
 
@@ -143,6 +149,8 @@ export default class GameStore {
     this.roundResults = [];
     this.hasSubmittedAnswer = false;
     this.hasVoted = false;
+    this.myAnswerId = null;
+    this.myVoteAnswerId = null;
     this.error = null;
   }
 
@@ -153,6 +161,8 @@ export default class GameStore {
       if (phase === GAME_PHASE.ANSWERING) {
         this.hasSubmittedAnswer = false;
         this.hasVoted = false;
+        this.myAnswerId = null;
+        this.myVoteAnswerId = null;
         this.votingAnswers = [];
         this.roundResults = [];
       }
@@ -258,7 +268,7 @@ export default class GameStore {
     this.error = null;
 
     try {
-      await this.gameService.submitAnswer({
+      const submitted = await this.gameService.submitAnswer({
         gameId: game.id,
         roundNumber: game.currentRound,
         questionId: game.currentQuestionId,
@@ -268,6 +278,7 @@ export default class GameStore {
 
       runInAction(() => {
         this.hasSubmittedAnswer = true;
+        this.myAnswerId = submitted?.id ?? null;
       });
 
       return true;
@@ -340,6 +351,7 @@ export default class GameStore {
 
       runInAction(() => {
         this.hasVoted = true;
+        this.myVoteAnswerId = answerId;
       });
 
       return true;

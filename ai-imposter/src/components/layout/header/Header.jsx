@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 
 import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { useStores } from "../../../context/StoreContext.jsx";
-import { ROOM_STATUS } from "../../../domain/constants.js";
+import { GAME_PHASE, ROOM_STATUS } from "../../../domain/constants.js";
 import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
@@ -19,6 +19,12 @@ function secondsUntil(isoTimestamp) {
     Math.ceil((new Date(isoTimestamp).getTime() - Date.now()) / 1000),
   );
 }
+
+const PHASE_TIMER_LABELS = {
+  [GAME_PHASE.ANSWERING]: "TIME TO ANSWER",
+  [GAME_PHASE.VOTING]: "VOTING ENDS IN",
+  [GAME_PHASE.REVEAL]: "NEXT ROUND IN",
+};
 
 const Header = observer(function Header({ onLeaveRoom }) {
   const { roomStore, gameStore } = useStores();
@@ -80,8 +86,30 @@ const Header = observer(function Header({ onLeaveRoom }) {
         </Flex>
       )}
 
-      {isGameInProgress && (
-        <GameRoundStatus completedRounds={1} totalRounds={5} />
+      {isGameInProgress && currentGame && (
+        <>
+          <GameRoundStatus
+            completedRounds={Math.max(0, currentGame.currentRound - 1)}
+            totalRounds={currentGame.totalRounds}
+          />
+
+          {/*
+            Phase timer, synchronized for all players via the server's
+            games.phase_ends_at. Keyed by phase+round so each new phase
+            remounts the Timer with a fresh duration.
+          */}
+          {PHASE_TIMER_LABELS[currentGame.phase] && currentGame.phaseEndsAt && (
+            <>
+              <div className={Classes.verticalDivider} />
+
+              <Timer
+                key={`${currentGame.phase}-${currentGame.currentRound}`}
+                duration={secondsUntil(currentGame.phaseEndsAt)}
+                label={PHASE_TIMER_LABELS[currentGame.phase]}
+              />
+            </>
+          )}
+        </>
       )}
 
       {/*

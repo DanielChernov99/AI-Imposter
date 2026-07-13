@@ -68,6 +68,7 @@ function mapPlayer(dbPlayer) {
     nickname: dbPlayer.nickname,
     avatarUrl: dbPlayer.avatar_url,
     isReady: dbPlayer.is_ready,
+    totalScore: dbPlayer.total_score ?? 0,
   };
 }
 
