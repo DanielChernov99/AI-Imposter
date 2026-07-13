@@ -21,6 +21,7 @@ export const MAX_PLAYERS = 5;
 export const MIN_NICKNAME_LENGTH = 2;
 export const MAX_NICKNAME_LENGTH = 16;
 export const MAX_ANSWER_LENGTH = 120;
+export const MISSING_ANSWER_TEXT = "No valid answer submitted";
 
 export const ROOM_CODE_LENGTH = 6;
 export const TOTAL_ROUNDS = 5;

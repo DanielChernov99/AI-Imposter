@@ -1,10 +1,58 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
-import { buildRevealAnswerSlots } from "../domain/answerSlots.js";
+import { MISSING_ANSWER_TEXT } from "../domain/constants.js";
 import {
   REVEAL_SERVICE_ERRORS,
   RevealServiceError,
 } from "../services/contracts/revealService.js";
+
+function buildRevealAnswerSlots({
+  answers,
+  humanPlayerCount,
+  gameId,
+  roundNumber,
+}) {
+  const validHumanPlayerIds = new Set();
+  let hasAiAnswer = false;
+
+  const displayAnswers = answers.filter((answer) => {
+    if (answer.isAi) {
+      if (hasAiAnswer) {
+        return false;
+      }
+
+      hasAiAnswer = true;
+      return true;
+    }
+
+    if (
+      answer.isValid !== true ||
+      !answer.playerId ||
+      validHumanPlayerIds.has(answer.playerId)
+    ) {
+      return false;
+    }
+
+    validHumanPlayerIds.add(answer.playerId);
+    return true;
+  });
+  const missingCount = Math.max(
+    0,
+    humanPlayerCount - validHumanPlayerIds.size,
+  );
+  const placeholders = Array.from({ length: missingCount }, (_, index) => ({
+    id: `placeholder:${gameId}:${roundNumber}:reveal:${index + 1}`,
+    text: MISSING_ANSWER_TEXT,
+    isPlaceholder: true,
+    isValid: false,
+    isAi: false,
+    isDisabled: true,
+    playerId: null,
+    voterPlayerIds: [],
+  }));
+
+  return [...displayAnswers, ...placeholders];
+}
 
 function collectVotes(roundAnswers) {
   return roundAnswers.flatMap((answer) =>
@@ -25,6 +73,8 @@ export default class RevealStore {
   error = null;
 
   revealRequestId = 0;
+  activeRevealLoadKey = null;
+  loadedRevealKey = null;
 
   constructor(revealService) {
     this.revealService = revealService;
@@ -68,11 +118,20 @@ export default class RevealStore {
   }
 
   async loadRoundReveal({ gameId, roundNumber, roomId }) {
-    if (this.isLoading || !gameId || !roomId) {
+    const loadKey = `${gameId}:${roundNumber}:reveal`;
+
+    if (
+      this.isLoading ||
+      !gameId ||
+      !roomId ||
+      this.activeRevealLoadKey === loadKey ||
+      this.loadedRevealKey === loadKey
+    ) {
       return false;
     }
 
     const requestId = ++this.revealRequestId;
+    this.activeRevealLoadKey = loadKey;
     this.isLoading = true;
     this.error = null;
     this.roundAnswers = [];
@@ -91,7 +150,8 @@ export default class RevealStore {
         const roundAnswers = buildRevealAnswerSlots({
           answers: roundResult.answers,
           humanPlayerCount: roundResult.roundPoints.length,
-          slotKey: `${gameId}:${roundNumber}:reveal`,
+          gameId,
+          roundNumber,
         });
 
         runInAction(() => {
@@ -99,6 +159,7 @@ export default class RevealStore {
           this.votes = collectVotes(roundAnswers);
           this.roundPoints = [...roundResult.roundPoints];
           this.leaderboard = [...roundResult.leaderboard];
+          this.loadedRevealKey = loadKey;
         });
       }
 
@@ -116,6 +177,7 @@ export default class RevealStore {
     } finally {
       if (requestId === this.revealRequestId) {
         runInAction(() => {
+          this.activeRevealLoadKey = null;
           this.isLoading = false;
         });
       }
@@ -130,16 +192,18 @@ export default class RevealStore {
 
   resetForRound() {
     this.revealRequestId += 1;
+    this.activeRevealLoadKey = null;
+    this.loadedRevealKey = null;
     this.roundAnswers = [];
     this.votes = [];
     this.roundPoints = [];
-    this.leaderboard = [];
     this.isLoading = false;
     this.error = null;
   }
 
   reset() {
     this.resetForRound();
+    this.leaderboard = [];
     this.finalStandings = [];
   }
 }

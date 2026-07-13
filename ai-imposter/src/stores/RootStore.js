@@ -48,6 +48,10 @@ export default class RootStore {
       ({ gameId, status }, previousRoomGameState) => {
         if (gameId && GAME_ACTIVE_ROOM_STATUSES.includes(status)) {
           this.gameStore.startGameSync(gameId);
+        } else if (status === ROOM_STATUS.FINISHED) {
+          // Room and game updates use separate Realtime channels. Stop the
+          // deadline callback even if the room's finished event arrives first.
+          this.gameStore.clearScheduledPhaseAdvance();
         } else if (
           previousRoomGameState?.status === ROOM_STATUS.COUNTDOWN &&
           status === ROOM_STATUS.WAITING &&
@@ -91,6 +95,14 @@ export default class RootStore {
           this.revealStore.reset();
           this.questionStore.resetQuestions();
         } else if (isNewRound) {
+          this.questionStore.resetForRound();
+          this.answerStore.resetForRound();
+          this.voteStore.resetForRound();
+          this.revealStore.resetForRound();
+        } else if (
+          phase === GAME_PHASE.FINISHED &&
+          previousGameState?.phase !== GAME_PHASE.FINISHED
+        ) {
           this.answerStore.resetForRound();
           this.voteStore.resetForRound();
           this.revealStore.resetForRound();
@@ -103,7 +115,7 @@ export default class RootStore {
 
         if (
           questionId &&
-          (isNewGame || questionId !== previousGameState?.questionId)
+          (isNewRound || questionId !== previousGameState?.questionId)
         ) {
           void this.questionStore.loadQuestionById(questionId);
         }
