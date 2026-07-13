@@ -5,11 +5,20 @@ import {
   QuestionServiceError,
 } from "../services/questionService.js";
 
+function toDisplayQuestion(question) {
+  return {
+    id: question.id,
+    text: question.text,
+  };
+}
+
 export default class QuestionStore {
   currentQuestion = null;
   usedQuestionIds = [];
   isLoading = false;
   error = null;
+
+  questionRequestId = 0;
 
   constructor(questionService) {
     this.questionService = questionService;
@@ -49,77 +58,89 @@ export default class QuestionStore {
   }
 
   async loadQuestionById(questionId) {
-    if (this.isLoading) {
-      return null;
-    }
-
+    const requestId = ++this.questionRequestId;
     this.isLoading = true;
     this.error = null;
 
     try {
-      const question = await this.questionService.getQuestionById(questionId);
+      const question = toDisplayQuestion(
+        await this.questionService.getQuestionById(questionId),
+      );
 
-      runInAction(() => {
-        this.currentQuestion = question;
+      if (requestId === this.questionRequestId) {
+        runInAction(() => {
+          this.currentQuestion = question;
 
-        if (!this.usedQuestionIds.includes(question.id)) {
-          this.usedQuestionIds = [...this.usedQuestionIds, question.id];
-        }
-      });
+          if (!this.usedQuestionIds.includes(question.id)) {
+            this.usedQuestionIds = [...this.usedQuestionIds, question.id];
+          }
+        });
+      }
 
       return question;
     } catch (caughtError) {
-      this.setServiceError(
-        "loadById",
-        caughtError,
-        "Failed to load the question",
-      );
+      if (requestId === this.questionRequestId) {
+        this.setServiceError(
+          "loadById",
+          caughtError,
+          "Failed to load the question",
+        );
+      }
 
       return null;
     } finally {
-      runInAction(() => {
-        this.isLoading = false;
-      });
+      if (requestId === this.questionRequestId) {
+        runInAction(() => {
+          this.isLoading = false;
+        });
+      }
     }
   }
 
   async loadRandomQuestion() {
-    if (this.isLoading) {
-      return null;
-    }
-
+    const requestId = ++this.questionRequestId;
     this.isLoading = true;
     this.error = null;
 
     try {
-      const question = await this.questionService.getRandomQuestion({
-        excludedQuestionIds: this.usedQuestionIds,
-      });
+      const question = toDisplayQuestion(
+        await this.questionService.getRandomQuestion({
+          excludedQuestionIds: this.usedQuestionIds,
+        }),
+      );
 
-      runInAction(() => {
-        this.currentQuestion = question;
-        this.usedQuestionIds = [...this.usedQuestionIds, question.id];
-      });
+      if (requestId === this.questionRequestId) {
+        runInAction(() => {
+          this.currentQuestion = question;
+          this.usedQuestionIds = [...this.usedQuestionIds, question.id];
+        });
+      }
 
       return question;
     } catch (caughtError) {
-      this.setServiceError(
-        "loadRandom",
-        caughtError,
-        "Failed to load a random question",
-      );
+      if (requestId === this.questionRequestId) {
+        this.setServiceError(
+          "loadRandom",
+          caughtError,
+          "Failed to load a random question",
+        );
+      }
 
       return null;
     } finally {
-      runInAction(() => {
-        this.isLoading = false;
-      });
+      if (requestId === this.questionRequestId) {
+        runInAction(() => {
+          this.isLoading = false;
+        });
+      }
     }
   }
 
   resetQuestions() {
+    this.questionRequestId += 1;
     this.currentQuestion = null;
     this.usedQuestionIds = [];
+    this.isLoading = false;
     this.error = null;
   }
 }

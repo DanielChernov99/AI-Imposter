@@ -13,7 +13,7 @@ const GamePage = observer(() => {
   const { roomStore, gameStore, questionStore } = useStores();
   const { currentGame } = gameStore;
   const { currentQuestion } = questionStore;
-  const phase = currentGame?.phase;
+  const phase = gameStore.currentPhase;
   const navigate = useNavigate();
 
   const handleLeaveRoom = async () => {

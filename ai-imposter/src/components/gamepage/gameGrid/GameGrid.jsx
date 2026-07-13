@@ -19,7 +19,7 @@ const CARD_COLORS = [
 
 const GameGrid = observer(({ phase }) => {
   const rootStore = useStores();
-  const { gameStore, roomStore } = rootStore;
+  const { answerStore, revealStore, roomStore, voteStore } = rootStore;
 
   const playersById = new Map(
     roomStore.currentRoomPlayers.map((player) => [player.id, player]),
@@ -28,15 +28,26 @@ const GameGrid = observer(({ phase }) => {
   if (phase === GAME_PHASE.VOTING) {
     return (
       <Grid>
-        {gameStore.votingAnswers.map((votingAnswer, index) => (
+        {voteStore.votingOptions.map((votingAnswer, index) => (
           <Grid.Col key={votingAnswer.id} span={{ base: 12, sm: 6, md: 4 }}>
             <VotingCard
               answer={votingAnswer.text}
               color={CARD_COLORS[index % CARD_COLORS.length]}
-              isSelected={gameStore.myVoteAnswerId === votingAnswer.id}
-              isOwn={gameStore.myAnswerId === votingAnswer.id}
+              isSelected={
+                voteStore.selectedAnswerId === votingAnswer.id ||
+                voteStore.submittedVoteAnswerId === votingAnswer.id
+              }
+              isOwn={answerStore.submittedAnswerId === votingAnswer.id}
               isValid
-              onClick={() => rootStore.castCurrentVote(votingAnswer.id)}
+              onClick={
+                voteStore.hasVoted || voteStore.isSubmitting
+                  ? undefined
+                  : () => {
+                      if (voteStore.selectAnswer(votingAnswer.id)) {
+                        void rootStore.castCurrentVote(votingAnswer.id);
+                      }
+                    }
+              }
             />
           </Grid.Col>
         ))}
@@ -47,7 +58,7 @@ const GameGrid = observer(({ phase }) => {
   if (phase === GAME_PHASE.REVEAL) {
     return (
       <Grid>
-        {gameStore.roundResults.map((result, index) => (
+        {revealStore.roundAnswers.map((result, index) => (
           <Grid.Col key={result.id} span={{ base: 12, sm: 6, md: 4 }}>
             <ResultCard
               index={index}

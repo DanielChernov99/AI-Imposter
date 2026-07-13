@@ -10,7 +10,7 @@ import { useStores } from "../context/StoreContext.jsx";
 import styles from "../styles/ResultPage.module.css";
 
 const ResultPage = observer(() => {
-  const { roomStore, gameStore } = useStores();
+  const { revealStore, roomStore } = useStores();
   const navigate = useNavigate();
 
   const handleQuit = async () => {
@@ -24,7 +24,7 @@ const ResultPage = observer(() => {
   // Prefer the snapshot taken by the server at the moment the game finished:
   // it still includes players who left the room afterwards. Fall back to the
   // live player list (e.g. if this page is somehow reached mid-game).
-  const finalStandings = gameStore.currentGame?.finalStandings;
+  const { finalStandings } = revealStore;
 
   const sortedPlayers = finalStandings?.length
     ? finalStandings.map((standing) => ({

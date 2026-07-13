@@ -1,30 +1,41 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
 import {
-  VOTE_SERVICE_ERRORS,
-  VoteServiceError,
-} from "../services/voteService.js";
+  GAME_SERVICE_ERRORS,
+  GameServiceError,
+} from "../services/gameService.js";
 
 export default class VoteStore {
-  currentPlayerVote = null;
-  currentRoundVotes = [];
-  isLoading = false;
+  votingOptions = [];
+  selectedAnswerId = null;
+  hasVoted = false;
+  submittedVoteAnswerId = null;
+  isLoadingOptions = false;
+  isSubmitting = false;
   error = null;
 
-  constructor(voteService) {
-    this.voteService = voteService;
+  optionsRequestId = 0;
+  submissionRequestId = 0;
+
+  constructor(gameService) {
+    this.gameService = gameService;
 
     makeObservable(this, {
-      currentPlayerVote: observable,
-      currentRoundVotes: observable,
-      isLoading: observable,
+      votingOptions: observable,
+      selectedAnswerId: observable,
+      hasVoted: observable,
+      submittedVoteAnswerId: observable,
+      isLoadingOptions: observable,
+      isSubmitting: observable,
       error: observable,
 
       clearError: action,
       setServiceError: action,
-      submitVote: action,
-      loadVotesByRound: action,
-      resetRoundVotes: action,
+      loadVotingOptions: action,
+      selectAnswer: action,
+      castVote: action,
+      resetForRound: action,
+      reset: action,
     });
   }
 
@@ -33,7 +44,7 @@ export default class VoteStore {
   }
 
   setServiceError(source, caughtError, fallbackMessage) {
-    if (caughtError instanceof VoteServiceError) {
+    if (caughtError instanceof GameServiceError) {
       this.error = {
         source,
         code: caughtError.code,
@@ -42,89 +53,149 @@ export default class VoteStore {
     } else {
       this.error = {
         source,
-        code: VOTE_SERVICE_ERRORS.UNKNOWN_ERROR,
+        code: GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
         message: fallbackMessage,
       };
     }
   }
 
-  async submitVote({ gameId, roundNumber, voterPlayerId, answerId }) {
-    if (this.isLoading) {
-      return null;
+  async loadVotingOptions({ gameId }) {
+    if (this.isLoadingOptions || !gameId) {
+      return false;
     }
 
-    this.isLoading = true;
+    const requestId = ++this.optionsRequestId;
+    this.isLoadingOptions = true;
     this.error = null;
 
     try {
-      const vote = await this.voteService.submitVote({
+      const votingOptions = await this.gameService.getVotingAnswers(gameId);
+
+      if (requestId === this.optionsRequestId) {
+        runInAction(() => {
+          this.votingOptions = votingOptions;
+        });
+      }
+
+      return true;
+    } catch (caughtError) {
+      if (requestId === this.optionsRequestId) {
+        this.setServiceError(
+          "loadVotingOptions",
+          caughtError,
+          "Failed to load the answers for voting",
+        );
+      }
+
+      return false;
+    } finally {
+      if (requestId === this.optionsRequestId) {
+        runInAction(() => {
+          this.isLoadingOptions = false;
+        });
+      }
+    }
+  }
+
+  selectAnswer(answerId) {
+    const isVotingOption = this.votingOptions.some(
+      (option) => option.id === answerId,
+    );
+
+    if (this.hasVoted || this.isSubmitting || !isVotingOption) {
+      return false;
+    }
+
+    this.selectedAnswerId = answerId;
+
+    return true;
+  }
+
+  async castVote({ gameId, roundNumber, voterPlayerId, answerId }) {
+    const selectedAnswerId = answerId ?? this.selectedAnswerId;
+    const isVotingOption = this.votingOptions.some(
+      (option) => option.id === selectedAnswerId,
+    );
+
+    if (
+      this.isSubmitting ||
+      this.hasVoted ||
+      !selectedAnswerId ||
+      !isVotingOption
+    ) {
+      return false;
+    }
+
+    const requestId = ++this.submissionRequestId;
+    this.isSubmitting = true;
+    this.error = null;
+
+    try {
+      await this.gameService.castVote({
         gameId,
         roundNumber,
         voterPlayerId,
-        answerId,
+        answerId: selectedAnswerId,
       });
 
-      runInAction(() => {
-        this.currentPlayerVote = vote;
+      if (requestId === this.submissionRequestId) {
+        runInAction(() => {
+          this.selectedAnswerId = selectedAnswerId;
+          this.hasVoted = true;
+          this.submittedVoteAnswerId = selectedAnswerId;
+        });
+      }
 
-        if (
-          !this.currentRoundVotes.some(
-            (roundVote) => roundVote.id === vote.id,
-          )
-        ) {
-          this.currentRoundVotes = [...this.currentRoundVotes, vote];
+      return true;
+    } catch (caughtError) {
+      if (
+        caughtError instanceof GameServiceError &&
+        caughtError.code === GAME_SERVICE_ERRORS.ALREADY_VOTED
+      ) {
+        if (requestId === this.submissionRequestId) {
+          runInAction(() => {
+            // The service confirms that a vote exists, but it does not return
+            // which answer was selected in the earlier submission.
+            this.selectedAnswerId = null;
+            this.hasVoted = true;
+            this.submittedVoteAnswerId = null;
+          });
         }
-      });
 
-      return vote;
-    } catch (caughtError) {
-      this.setServiceError("submit", caughtError, "Failed to submit the vote");
+        return true;
+      }
 
-      return null;
+      if (requestId === this.submissionRequestId) {
+        this.setServiceError(
+          "castVote",
+          caughtError,
+          "Failed to cast your vote",
+        );
+      }
+
+      return false;
     } finally {
-      runInAction(() => {
-        this.isLoading = false;
-      });
+      if (requestId === this.submissionRequestId) {
+        runInAction(() => {
+          this.isSubmitting = false;
+        });
+      }
     }
   }
 
-  async loadVotesByRound({ gameId, roundNumber }) {
-    if (this.isLoading) {
-      return null;
-    }
-
-    this.isLoading = true;
+  resetForRound() {
+    this.optionsRequestId += 1;
+    this.submissionRequestId += 1;
+    this.votingOptions = [];
+    this.selectedAnswerId = null;
+    this.hasVoted = false;
+    this.submittedVoteAnswerId = null;
+    this.isLoadingOptions = false;
+    this.isSubmitting = false;
     this.error = null;
-
-    try {
-      const votes = await this.voteService.getVotesByRound({
-        gameId,
-        roundNumber,
-      });
-
-      runInAction(() => {
-        this.currentRoundVotes = votes;
-      });
-
-      return votes;
-    } catch (caughtError) {
-      this.setServiceError(
-        "loadRound",
-        caughtError,
-        "Failed to load round votes",
-      );
-
-      return null;
-    } finally {
-      runInAction(() => {
-        this.isLoading = false;
-      });
-    }
   }
 
-  resetRoundVotes() {
-    this.currentPlayerVote = null;
-    this.currentRoundVotes = [];
-    this.error = null;
+  reset() {
+    this.resetForRound();
   }
 }

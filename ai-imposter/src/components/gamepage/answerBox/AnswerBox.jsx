@@ -9,25 +9,19 @@ import classes from "./AnswerBox.module.css";
 
 const AnswerBox = observer(() => {
   const rootStore = useStores();
-  const { gameStore } = rootStore;
+  const { answerStore } = rootStore;
   const [answer, setAnswer] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const hasSubmitted = gameStore.hasSubmittedAnswer;
-  const canSubmit = answer.trim().length > 0 && !hasSubmitted && !isSubmitting;
+  const { hasSubmittedAnswer, isSubmitting, error } = answerStore;
+  const canSubmit =
+    answer.trim().length > 0 && !hasSubmittedAnswer && !isSubmitting;
 
   const handleSubmit = async () => {
     if (!canSubmit) {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      await rootStore.submitCurrentAnswer(answer);
-    } finally {
-      setIsSubmitting(false);
-    }
+    await rootStore.submitCurrentAnswer(answer);
   };
 
   return (
@@ -38,7 +32,8 @@ const AnswerBox = observer(() => {
         }}
         placeholder="Type your answer here"
         value={answer}
-        disabled={hasSubmitted}
+        disabled={hasSubmittedAnswer}
+        error={error?.message}
         onChange={(e) =>
           setAnswer(e.target.value.slice(0, MAX_ANSWER_LENGTH))
         }
@@ -53,23 +48,23 @@ const AnswerBox = observer(() => {
       <Button
         className={classes["submit-button"]}
         onClick={handleSubmit}
-        disabled={!canSubmit && !hasSubmitted}
+        disabled={!canSubmit && !hasSubmittedAnswer}
         loading={isSubmitting}
       >
         <Flex className={classes["submit-button-content"]}>
-          {hasSubmitted ? (
+          {hasSubmittedAnswer ? (
             <Check className={classes["send-icon"]} />
           ) : (
             <Send className={classes["send-icon"]} />
           )}
           <Text className={classes["submit-button-text"]} span>
-            {hasSubmitted ? "ANSWER SUBMITTED" : "SUBMIT ANSWER"}
+            {hasSubmittedAnswer ? "ANSWER SUBMITTED" : "SUBMIT ANSWER"}
           </Text>
         </Flex>
       </Button>
       <Flex className={classes["submit-label-container"]}>
         <span>
-          {hasSubmitted
+          {hasSubmittedAnswer
             ? "Waiting for the other players..."
             : "You can submit before the timer ends"}
         </span>
