@@ -116,6 +116,7 @@ export default class RootStore {
             gameId,
             roundNumber,
             playerId: this.roomStore.currentPlayer?.id,
+            humanPlayerCount: this.roomStore.currentRoomPlayers.length,
           });
         }
 

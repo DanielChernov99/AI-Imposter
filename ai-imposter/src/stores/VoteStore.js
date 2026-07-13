@@ -1,5 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
+import { buildVotingAnswerSlots } from "../domain/answerSlots.js";
 import {
   VOTE_SERVICE_ERRORS,
   VoteServiceError,
@@ -59,7 +60,12 @@ export default class VoteStore {
     }
   }
 
-  async loadVotingOptions({ gameId, roundNumber, playerId }) {
+  async loadVotingOptions({
+    gameId,
+    roundNumber,
+    playerId,
+    humanPlayerCount,
+  }) {
     if (this.isLoadingOptions || !gameId) {
       return false;
     }
@@ -69,10 +75,15 @@ export default class VoteStore {
     this.error = null;
 
     try {
-      const votingOptions = await this.voteService.getVotingAnswers({
+      const votingAnswers = await this.voteService.getVotingAnswers({
         gameId,
         roundNumber,
         playerId,
+      });
+      const votingOptions = buildVotingAnswerSlots({
+        answers: votingAnswers,
+        humanPlayerCount,
+        slotKey: `${gameId}:${roundNumber}:voting`,
       });
 
       if (requestId === this.optionsRequestId) {
@@ -102,11 +113,16 @@ export default class VoteStore {
   }
 
   selectAnswer(answerId) {
-    const isVotingOption = this.votingOptions.some(
+    const votingOption = this.votingOptions.find(
       (option) => option.id === answerId,
     );
+    const isSelectableOption =
+      Boolean(votingOption) &&
+      votingOption.isPlaceholder !== true &&
+      votingOption.isDisabled !== true &&
+      votingOption.isValid !== false;
 
-    if (this.hasVoted || this.isSubmitting || !isVotingOption) {
+    if (this.hasVoted || this.isSubmitting || !isSelectableOption) {
       return false;
     }
 
@@ -117,15 +133,20 @@ export default class VoteStore {
 
   async castVote({ gameId, roundNumber, voterPlayerId, answerId }) {
     const selectedAnswerId = answerId ?? this.selectedAnswerId;
-    const isVotingOption = this.votingOptions.some(
+    const votingOption = this.votingOptions.find(
       (option) => option.id === selectedAnswerId,
     );
+    const isSelectableOption =
+      Boolean(votingOption) &&
+      votingOption.isPlaceholder !== true &&
+      votingOption.isDisabled !== true &&
+      votingOption.isValid !== false;
 
     if (
       this.isSubmitting ||
       this.hasVoted ||
       !selectedAnswerId ||
-      !isVotingOption
+      !isSelectableOption
     ) {
       return false;
     }

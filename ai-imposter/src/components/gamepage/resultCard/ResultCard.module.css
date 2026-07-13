@@ -11,6 +11,17 @@
   height: 10rem;
   gap: var(--space-2);
 }
+.resultCard-wrapper.placeholder {
+  background: var(--disabled-surface);
+  border-color: var(--disabled-border);
+  border-style: dashed;
+  color: var(--disabled-text);
+  box-shadow: none;
+  pointer-events: none;
+}
+.resultCard-wrapper.placeholder .answer-container {
+  color: var(--disabled-text);
+}
 .isCorrect-icon {
   position: absolute;
   right: 10px;
@@ -159,6 +170,13 @@
   stroke: #ffb347;
 }
 
+.invalidBadge {
+  color: var(--disabled-text);
+  background: var(--disabled-surface);
+  border-color: var(--disabled-border);
+  box-shadow: none;
+}
+
 .divider {
   height: 1px;
   width: 100%;
@@ -181,4 +199,7 @@
 }
 .wrong {
   color: #ff5b5b;
+}
+.invalidText {
+  color: var(--disabled-text);
 }

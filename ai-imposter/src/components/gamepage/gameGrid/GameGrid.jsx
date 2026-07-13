@@ -32,6 +32,8 @@ const GameGrid = observer(({ phase }) => {
     );
     const hasValidSelection =
       Boolean(selectedVotingAnswer) &&
+      selectedVotingAnswer.isPlaceholder !== true &&
+      selectedVotingAnswer.isDisabled !== true &&
       selectedVotingAnswer.isValid !== false &&
       selectedVotingAnswer.id !== answerStore.submittedAnswerId;
 
@@ -54,6 +56,9 @@ const GameGrid = observer(({ phase }) => {
             const isOwn =
               answerStore.submittedAnswerId === votingAnswer.id;
             const isValid = votingAnswer.isValid !== false;
+            const isPlaceholder = votingAnswer.isPlaceholder === true;
+            const isDisabled =
+              votingAnswer.isDisabled === true || !isValid;
 
             return (
               <Grid.Col
@@ -68,11 +73,14 @@ const GameGrid = observer(({ phase }) => {
                   }
                   isOwn={isOwn}
                   isValid={isValid}
+                  isPlaceholder={isPlaceholder}
+                  isDisabled={isDisabled}
                   onClick={
                     voteStore.hasVoted ||
                     voteStore.isSubmitting ||
                     isOwn ||
-                    !isValid
+                    isDisabled ||
+                    isPlaceholder
                       ? undefined
                       : () => voteStore.selectAnswer(votingAnswer.id)
                   }
@@ -105,10 +113,20 @@ const GameGrid = observer(({ phase }) => {
               index={index}
               answer={result.text}
               isAi={result.isAi}
-              author={playersById.get(result.playerId) ?? null}
-              voters={result.voterPlayerIds
-                .map((voterId) => playersById.get(voterId))
-                .filter(Boolean)}
+              isPlaceholder={result.isPlaceholder === true}
+              isDisabled={result.isDisabled === true}
+              author={
+                result.isPlaceholder
+                  ? null
+                  : (playersById.get(result.playerId) ?? null)
+              }
+              voters={
+                result.isPlaceholder
+                  ? []
+                  : result.voterPlayerIds
+                      .map((voterId) => playersById.get(voterId))
+                      .filter(Boolean)
+              }
             />
           </Grid.Col>
         ))}

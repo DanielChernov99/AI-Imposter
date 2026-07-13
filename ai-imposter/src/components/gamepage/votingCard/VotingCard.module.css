@@ -16,13 +16,18 @@
 }
 .votingCard-wrapper.invalid {
   opacity: 0.55;
-  background: #1b1d27;
-  border-color: #313543;
+  background: var(--disabled-surface);
+  border-color: var(--disabled-border);
   border-style: dashed;
 }
 
 .votingCard-wrapper.invalid .answer-text {
-  color: #7b8498;
+  color: var(--disabled-text);
+}
+
+.votingCard-wrapper.disabled {
+  pointer-events: none;
+  box-shadow: none;
 }
 .mask-icon-container {
   --color: #d946ef;

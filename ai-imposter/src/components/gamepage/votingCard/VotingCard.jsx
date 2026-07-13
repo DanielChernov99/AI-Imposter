@@ -22,12 +22,18 @@ const VotingCard = ({
   isSelected = false,
   isValid = true,
   isOwn = false,
+  isPlaceholder = false,
+  isDisabled = false,
   color = "gray",
   onClick,
 }) => {
   const textRef = useRef(null);
   const [isTruncated, setIsTruncated] = useState(false);
-  const displayText = isValid ? answer : "Invalid answer was submitted";
+  const displayText = isPlaceholder
+    ? answer
+    : isValid
+      ? answer
+      : "Invalid answer was submitted";
 
   useEffect(() => {
     const el = textRef.current;
@@ -37,7 +43,12 @@ const VotingCard = ({
   }, [displayText]);
 
   // You can't vote for your own answer (the server rejects it anyway).
-  const isClickable = Boolean(onClick) && isValid && !isOwn;
+  const isClickable =
+    Boolean(onClick) &&
+    isValid &&
+    !isOwn &&
+    !isPlaceholder &&
+    !isDisabled;
 
   const handleKeyDown = (event) => {
     if (isClickable && (event.key === "Enter" || event.key === " ")) {
@@ -51,18 +62,19 @@ const VotingCard = ({
       role="button"
       tabIndex={isClickable ? 0 : -1}
       aria-disabled={!isClickable}
-      aria-pressed={isSelected}
+      aria-pressed={isClickable && isSelected}
       onKeyDown={handleKeyDown}
       className={[
         classes["votingCard-wrapper"],
         isSelected && classes.selected,
         !isValid && classes.invalid,
+        isDisabled && classes.disabled,
       ]
         .filter(Boolean)
         .join(" ")}
       onClick={isClickable ? onClick : undefined}
       style={{
-        cursor: isClickable ? "pointer" : "default",
+        cursor: isClickable ? "pointer" : "not-allowed",
         opacity: isOwn ? 0.55 : 1,
       }}
     >
@@ -93,7 +105,7 @@ const VotingCard = ({
         </Text>
       </Tooltip>
 
-      {isSelected && isValid && (
+      {isSelected && isClickable && (
         <Flex className={classes["check-icon"]}>
           <Check stroke="white" />
         </Flex>

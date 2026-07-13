@@ -1,5 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
+import { buildRevealAnswerSlots } from "../domain/answerSlots.js";
 import {
   REVEAL_SERVICE_ERRORS,
   RevealServiceError,
@@ -87,9 +88,15 @@ export default class RevealStore {
       });
 
       if (requestId === this.revealRequestId) {
+        const roundAnswers = buildRevealAnswerSlots({
+          answers: roundResult.answers,
+          humanPlayerCount: roundResult.roundPoints.length,
+          slotKey: `${gameId}:${roundNumber}:reveal`,
+        });
+
         runInAction(() => {
-          this.roundAnswers = [...roundResult.answers];
-          this.votes = collectVotes(roundResult.answers);
+          this.roundAnswers = roundAnswers;
+          this.votes = collectVotes(roundAnswers);
           this.roundPoints = [...roundResult.roundPoints];
           this.leaderboard = [...roundResult.leaderboard];
         });
