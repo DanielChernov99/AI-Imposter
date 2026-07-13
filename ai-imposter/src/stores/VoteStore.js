@@ -1,9 +1,9 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
 import {
-  GAME_SERVICE_ERRORS,
-  GameServiceError,
-} from "../services/gameService.js";
+  VOTE_SERVICE_ERRORS,
+  VoteServiceError,
+} from "../services/voteService.js";
 
 export default class VoteStore {
   votingOptions = [];
@@ -17,8 +17,8 @@ export default class VoteStore {
   optionsRequestId = 0;
   submissionRequestId = 0;
 
-  constructor(gameService) {
-    this.gameService = gameService;
+  constructor(voteService) {
+    this.voteService = voteService;
 
     makeObservable(this, {
       votingOptions: observable,
@@ -44,7 +44,7 @@ export default class VoteStore {
   }
 
   setServiceError(source, caughtError, fallbackMessage) {
-    if (caughtError instanceof GameServiceError) {
+    if (caughtError instanceof VoteServiceError) {
       this.error = {
         source,
         code: caughtError.code,
@@ -53,13 +53,13 @@ export default class VoteStore {
     } else {
       this.error = {
         source,
-        code: GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
+        code: VOTE_SERVICE_ERRORS.UNKNOWN_ERROR,
         message: fallbackMessage,
       };
     }
   }
 
-  async loadVotingOptions({ gameId }) {
+  async loadVotingOptions({ gameId, roundNumber, playerId }) {
     if (this.isLoadingOptions || !gameId) {
       return false;
     }
@@ -69,7 +69,11 @@ export default class VoteStore {
     this.error = null;
 
     try {
-      const votingOptions = await this.gameService.getVotingAnswers(gameId);
+      const votingOptions = await this.voteService.getVotingAnswers({
+        gameId,
+        roundNumber,
+        playerId,
+      });
 
       if (requestId === this.optionsRequestId) {
         runInAction(() => {
@@ -131,7 +135,7 @@ export default class VoteStore {
     this.error = null;
 
     try {
-      await this.gameService.castVote({
+      await this.voteService.submitVote({
         gameId,
         roundNumber,
         voterPlayerId,
@@ -149,8 +153,8 @@ export default class VoteStore {
       return true;
     } catch (caughtError) {
       if (
-        caughtError instanceof GameServiceError &&
-        caughtError.code === GAME_SERVICE_ERRORS.ALREADY_VOTED
+        caughtError instanceof VoteServiceError &&
+        caughtError.code === VOTE_SERVICE_ERRORS.VOTE_ALREADY_SUBMITTED
       ) {
         if (requestId === this.submissionRequestId) {
           runInAction(() => {

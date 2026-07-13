@@ -108,9 +108,22 @@ export default function createMockGameService() {
     return game;
   }
 
+  async function advancePhase() {
+    throw new GameServiceError(
+      GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
+      "Mock phase advancement is intentionally deferred to the complete Mock gameplay stage.",
+    );
+  }
+
+  function subscribeToGame() {
+    return () => {};
+  }
+
   return {
     createGame,
     getGameById,
     transitionGamePhase,
+    advancePhase,
+    subscribeToGame,
   };
 }

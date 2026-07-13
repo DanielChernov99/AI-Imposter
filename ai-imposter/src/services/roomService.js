@@ -12,7 +12,7 @@
  * startGame({ roomId, totalRounds? }) -> { gameId }
  *   With Supabase this calls the start_game RPC: the server creates the
  *   game in its countdown phase and flips rooms.status to "countdown".
- *   (mockRoomService still uses the older { roomId, gameId } shape.)
+ * subscribeToRoom({ roomId, onPlayersChange, onRoomChange }) -> unsubscribe
  *
  */
 

@@ -141,6 +141,17 @@ export default function createMockVoteService({ answerService }) {
     return vote;
   }
 
+  async function getVotingAnswers({ gameId, roundNumber }) {
+    const roundAnswers = await answerService.getAnswersByRound({
+      gameId,
+      roundNumber,
+    });
+
+    return roundAnswers
+      .filter((answer) => answer.isValid)
+      .map((answer) => ({ id: answer.id, text: answer.text }));
+  }
+
   async function getVotesByRound({ gameId, roundNumber }) {
     const cleanGameId = validateGameId(gameId);
     const validRoundNumber = validateRoundNumber(roundNumber);
@@ -172,6 +183,7 @@ export default function createMockVoteService({ answerService }) {
   }
 
   return {
+    getVotingAnswers,
     submitVote,
     getVotesByRound,
     getPlayerVoteByRound,

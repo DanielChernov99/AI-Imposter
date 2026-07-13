@@ -1,9 +1,9 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
 import {
-  GAME_SERVICE_ERRORS,
-  GameServiceError,
-} from "../services/gameService.js";
+  ANSWER_SERVICE_ERRORS,
+  AnswerServiceError,
+} from "../services/answerService.js";
 
 export default class AnswerStore {
   hasSubmittedAnswer = false;
@@ -13,8 +13,8 @@ export default class AnswerStore {
 
   submissionRequestId = 0;
 
-  constructor(gameService) {
-    this.gameService = gameService;
+  constructor(answerService) {
+    this.answerService = answerService;
 
     makeObservable(this, {
       hasSubmittedAnswer: observable,
@@ -35,7 +35,7 @@ export default class AnswerStore {
   }
 
   setServiceError(source, caughtError, fallbackMessage) {
-    if (caughtError instanceof GameServiceError) {
+    if (caughtError instanceof AnswerServiceError) {
       this.error = {
         source,
         code: caughtError.code,
@@ -44,7 +44,7 @@ export default class AnswerStore {
     } else {
       this.error = {
         source,
-        code: GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
+        code: ANSWER_SERVICE_ERRORS.UNKNOWN_ERROR,
         message: fallbackMessage,
       };
     }
@@ -60,7 +60,7 @@ export default class AnswerStore {
     this.error = null;
 
     try {
-      const submittedAnswer = await this.gameService.submitAnswer({
+      const submittedAnswer = await this.answerService.submitPlayerAnswer({
         gameId,
         roundNumber,
         questionId,
@@ -78,8 +78,8 @@ export default class AnswerStore {
       return true;
     } catch (caughtError) {
       if (
-        caughtError instanceof GameServiceError &&
-        caughtError.code === GAME_SERVICE_ERRORS.ANSWER_ALREADY_SUBMITTED
+        caughtError instanceof AnswerServiceError &&
+        caughtError.code === ANSWER_SERVICE_ERRORS.ANSWER_ALREADY_SUBMITTED
       ) {
         if (requestId === this.submissionRequestId) {
           runInAction(() => {

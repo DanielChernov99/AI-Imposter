@@ -11,17 +11,20 @@ import VoteStore from "./VoteStore.js";
 const GAME_ACTIVE_ROOM_STATUSES = [ROOM_STATUS.COUNTDOWN, ROOM_STATUS.PLAYING];
 
 export default class RootStore {
-  constructor({ roomService, gameService, questionService }) {
+  constructor({
+    roomService,
+    gameService,
+    questionService,
+    answerService,
+    voteService,
+    revealService,
+  }) {
     this.roomStore = new RoomStore(roomService);
     this.gameStore = new GameStore(gameService);
     this.questionStore = new QuestionStore(questionService);
-
-    // Temporary Stage 2 wiring: these domain stores use only their relevant
-    // methods on the current gameService. Dedicated service contracts are a
-    // later step.
-    this.answerStore = new AnswerStore(gameService);
-    this.voteStore = new VoteStore(gameService);
-    this.revealStore = new RevealStore(gameService);
+    this.answerStore = new AnswerStore(answerService);
+    this.voteStore = new VoteStore(voteService);
+    this.revealStore = new RevealStore(revealService);
 
     this.#wireCrossStoreReactions();
   }

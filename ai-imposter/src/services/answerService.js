@@ -1,16 +1,9 @@
 /**
  * Answer service contract.
  *
- * Every Answer Service implementation should expose these async methods:
+ * Every Answer Service implementation should expose:
  *
  * submitPlayerAnswer({ gameId, roundNumber, questionId, playerId, text })
- * submitAiAnswer({ gameId, roundNumber, questionId, text })
- * createMissingPlayerAnswer({ gameId, roundNumber, questionId, playerId })
- * getAnswerById(answerId)
- * getAnswersByRound({ gameId, roundNumber })
- * getPlayerAnswerByRound({ gameId, roundNumber, playerId })
- *
- * getPlayerAnswerByRound throws ANSWER_NOT_FOUND when no answer exists.
  */
 
 export const ANSWER_SERVICE_ERRORS = Object.freeze({

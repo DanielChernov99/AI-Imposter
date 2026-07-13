@@ -1,9 +1,9 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
 import {
-  GAME_SERVICE_ERRORS,
-  GameServiceError,
-} from "../services/gameService.js";
+  REVEAL_SERVICE_ERRORS,
+  RevealServiceError,
+} from "../services/revealService.js";
 
 function collectVotes(roundAnswers) {
   return roundAnswers.flatMap((answer) =>
@@ -25,8 +25,8 @@ export default class RevealStore {
 
   revealRequestId = 0;
 
-  constructor(gameService) {
-    this.gameService = gameService;
+  constructor(revealService) {
+    this.revealService = revealService;
 
     makeObservable(this, {
       roundAnswers: observable,
@@ -51,7 +51,7 @@ export default class RevealStore {
   }
 
   setServiceError(source, caughtError, fallbackMessage) {
-    if (caughtError instanceof GameServiceError) {
+    if (caughtError instanceof RevealServiceError) {
       this.error = {
         source,
         code: caughtError.code,
@@ -60,7 +60,7 @@ export default class RevealStore {
     } else {
       this.error = {
         source,
-        code: GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
+        code: REVEAL_SERVICE_ERRORS.UNKNOWN_ERROR,
         message: fallbackMessage,
       };
     }
@@ -76,7 +76,7 @@ export default class RevealStore {
     this.error = null;
 
     try {
-      const roundAnswers = await this.gameService.getRoundResults({
+      const roundAnswers = await this.revealService.getRoundResults({
         gameId,
         roundNumber,
       });
