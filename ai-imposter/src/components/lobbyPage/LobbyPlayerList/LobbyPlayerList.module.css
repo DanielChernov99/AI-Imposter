@@ -1,11 +1,15 @@
-/* .list {
-  width: min(100%, 48rem);
+.list {
+  width: 100%;
+  flex-direction: column;
   gap: var(--space-3);
+
+  max-height: 24rem;
+  overflow-y: auto;
 }
 
-@media (max-width: 768px) {
+/* Tablet: 768px */
+@media (min-width: 48rem) {
   .list {
-    width: 100%;
-    gap: var(--space-3);
+    max-height: 28rem;
   }
-} */
+}

@@ -1,10 +1,10 @@
-import { Stack } from "@mantine/core";
+import { Flex } from "@mantine/core";
 import LobbyPlayerRow from "../LobbyPlayerRow/LobbyPlayerRow";
 import styles from "./LobbyPlayerList.module.css";
 
 export default function LobbyPlayerList({ players, currentPlayerId }) {
   return (
-    <Stack className={styles.list}>
+    <Flex className={styles.list}>
       {players.map((player) => (
         <LobbyPlayerRow
           key={player.id}
@@ -12,6 +12,6 @@ export default function LobbyPlayerList({ players, currentPlayerId }) {
           isCurrentPlayer={player.id === currentPlayerId}
         />
       ))}
-    </Stack>
+    </Flex>
   );
 }
