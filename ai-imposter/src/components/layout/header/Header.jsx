@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { useStores } from "../../../context/StoreContext.jsx";
 import { GAME_PHASE, ROOM_STATUS } from "../../../domain/constants.js";
-import { secondsUntil } from "../../../domain/time.js";
+import { parseTimestampMs } from "../../../domain/time.js";
 import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
@@ -35,8 +35,8 @@ const Header = observer(function Header({ onLeaveRoom }) {
   const isCountdown = roomStatus === ROOM_STATUS.COUNTDOWN;
   const isGameInProgress = roomStatus === ROOM_STATUS.PLAYING;
   const isFinished = roomStatus === ROOM_STATUS.FINISHED;
-  const timerDuration = secondsUntil(currentGame?.phaseEndsAt);
-  const hasValidTimerDuration = timerDuration !== null;
+  const phaseDeadlineMs = parseTimestampMs(currentGame?.phaseEndsAt);
+  const hasValidPhaseDeadline = phaseDeadlineMs !== null;
   const showWaitingContext = isWaitingRoom || isCountdown;
   const showRoundStatus = (isGameInProgress || isFinished) && currentGame;
   const phaseLabel = isFinished
@@ -155,17 +155,17 @@ const Header = observer(function Header({ onLeaveRoom }) {
 
         {/*
           Phase timer, synchronized for all players via the server's
-          games.phase_ends_at. Keyed by phase+round so each new phase
-          remounts the Timer with a fresh duration.
+          games.phase_ends_at. Keyed by the absolute deadline so a corrected
+          deadline in the same phase also resets the presentational timer.
         */}
         {isGameInProgress &&
           currentGame &&
           PHASE_TIMER_LABELS[currentGame.phase] &&
-          hasValidTimerDuration && (
+          hasValidPhaseDeadline && (
             <div className={Classes["timer-slot"]}>
               <Timer
-                key={`${currentGame.phase}-${currentGame.currentRound}`}
-                duration={timerDuration}
+                key={`${currentGame.phase}-${currentGame.currentRound}-${phaseDeadlineMs}`}
+                deadline={phaseDeadlineMs}
                 label={PHASE_TIMER_LABELS[currentGame.phase]}
               />
             </div>
@@ -179,12 +179,13 @@ const Header = observer(function Header({ onLeaveRoom }) {
           automatically (ProtectedRoute) when the server flips the room to
           "playing"; no onComplete callback is needed here.
         */}
-        {isCountdown && currentGame && hasValidTimerDuration && (
+        {isCountdown && currentGame && hasValidPhaseDeadline && (
           <div
             className={`${Classes["timer-slot"]} ${Classes["countdown-timer-slot"]}`}
           >
             <Timer
-              duration={timerDuration}
+              key={`countdown-${phaseDeadlineMs}`}
+              deadline={phaseDeadlineMs}
               label="GAME STARTS IN"
             />
           </div>

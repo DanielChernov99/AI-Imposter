@@ -4,28 +4,19 @@ import { Flex } from "@mantine/core";
 import Clock from "./Clock.jsx";
 import Classes from "./Timer.module.css";
 
-function normalizeDuration(duration) {
-  if (
-    duration === null ||
-    duration === undefined ||
-    duration === "" ||
-    typeof duration === "boolean"
-  ) {
-    return null;
-  }
-
-  const numericDuration = Number(duration);
-
-  if (!Number.isFinite(numericDuration) || numericDuration < 0) {
-    return null;
-  }
-
-  return Math.floor(numericDuration);
+function getTimerSnapshot(deadlineMs, now = Date.now()) {
+  return Math.max(0, Math.ceil((deadlineMs - now) / 1000));
 }
 
-const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
-  const [seconds, setSeconds] = useState(normalizedDuration);
+const CountdownTimer = ({ deadlineMs, label, onComplete }) => {
+  const [{ seconds, totalDuration }, setTimerState] = useState(() => {
+    const initialSeconds = getTimerSnapshot(deadlineMs);
 
+    return {
+      seconds: initialSeconds,
+      totalDuration: initialSeconds,
+    };
+  });
   const hasCompleted = useRef(false);
   const onCompleteRef = useRef(onComplete);
 
@@ -34,29 +25,41 @@ const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
   }, [onComplete]);
 
   useEffect(() => {
-    if (normalizedDuration === 0) {
-      return;
-    }
+    hasCompleted.current = false;
 
-    const endTime = Date.now() + normalizedDuration * 1000;
+    const synchronize = () => {
+      const nextSeconds = getTimerSnapshot(deadlineMs);
 
-    const intervalId = window.setInterval(() => {
-      const remainingSeconds = Math.max(
-        0,
-        Math.ceil((endTime - Date.now()) / 1000),
+      setTimerState((currentState) =>
+        currentState.seconds === nextSeconds
+          ? currentState
+          : { ...currentState, seconds: nextSeconds },
       );
+    };
 
-      setSeconds(remainingSeconds);
-
-      if (remainingSeconds === 0) {
-        window.clearInterval(intervalId);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        synchronize();
       }
-    }, 1000);
+    };
+    const handleFocus = () => synchronize();
+    const handlePageShow = () => synchronize();
+
+    synchronize();
+
+    const intervalId = window.setInterval(synchronize, 1000);
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("pageshow", handlePageShow);
 
     return () => {
       window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("pageshow", handlePageShow);
     };
-  }, [normalizedDuration]);
+  }, [deadlineMs]);
 
   useEffect(() => {
     if (seconds !== 0 || hasCompleted.current) {
@@ -68,16 +71,11 @@ const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
   }, [seconds]);
 
   const progress =
-    normalizedDuration === 0
+    totalDuration === 0
       ? 1
-      : (normalizedDuration - seconds) / normalizedDuration;
-
+      : (totalDuration - seconds) / totalDuration;
   const angle = Math.min(Math.max(progress, 0), 1) * 360;
-
-  const minutes = Math.floor(seconds / 60)
-    .toString()
-    .padStart(2, "0");
-
+  const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
   const remainingSeconds = (seconds % 60).toString().padStart(2, "0");
 
   return (
@@ -99,17 +97,19 @@ const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
   );
 };
 
-const Timer = ({ duration, label = "GAME STARTS IN", onComplete }) => {
-  const normalizedDuration = normalizeDuration(duration);
-
-  if (normalizedDuration === null) {
+const Timer = ({
+  deadline,
+  label = "GAME STARTS IN",
+  onComplete,
+}) => {
+  if (!Number.isFinite(deadline)) {
     return null;
   }
 
   return (
     <CountdownTimer
-      key={normalizedDuration}
-      normalizedDuration={normalizedDuration}
+      key={deadline}
+      deadlineMs={deadline}
       label={label}
       onComplete={onComplete}
     />

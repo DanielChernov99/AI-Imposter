@@ -4,6 +4,8 @@ import {
   GameServiceError,
 } from "../contracts/gameService.js";
 
+let gameChannelSequence = 0;
+
 function mapStanding(entry) {
   return {
     playerId: entry.player_id,
@@ -87,8 +89,10 @@ function subscribeToGame({
   onSubscribed,
   onError,
 }) {
+  let isDisposed = false;
+  const channelInstance = ++gameChannelSequence;
   const channel = supabase
-    .channel(`game:${gameId}`)
+    .channel(`game:${gameId}:${channelInstance}`)
     .on(
       "postgres_changes",
       {
@@ -98,12 +102,16 @@ function subscribeToGame({
         filter: `id=eq.${gameId}`,
       },
       (payload) => {
-        if (payload.new?.id) {
+        if (!isDisposed && payload.new?.id) {
           onGameChange?.(mapGame(payload.new));
         }
       },
     )
     .subscribe((status, error) => {
+      if (isDisposed) {
+        return;
+      }
+
       if (status === "SUBSCRIBED") {
         onSubscribed?.();
       } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
@@ -117,7 +125,8 @@ function subscribeToGame({
     });
 
   return () => {
-    supabase.removeChannel(channel);
+    isDisposed = true;
+    void supabase.removeChannel(channel);
   };
 }
 

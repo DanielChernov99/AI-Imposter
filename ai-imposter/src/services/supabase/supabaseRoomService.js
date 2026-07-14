@@ -14,6 +14,7 @@ import {
 
 const UNIQUE_VIOLATION = "23505";
 const MAX_ROOM_CODE_ATTEMPTS = 5;
+let roomChannelSequence = 0;
 
 function validateNickname(nickname) {
   const cleanNickname = typeof nickname === "string" ? nickname.trim() : "";
@@ -475,8 +476,10 @@ function subscribeToRoom({
   onSubscribed,
   onError,
 }) {
+  let isDisposed = false;
+  const channelInstance = ++roomChannelSequence;
   const channel = supabase
-    .channel(`room:${roomId}`)
+    .channel(`room:${roomId}:${channelInstance}`)
     .on(
       "postgres_changes",
       {
@@ -486,6 +489,9 @@ function subscribeToRoom({
         filter: `room_id=eq.${roomId}`,
       },
       (payload) => {
+        if (isDisposed) {
+          return;
+        }
         onPlayersChange?.({
           eventType: payload.eventType,
           newPlayer: payload.new?.id ? mapPlayer(payload.new) : null,
@@ -502,12 +508,16 @@ function subscribeToRoom({
         filter: `id=eq.${roomId}`,
       },
       (payload) => {
-        if (payload.new?.id) {
+        if (!isDisposed && payload.new?.id) {
           onRoomChange?.(mapRoom(payload.new));
         }
       },
     )
     .subscribe((status, error) => {
+      if (isDisposed) {
+        return;
+      }
+
       if (status === "SUBSCRIBED") {
         onSubscribed?.();
       } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
@@ -521,7 +531,8 @@ function subscribeToRoom({
     });
 
   return () => {
-    supabase.removeChannel(channel);
+    isDisposed = true;
+    void supabase.removeChannel(channel);
   };
 }
 
