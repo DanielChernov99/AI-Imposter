@@ -1,6 +1,62 @@
-import { Avatar, Flex, Text } from "@mantine/core";
+import { useState } from "react";
+import { Avatar, Flex, Stack, Text, Tooltip } from "@mantine/core";
+import { useMergedRef, useResizeObserver } from "@mantine/hooks";
 import classes from "./ResultCard.module.css";
 import { Check, X, Sparkles, PersonStanding } from "lucide-react";
+
+const ANSWER_LINE_LIMIT = 3;
+
+function ClampedAnswer({ answer, disabled }) {
+  const [answerElement, setAnswerElement] = useState(null);
+  const [resizeRef, { width }] = useResizeObserver();
+  const answerRef = useMergedRef(resizeRef, setAnswerElement);
+  const isTruncated = Boolean(
+    answerElement &&
+      Number.isFinite(width) &&
+      answerElement.scrollHeight > answerElement.clientHeight + 1,
+  );
+  const tooltipDisabled = disabled || !isTruncated;
+
+  return (
+    <Tooltip
+      arrowRadius={2}
+      arrowSize={7}
+      classNames={{
+        arrow: classes["answer-tooltip-arrow"],
+        tooltip: classes["answer-tooltip"],
+      }}
+      closeDelay={100}
+      disabled={tooltipDisabled}
+      events={{ hover: true, focus: true, touch: true }}
+      inline
+      label={
+        <Stack gap={4}>
+          <Text className={classes["answer-tooltip-kicker"]} span>
+            Full answer
+          </Text>
+          <Text className={classes["answer-tooltip-copy"]}>{answer}</Text>
+        </Stack>
+      }
+      multiline
+      offset={10}
+      openDelay={220}
+      position="top"
+      transitionProps={{ duration: 150, transition: "fade-up" }}
+      withArrow
+    >
+      <Text
+        className={classes["answer-text"]}
+        data-truncated={isTruncated || undefined}
+        lineClamp={ANSWER_LINE_LIMIT}
+        ref={answerRef}
+        span
+        tabIndex={tooltipDisabled ? undefined : 0}
+      >
+        {answer}
+      </Text>
+    </Tooltip>
+  );
+}
 
 /**
  * One revealed answer: who wrote it (a player or the AI) and who voted
@@ -42,7 +98,7 @@ const ResultCard = ({
         .join(" ")}
     >
       <Flex className={classes["answer-container"]}>
-        <Text span>{answer}</Text>
+        <ClampedAnswer answer={answer} disabled={isUnavailable} />
       </Flex>
       <Flex className={classes["writtenBy-wrapper"]}>
         <Flex className={classes["writtenBy-container"]}>
