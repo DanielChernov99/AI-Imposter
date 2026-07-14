@@ -5,10 +5,19 @@ import Clock from "./Clock.jsx";
 import Classes from "./Timer.module.css";
 
 function normalizeDuration(duration) {
+  if (
+    duration === null ||
+    duration === undefined ||
+    duration === "" ||
+    typeof duration === "boolean"
+  ) {
+    return null;
+  }
+
   const numericDuration = Number(duration);
 
   if (!Number.isFinite(numericDuration) || numericDuration < 0) {
-    return 0;
+    return null;
   }
 
   return Math.floor(numericDuration);
@@ -92,6 +101,10 @@ const CountdownTimer = ({ normalizedDuration, label, onComplete }) => {
 
 const Timer = ({ duration, label = "GAME STARTS IN", onComplete }) => {
   const normalizedDuration = normalizeDuration(duration);
+
+  if (normalizedDuration === null) {
+    return null;
+  }
 
   return (
     <CountdownTimer

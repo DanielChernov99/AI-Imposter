@@ -5,20 +5,10 @@ import { observer } from "mobx-react-lite";
 import logo from "../../../assets/images/AI-Imposter_logo.png";
 import { useStores } from "../../../context/StoreContext.jsx";
 import { GAME_PHASE, ROOM_STATUS } from "../../../domain/constants.js";
+import { secondsUntil } from "../../../domain/time.js";
 import GameRoundStatus from "./components/gameRoundStatus/GameRoundStatus";
 import Timer from "./components/timer/Timer";
 import Classes from "./Header.module.css";
-
-function secondsUntil(isoTimestamp) {
-  if (!isoTimestamp) {
-    return 0;
-  }
-
-  return Math.max(
-    0,
-    Math.ceil((new Date(isoTimestamp).getTime() - Date.now()) / 1000),
-  );
-}
 
 const PHASE_TIMER_LABELS = {
   [GAME_PHASE.ANSWERING]: "TIME TO ANSWER",
@@ -45,6 +35,8 @@ const Header = observer(function Header({ onLeaveRoom }) {
   const isCountdown = roomStatus === ROOM_STATUS.COUNTDOWN;
   const isGameInProgress = roomStatus === ROOM_STATUS.PLAYING;
   const isFinished = roomStatus === ROOM_STATUS.FINISHED;
+  const timerDuration = secondsUntil(currentGame?.phaseEndsAt);
+  const hasValidTimerDuration = timerDuration !== null;
   const showWaitingContext = isWaitingRoom || isCountdown;
   const showRoundStatus = (isGameInProgress || isFinished) && currentGame;
   const phaseLabel = isFinished
@@ -169,11 +161,11 @@ const Header = observer(function Header({ onLeaveRoom }) {
         {isGameInProgress &&
           currentGame &&
           PHASE_TIMER_LABELS[currentGame.phase] &&
-          currentGame.phaseEndsAt && (
+          hasValidTimerDuration && (
             <div className={Classes["timer-slot"]}>
               <Timer
                 key={`${currentGame.phase}-${currentGame.currentRound}`}
-                duration={secondsUntil(currentGame.phaseEndsAt)}
+                duration={timerDuration}
                 label={PHASE_TIMER_LABELS[currentGame.phase]}
               />
             </div>
@@ -187,12 +179,12 @@ const Header = observer(function Header({ onLeaveRoom }) {
           automatically (ProtectedRoute) when the server flips the room to
           "playing"; no onComplete callback is needed here.
         */}
-        {isCountdown && currentGame?.phaseEndsAt && (
+        {isCountdown && currentGame && hasValidTimerDuration && (
           <div
             className={`${Classes["timer-slot"]} ${Classes["countdown-timer-slot"]}`}
           >
             <Timer
-              duration={secondsUntil(currentGame.phaseEndsAt)}
+              duration={timerDuration}
               label="GAME STARTS IN"
             />
           </div>

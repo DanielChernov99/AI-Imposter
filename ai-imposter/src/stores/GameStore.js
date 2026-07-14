@@ -8,6 +8,7 @@ import {
 } from "mobx";
 
 import { GAME_PHASE } from "../domain/constants.js";
+import { parseTimestampMs } from "../domain/time.js";
 import {
   GAME_SERVICE_ERRORS,
   GameServiceError,
@@ -189,7 +190,10 @@ export default class GameStore {
   #schedulePhaseAdvance() {
     this.#clearPhaseTimeout();
 
-    if (this.error?.source === "advance") {
+    if (
+      this.error?.source === "advance" ||
+      this.error?.source === "phaseDeadline"
+    ) {
       this.clearError();
     }
 
@@ -197,8 +201,21 @@ export default class GameStore {
       return;
     }
 
-    const millisecondsLeft =
-      new Date(this.phaseEndsAt).getTime() - Date.now();
+    const phaseEndTime = parseTimestampMs(this.phaseEndsAt);
+
+    if (phaseEndTime === null) {
+      this.setServiceError(
+        "phaseDeadline",
+        new GameServiceError(
+          GAME_SERVICE_ERRORS.UNKNOWN_ERROR,
+          "The game phase deadline is invalid.",
+        ),
+        "The game phase deadline is invalid.",
+      );
+      return;
+    }
+
+    const millisecondsLeft = phaseEndTime - Date.now();
     const delay =
       Math.max(0, millisecondsLeft) + Math.random() * ADVANCE_JITTER_MS;
     const phaseIdentity = {
@@ -304,8 +321,9 @@ export default class GameStore {
         return null;
       }
 
+      const parsedEndTime = parseTimestampMs(endsAt);
       const deadlineHasExpired =
-        new Date(endsAt).getTime() <= Date.now();
+        parsedEndTime !== null && parsedEndTime <= Date.now();
 
       if (
         deadlineHasExpired &&
