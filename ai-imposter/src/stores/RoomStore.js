@@ -155,10 +155,22 @@ export default class RoomStore {
       return;
     }
 
-    this.roomSubscription = this.roomService.subscribeToRoom({
-      roomId: this.currentRoom.id,
+    const roomId = this.currentRoom.id;
+    let isActive = true;
+    const isCurrentRoomSync = () =>
+      isActive && this.currentRoom?.id === roomId;
+    const subscriptionOptions = {
+      roomId,
       onPlayersChange: ({ eventType, newPlayer, oldPlayer }) => {
+        if (!isCurrentRoomSync()) {
+          return;
+        }
+
         runInAction(() => {
+          if (this.error?.source === "realtime") {
+            this.error = null;
+          }
+
           if (eventType === "INSERT" && newPlayer) {
             if (
               !this.currentRoomPlayers.some(
@@ -174,6 +186,10 @@ export default class RoomStore {
 
             if (this.currentPlayer?.id === newPlayer.id) {
               this.currentPlayer = newPlayer;
+
+              if (this.error?.source === "ready") {
+                this.error = null;
+              }
             }
           } else if (eventType === "DELETE" && oldPlayer) {
             this.currentRoomPlayers = this.currentRoomPlayers.filter(
@@ -183,7 +199,22 @@ export default class RoomStore {
         });
       },
       onRoomChange: (updatedRoom) => {
+        if (!isCurrentRoomSync()) {
+          return;
+        }
+
         runInAction(() => {
+          if (this.error?.source === "realtime") {
+            this.error = null;
+          }
+
+          if (
+            this.error?.source === "startGame" &&
+            updatedRoom.status !== ROOM_STATUS.WAITING
+          ) {
+            this.error = null;
+          }
+
           const returnedToWaiting =
             this.currentRoom?.status === ROOM_STATUS.FINISHED &&
             updatedRoom.status === ROOM_STATUS.WAITING;
@@ -209,7 +240,48 @@ export default class RoomStore {
           this.currentRoom = updatedRoom;
         });
       },
-    });
+      onSubscribed: () => {
+        if (!isCurrentRoomSync()) {
+          return;
+        }
+
+        runInAction(() => {
+          if (this.error?.source === "realtime") {
+            this.error = null;
+          }
+        });
+      },
+      onError: (caughtError) => {
+        if (!isCurrentRoomSync()) {
+          return;
+        }
+
+        this.setServiceError(
+          "realtime",
+          caughtError,
+          "The live room connection was interrupted. Reconnecting...",
+        );
+      },
+    };
+
+    try {
+      const unsubscribe = this.roomService.subscribeToRoom(subscriptionOptions);
+
+      this.roomSubscription = () => {
+        isActive = false;
+        unsubscribe();
+      };
+    } catch (caughtError) {
+      isActive = false;
+
+      if (this.currentRoom?.id === roomId) {
+        this.setServiceError(
+          "realtime",
+          caughtError,
+          "Could not start live room updates. Please refresh.",
+        );
+      }
+    }
   }
 
   stopRoomRealtimeSync() {
@@ -224,7 +296,10 @@ export default class RoomStore {
       return false;
     }
     this.isLoading = true;
-    this.error = null;
+
+    if (this.error?.source === "ready") {
+      this.error = null;
+    }
     try {
       if (
         this.currentRoom.status === ROOM_STATUS.COUNTDOWN &&
@@ -260,6 +335,13 @@ export default class RoomStore {
       });
       return true;
     } catch (caughtError) {
+      if (this.currentPlayer?.isReady === isReady) {
+        if (this.error?.source === "ready") {
+          this.error = null;
+        }
+        return true;
+      }
+
       this.setServiceError(
         "ready",
         caughtError,
@@ -314,7 +396,10 @@ export default class RoomStore {
     }
 
     this.isLoading = true;
-    this.error = null;
+
+    if (this.error?.source === "leave") {
+      this.error = null;
+    }
 
     try {
       await this.roomService.leaveRoom({
@@ -349,7 +434,10 @@ export default class RoomStore {
     }
 
     this.isLoading = true;
-    this.error = null;
+
+    if (this.error?.source === "loadPlayers") {
+      this.error = null;
+    }
 
     try {
       const players = await this.roomService.getPlayersByRoomId(
@@ -388,14 +476,29 @@ export default class RoomStore {
       return false;
     }
 
+    const roomId = this.currentRoom.id;
     this.isStartingGame = true;
-    this.error = null;
+
+    if (this.error?.source === "startGame") {
+      this.error = null;
+    }
 
     try {
-      await this.roomService.startGame({ roomId: this.currentRoom.id });
+      await this.roomService.startGame({ roomId });
 
       return true;
     } catch (caughtError) {
+      if (this.currentRoom?.id !== roomId) {
+        return false;
+      }
+
+      if (this.currentRoom.status !== ROOM_STATUS.WAITING) {
+        if (this.error?.source === "startGame") {
+          this.error = null;
+        }
+        return true;
+      }
+
       if (
         caughtError instanceof RoomServiceError &&
         caughtError.code === ROOM_SERVICE_ERRORS.ROOM_ALREADY_STARTED
@@ -424,13 +527,18 @@ export default class RoomStore {
       return null;
     }
 
+    const roomId = this.currentRoom.id;
+    const playerId = this.currentPlayer.id;
     this.isRequestingPlayAgain = true;
-    this.error = null;
+
+    if (this.error?.source === "playAgain") {
+      this.error = null;
+    }
 
     try {
       const result = await this.roomService.requestPlayAgain({
-        roomId: this.currentRoom.id,
-        playerId: this.currentPlayer.id,
+        roomId,
+        playerId,
       });
 
       runInAction(() => {
@@ -452,6 +560,13 @@ export default class RoomStore {
 
       return result;
     } catch (caughtError) {
+      if (
+        this.currentRoom?.id !== roomId ||
+        this.currentRoom.status !== ROOM_STATUS.FINISHED
+      ) {
+        return null;
+      }
+
       this.setServiceError(
         "playAgain",
         caughtError,

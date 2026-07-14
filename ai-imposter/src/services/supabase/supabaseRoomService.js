@@ -464,9 +464,17 @@ async function requestPlayAgain({ roomId }) {
  * @param {string} params.roomId
  * @param {(change: {eventType: "INSERT"|"UPDATE"|"DELETE", newPlayer: object|null, oldPlayer: object|null}) => void} [params.onPlayersChange]
  * @param {(room: object) => void} [params.onRoomChange]
+ * @param {() => void} [params.onSubscribed]
+ * @param {(error: RoomServiceError) => void} [params.onError]
  * @returns {() => void} unsubscribe
  */
-function subscribeToRoom({ roomId, onPlayersChange, onRoomChange }) {
+function subscribeToRoom({
+  roomId,
+  onPlayersChange,
+  onRoomChange,
+  onSubscribed,
+  onError,
+}) {
   const channel = supabase
     .channel(`room:${roomId}`)
     .on(
@@ -499,7 +507,18 @@ function subscribeToRoom({ roomId, onPlayersChange, onRoomChange }) {
         }
       },
     )
-    .subscribe();
+    .subscribe((status, error) => {
+      if (status === "SUBSCRIBED") {
+        onSubscribed?.();
+      } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        onError?.(
+          toRoomServiceError(
+            error,
+            "The live room connection was interrupted. Reconnecting...",
+          ),
+        );
+      }
+    });
 
   return () => {
     supabase.removeChannel(channel);

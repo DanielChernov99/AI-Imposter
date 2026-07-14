@@ -15,7 +15,8 @@
  *   game in its countdown phase and flips rooms.status to "countdown".
  * requestPlayAgain({ roomId, playerId })
  *   -> { reset, optedIn, optedInCount, playerCount }
- * subscribeToRoom({ roomId, onPlayersChange, onRoomChange }) -> unsubscribe
+ * subscribeToRoom({ roomId, onPlayersChange, onRoomChange, onSubscribed,
+ *   onError }) -> unsubscribe
  *
  */
 

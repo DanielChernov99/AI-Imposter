@@ -164,6 +164,10 @@ export default class VoteStore {
       return false;
     }
 
+    if (this.error?.source === "castVote") {
+      this.error = null;
+    }
+
     this.selectedAnswerId = answerId;
 
     return true;

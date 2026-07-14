@@ -133,6 +133,18 @@ export default class RootStore {
           isNewRound || phase !== previousGameState?.phase;
 
         if (enteredPhase && phase === GAME_PHASE.VOTING) {
+          this.answerStore.clearError();
+        }
+
+        if (enteredPhase && phase === GAME_PHASE.REVEAL) {
+          this.voteStore.clearError();
+        }
+
+        if (enteredPhase && phase === GAME_PHASE.FINISHED) {
+          this.questionStore.clearError();
+        }
+
+        if (enteredPhase && phase === GAME_PHASE.VOTING) {
           void this.voteStore.loadVotingOptions({
             gameId,
             roundNumber,

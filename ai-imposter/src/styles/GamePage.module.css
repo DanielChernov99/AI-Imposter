@@ -16,6 +16,31 @@
   min-width: 0;
 }
 
+.phaseMessageSlot {
+  display: grid;
+  grid-template: 1fr / minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-height: 2.75rem;
+}
+
+.phaseMessageSlot > * {
+  grid-area: 1 / 1;
+}
+
+.hiddenInstruction {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.loadErrorLayout {
+  width: 100%;
+  max-width: 100rem;
+  min-height: 3rem;
+  margin: 0 auto;
+  padding: clamp(var(--space-3), 2vw, var(--space-6));
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;

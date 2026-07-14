@@ -56,6 +56,7 @@ export default class GameStore {
       clearError: action,
       setServiceError: action,
       loadGameById: action,
+      stopGameSync: action,
       clearScheduledPhaseAdvance: action,
       resetGame: action,
     });
@@ -115,7 +116,15 @@ export default class GameStore {
    * different game first closes the previous subscription and timer.
    */
   startGameSync(gameId) {
-    if (!gameId || this.syncedGameId === gameId) {
+    if (!gameId) {
+      return;
+    }
+
+    if (this.syncedGameId === gameId) {
+      if (!this.isLoading && this.currentGame?.id !== gameId) {
+        void this.loadGameById(gameId);
+      }
+
       return;
     }
 
@@ -124,22 +133,54 @@ export default class GameStore {
     void this.loadGameById(gameId);
 
     if (this.gameService.subscribeToGame) {
-      this.gameSubscription = this.gameService.subscribeToGame({
-        gameId,
-        onGameChange: (game) => {
-          if (this.syncedGameId !== gameId) {
-            return;
-          }
+      try {
+        this.gameSubscription = this.gameService.subscribeToGame({
+          gameId,
+          onGameChange: (game) => {
+            if (this.syncedGameId !== gameId) {
+              return;
+            }
 
-          runInAction(() => {
-            // A Realtime update is newer than any initial fetch still in
-            // flight, so prevent that fetch from restoring an older phase.
-            this.gameLoadRequestId += 1;
-            this.isLoading = false;
-            this.currentGame = game;
-          });
-        },
-      });
+            runInAction(() => {
+              // A Realtime update is newer than any initial fetch still in
+              // flight, so prevent that fetch from restoring an older phase.
+              this.gameLoadRequestId += 1;
+              this.isLoading = false;
+              this.currentGame = game;
+
+              if (
+                this.error?.source === "realtime" ||
+                this.error?.source === "load"
+              ) {
+                this.error = null;
+              }
+            });
+          },
+          onSubscribed: () => {
+            if (
+              this.syncedGameId === gameId &&
+              this.error?.source === "realtime"
+            ) {
+              this.clearError();
+            }
+          },
+          onError: (caughtError) => {
+            if (this.syncedGameId === gameId) {
+              this.setServiceError(
+                "realtime",
+                caughtError,
+                "The live game connection was interrupted. Reconnecting...",
+              );
+            }
+          },
+        });
+      } catch (caughtError) {
+        this.setServiceError(
+          "realtime",
+          caughtError,
+          "Could not start live game updates. Please refresh.",
+        );
+      }
     }
 
     this.phaseReactionDisposer = reaction(
@@ -166,13 +207,14 @@ export default class GameStore {
     }
 
     this.phaseAdvanceGeneration += 1;
+    this.gameLoadRequestId += 1;
+    this.isLoading = false;
     this.#clearPhaseTimeout();
     this.syncedGameId = null;
   }
 
   resetGame() {
     this.stopGameSync();
-    this.gameLoadRequestId += 1;
     this.currentGame = null;
     this.isLoading = false;
     this.error = null;
@@ -307,6 +349,10 @@ export default class GameStore {
 
       return result;
     } catch (caughtError) {
+      if (!this.#isCurrentPhase(phaseIdentity)) {
+        return null;
+      }
+
       const didReload = await this.loadGameById(gameId);
 
       if (!didReload || !this.#isCurrentPhase(phaseIdentity)) {
@@ -354,7 +400,10 @@ export default class GameStore {
   async loadGameById(gameId) {
     const requestId = ++this.gameLoadRequestId;
     this.isLoading = true;
-    this.error = null;
+
+    if (this.error?.source === "load") {
+      this.error = null;
+    }
 
     try {
       const game = await this.gameService.getGameById(gameId);

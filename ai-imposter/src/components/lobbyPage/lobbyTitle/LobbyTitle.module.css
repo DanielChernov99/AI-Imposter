@@ -24,10 +24,31 @@
 }
 
 .subtitle {
+  grid-area: 1 / 1;
+  align-self: center;
+  justify-self: center;
   color: var(--text-soft);
   max-width: 26rem;
   font-size: var(--font-size-md); /* 16px */
   line-height: 1.45;
+  transition: opacity 140ms ease;
+}
+
+.messageSlot {
+  display: grid;
+  grid-template: 1fr / minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-height: 3rem;
+}
+
+.messageSlot > * {
+  grid-area: 1 / 1;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
 }
 
 .countRow {

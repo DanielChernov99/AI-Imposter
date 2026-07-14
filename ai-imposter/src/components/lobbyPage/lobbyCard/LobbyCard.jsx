@@ -6,7 +6,7 @@ import styles from "./LobbyCard.module.css";
 import { observer } from "mobx-react-lite";
 import { useStores } from "../../../context/StoreContext.jsx";
 
-function LobbyCard() {
+function LobbyCard({ errorMessage }) {
   const { roomStore } = useStores();
   const { currentRoomPlayers, currentRoom, currentPlayer } = roomStore;
 
@@ -24,6 +24,8 @@ function LobbyCard() {
         <LobbyTitle
           joinedCount={currentRoomPlayers.length}
           capacity={currentRoom?.capacity ?? 0}
+          roomStatus={currentRoom?.status}
+          errorMessage={errorMessage}
         />
 
         <LobbyPlayerList
@@ -38,7 +40,8 @@ function LobbyCard() {
         />
 
         <Text span className={styles.hint}>
-          When all players are ready, the game starts automatically.
+          When the room is full and everyone is ready, the game starts
+          automatically.
         </Text>
       </Flex>
     </Card>

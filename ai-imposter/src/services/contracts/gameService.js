@@ -6,7 +6,8 @@
  * getGameById(gameId)
  * advancePhase(gameId)
  *   -> { phase, round, advanced }
- * subscribeToGame({ gameId, onGameChange }) -> unsubscribe (optional)
+ * subscribeToGame({ gameId, onGameChange, onSubscribed, onError })
+ *   -> unsubscribe (optional)
  */
 
 export const GAME_SERVICE_ERRORS = Object.freeze({

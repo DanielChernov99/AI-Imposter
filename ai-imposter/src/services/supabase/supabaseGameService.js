@@ -81,7 +81,12 @@ async function advancePhase(gameId) {
   return data;
 }
 
-function subscribeToGame({ gameId, onGameChange }) {
+function subscribeToGame({
+  gameId,
+  onGameChange,
+  onSubscribed,
+  onError,
+}) {
   const channel = supabase
     .channel(`game:${gameId}`)
     .on(
@@ -98,7 +103,18 @@ function subscribeToGame({ gameId, onGameChange }) {
         }
       },
     )
-    .subscribe();
+    .subscribe((status, error) => {
+      if (status === "SUBSCRIBED") {
+        onSubscribed?.();
+      } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        onError?.(
+          toGameServiceError(
+            error,
+            "The live game connection was interrupted. Reconnecting...",
+          ),
+        );
+      }
+    });
 
   return () => {
     supabase.removeChannel(channel);

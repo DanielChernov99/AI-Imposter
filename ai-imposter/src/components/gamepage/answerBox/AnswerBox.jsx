@@ -12,7 +12,7 @@ const AnswerBox = observer(() => {
   const { answerStore } = rootStore;
   const [answer, setAnswer] = useState("");
 
-  const { hasSubmittedAnswer, isSubmitting, error } = answerStore;
+  const { hasSubmittedAnswer, isSubmitting } = answerStore;
   const canSubmit =
     answer.trim().length > 0 && !hasSubmittedAnswer && !isSubmitting;
 
@@ -24,6 +24,14 @@ const AnswerBox = observer(() => {
     await rootStore.submitCurrentAnswer(answer);
   };
 
+  const handleAnswerChange = (event) => {
+    if (answerStore.error?.source === "submitAnswer") {
+      answerStore.clearError();
+    }
+
+    setAnswer(event.target.value.slice(0, MAX_ANSWER_LENGTH));
+  };
+
   return (
     <Flex className={classes["answerBox-container"]}>
       <Textarea
@@ -33,10 +41,7 @@ const AnswerBox = observer(() => {
         placeholder="Type your answer here"
         value={answer}
         disabled={hasSubmittedAnswer}
-        error={error?.message}
-        onChange={(e) =>
-          setAnswer(e.target.value.slice(0, MAX_ANSWER_LENGTH))
-        }
+        onChange={handleAnswerChange}
         bottomSection={
           <Flex className={classes["textArea-bottomSection"]}>
             <Text size="xs" c="dimmed">
