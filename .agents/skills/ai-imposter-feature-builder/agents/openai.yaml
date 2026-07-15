@@ -1,0 +1,7 @@
+interface:
+  display_name: "AI Imposter Feature Builder"
+  short_description: "Plan and build features across the game stack"
+  default_prompt: "Use $ai-imposter-feature-builder to plan an AI Imposter feature, then implement it after I approve the plan."
+
+policy:
+  allow_implicit_invocation: false
